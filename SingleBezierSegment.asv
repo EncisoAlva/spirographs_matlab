@@ -16,13 +16,78 @@
 %   MarkerSpeed  Speed at which the marker goes throuh its arc [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
-%          Time  Timestamps [1]
-%      CirCentT  Location of the wheel center at timestamps []
+%          Time  Timestamps [1x?]
+%      CirCentT  Location of the wheel center at timestamps [2x?]
+%       Marker  Location of marker at timepoints [2x?]
+%
 % *Notice that some parameters are redundant; this is to avoid computing
 % multile times the same parameters.
 %
-function [Time, CirCenterT, MarkerT] = ...
+function [Time, CirCenterT, MarkerPos, MarkerAngle] = ...
   SingleBezierSegment( CtrlPts, CirRadius, MarkerRadius, ...
-  MarkerAngle0, MarkerPos0, CirPos0, Time0, MaxDistDelta, MarkerSpeed )
+  MarkerAngle0, Time0, MaxDistDelta, MarkerSpeed )
+
+% initial guess for time
+DistDelta = 1/ceil(1/MaxDistDelta);
+LocalTime = 0:DistDelta:1;
+
+while true
+
+% compute the points on the Bezier curve and the wheel that rolls over it
+BezierPos  = EvalBezier( CtrlPts, LocalTime );
+if CirRadius > 0
+  CirCenterT = EvalBezierTangent( CtrlPts, LocalTime, BezierPos, CirRadius );
+else
+  CirCenterT = BezierPos;
+end
+
+% angle that the wheel spun between two given points
+if CirRadius > 0
+  DiffAngle = vecnorm( diff(BezierPos,1,2), 2, 1) / CirRadius;
+else
+  DiffAngle = vecnorm( diff(BezierPos,1,2), 2, 1);
+end
+
+% position and angle for the marker
+MarkerAngle = zeros(size(LocalTime));
+MarkerPos   = zeros(2, size(LocalTime,2));
+MarkerAngle(1) = MarkerAngle0;
+MarkerPos(:,1) = CirCenterT(:,1) + [sin(MarkerAngle0); cos(MarkerAngle0)]*MarkerRadius;
+for i = 2:length(MarkerAngle)
+  MarkerAngle(i) = MarkerAngle(i-1) + DiffAngle(i-1);
+  MarkerPos(:,i) = CirCenterT(:,i) + [sin(MarkerAngle(i)); cos(MarkerAngle(i))]*MarkerRadius;
+end
+
+% check if the marker points are not too far from each other
+DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);
+if max(DiffCurve) < MaxDistDelta
+  break
+end
+
+% if the marker points are too far, add more time points when needed
+NewTimes = [];
+for i = 2:length(LocalTime)
+  if( DiffCurve(i-1) > MaxDistDelta )
+    epsilon = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(MaxDistDelta/2));
+    NewTimes = [ NewTimes, (LocalTime(i-1):epsilon:LocalTime(i)) ];
+  end
+end
+
+% use the new timepoints and iterate until the result is acceptable
+LocalTime = unique( [LocalTime, NewTimes], "sorted" );
+end
+
+Time = LocalTime*MarkerSpeed + Time0;
 
 end
+
+%close all
+%figure()
+%plot(BezierPos(1,:),BezierPos(2,:),'-o')
+%hold on
+%plot(CirCenterT(1,:),CirCenterT(2,:),'-o')
+%axis equal
+%grid on
+%plot(MarkerPos(1,:),MarkerPos(2,:),'-o')
+
+

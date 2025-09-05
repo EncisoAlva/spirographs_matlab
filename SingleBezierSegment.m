@@ -3,30 +3,95 @@
 %
 % ---- INUPUT ------------------------------------------------------------
 %       CtrlPts  Control points for Bezier curve, [2x4]
-%     CirRadius  Radius of spirograph wheel, a negative radius indicates
+%   WheelRadius  Radius of spirograph wheel, a negative radius indicates
 %                that the wheel rolls inside the curve [1]
 %  MarkerRadius  Distance from the center of wheel to the marker; if it is
 %                larger than the wheel radius, the marker is outside [1]
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
-%    MarkerPos0  Initial position of the marker [2x1]
-%       CirPos0  Initial position of the wheel center [2x1]
 %         Time0  Initial timestamp [1]
 %  MaxDistDelta  Maximum allowable distance between neighboring points [1]
 %   MarkerSpeed  Speed at which the marker goes throuh its arc [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
 %          Time  Timestamps [1x?]
-%      CirCentT  Location of the wheel center at timestamps [2x?]
-%       MarkerT  Location of marker at timepoints [2x?]
+%      WhCtrPos  Location of the wheel center at timestamps [2x?]
+%     MarkerPos  Location of marker at timepoints [2x?]
 %
 % *Notice that some parameters are redundant; this is to avoid computing
 % multile times the same parameters.
 %
-function [Time, CirCenterT, MarkerT] = ...
-  SingleBezierSegment( CtrlPts, CirRadius, MarkerRadius, ...
-  MarkerAngle0, MarkerPos0, CirPos0, Time0, MaxDistDelta, MarkerSpeed )
+function [Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  SingleBezierSegment( CtrlPts, WheelRadius, MarkerRadius, ...
+  MarkerAngle0, Time0, MaxDistDelta, MarkerSpeed )
 
-LocalTime = 0:(1/MaxDistDelta):1;
+% initial guess for time
+DistDelta = 1/ceil(1/MaxDistDelta);
+LocalTime = 0:DistDelta:1;
+
+while true
+
+% compute the points on the Bezier curve and the wheel that rolls over it
+BezierPos  = EvalBezier( CtrlPts, LocalTime );
+if WheelRadius > 0
+  WhCtrPos = BezierPos + EvalBezierNormal( CtrlPts, LocalTime, WheelRadius );
+else
+  WhCtrPos = BezierPos;
+end
+
+% angle that the wheel spun between two given points
+if WheelRadius > 0
+  DiffAngle = vecnorm( diff(BezierPos,1,2), 2, 1) / WheelRadius;
+else
+  DiffAngle = vecnorm( diff(BezierPos,1,2), 2, 1);
+end
+
+% position and angle for the marker
+MarkerAngle = zeros(size(LocalTime));
+MarkerPos   = zeros(2, size(LocalTime,2));
+MarkerAngle(1) = MarkerAngle0;
+MarkerPos(:,1) = WhCtrPos(:,1) + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius;
+for i = 2:length(MarkerAngle)
+  MarkerAngle(i) = MarkerAngle(i-1) - DiffAngle(i-1);
+  MarkerPos(:,i) = WhCtrPos(:,i) + [cos(MarkerAngle(i)); sin(MarkerAngle(i))]*MarkerRadius;
+end
+
+% check if the marker points are not too far from each other
+DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);
+if max(DiffCurve) < MaxDistDelta
+  break
+end
+
+% if the marker points are too far, add more time points when needed
+NewTimes = [];
+for i = 2:length(LocalTime)
+  if( DiffCurve(i-1) > MaxDistDelta )
+    epsilon = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(MaxDistDelta/2));
+    NewTimes = [ NewTimes, (LocalTime(i-1):epsilon:LocalTime(i)) ];
+  end
+end
+
+% use the new timepoints and iterate until the result is acceptable
+LocalTime = unique( [LocalTime, NewTimes], "sorted" );
+end
+
+Time = LocalTime*MarkerSpeed + Time0;
+
+% technical
+MarkerAngle = mod(MarkerAngle, 2*pi);
 
 end
+
+% MarkerAngle0 = pi
+%CtrlPts = [3,0; 2,0; 0,0; -1,0]'
+
+%close all
+%figure()
+%plot(BezierPos(1,:),BezierPos(2,:),'-o')
+%hold on
+%plot(WhCtrPos(1,:),WhCtrPos(2,:),'-o')
+%axis equal
+%grid on
+%plot(MarkerPos(1,:),MarkerPos(2,:),'-o')
+
+%CtrlPts = [-1,0;-4,4;4,7;3,0]'
