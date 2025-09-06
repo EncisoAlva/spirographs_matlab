@@ -81,17 +81,3 @@ Time = LocalTime*MarkerSpeed + Time0;
 MarkerAngle = mod(MarkerAngle, 2*pi);
 
 end
-
-% MarkerAngle0 = pi
-%CtrlPts = [3,0; 2,0; 0,0; -1,0]'
-
-%close all
-%figure()
-%plot(BezierPos(1,:),BezierPos(2,:),'-o')
-%hold on
-%plot(WhCtrPos(1,:),WhCtrPos(2,:),'-o')
-%axis equal
-%grid on
-%plot(MarkerPos(1,:),MarkerPos(2,:),'-o')
-
-%CtrlPts = [-1,0;-4,4;4,7;3,0]'

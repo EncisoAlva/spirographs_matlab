@@ -59,19 +59,3 @@ Time = LocalTime*MarkerSpeed + Time0;
 MarkerAngle = mod(MarkerAngle, 2*pi);
 
 end
-
-% MarkerAngle0 = mod(5.4248, 2*pi);
-
-%CtrlPtsPre = [3,0; 2,0; 0,0; -1,0]'
-%CtrlPtsPos = [-1,0;-4,4;4,7;3,0]'
-
-%plot(WhCtrPosi(1,:),WhCtrPosi(2,:),'-o')
-%plot(MarkerPos(1,:),MarkerPos(2,:),'-o')
-
-% MarkerAngle0 = mod(4.4975, 2*pi);
-
-% MarkerAngle0 = mod(5.8481, 2*pi);
-%CtrlPtsPos = [3,0; 2,0; 0,0; -1,0]'
-%CtrlPtsPre = [-1,0;-4,4;4,7;3,0]'
-
-% MarkerAngle0 = mod(4.4192, 2*pi);

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="200mm"
+   height="200mm"
+   viewBox="0 0 200 200"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="TEXASFLAG_onlystar.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="405.52574"
+     inkscape:cy="418.60721"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     style="display:inline">
+    <path
+       style="color:#000000;fill:#800000;fill-opacity:0.689655;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:markers fill stroke"
+       d="m 100,0 c 8.362,16.942667 16.724,33.885333 25.086,50.828 3.64172,7.37789 10.6802,12.49197 18.82229,13.675906 18.69531,2.716797 37.39063,5.433594 56.08594,8.150391 -13.52743,13.188164 -27.05485,26.376329 -40.58228,39.564493 -5.89189,5.74308 -8.58107,14.01731 -7.19141,22.12695 3.19336,18.62109 6.38672,37.24219 9.58008,55.86328 -16.72269,-8.79167 -33.44537,-17.58333 -50.16806,-26.375 -7.28335,-3.8287 -15.98423,-3.8287 -23.267576,0 -16.723307,8.79167 -33.446615,17.58333 -50.169922,26.375 3.270088,-19.06722 6.638431,-38.702 9.582282,-55.86332 1.390834,-8.10994 -1.297651,-16.38501 -7.189453,-22.1289 C 27.059571,99.028648 13.53125,85.840496 0.00292969,72.652344 18.699219,69.936198 37.395508,67.220052 56.091797,64.503906 64.234619,63.320573 71.273911,58.206533 74.916016,50.828125 83.277344,33.885417 91.638672,16.942708 100,0 Z"
+       id="path6750"
+       sodipodi:nodetypes="cccccccccccccccc" />
+  </g>
+</svg>
