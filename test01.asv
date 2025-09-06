@@ -1,0 +1,69 @@
+%%
+% general parameters
+WheelRadius = 1;
+MarkerRadius = 1;
+MarkerAngle0 = pi;
+Time0 = 0;
+MaxDistDelta = 0.1;
+MarkerSpeed = 1;
+
+Curve_1 = [-1,0;-4,4;4,7;3,0]';
+Curve_2 = [3,0; 2,0; 0,0; -1,0]';
+
+%%
+
+[Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  SingleBezierSegment( Curve_1, WheelRadius, MarkerRadius, MarkerAngle0, Time0, MaxDistDelta, MarkerSpeed );
+
+BezierPos = EvalBezier(Curve_1, Time);
+
+figure()
+plot(BezierPos(1,:),BezierPos(2,:),'blue')
+hold on
+plot(WhCtrPos(1,:),WhCtrPos(2,:),'green')
+axis equal
+grid on
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+[~, WhCtrPosi, MarkerPos, MarkerAngle] = ...
+  RollCorner( Curve_1, Curve_2, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+BezierPos = EvalBezier(Curve_2, Time);
+
+plot(BezierPos(1,:),BezierPos(2,:),'blue')
+plot(WhCtrPosi(1,:),WhCtrPosi(2,:),'green')
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+[~, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  SingleBezierSegment( Curve_2, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+plot(WhCtrPos(1,:),WhCtrPos(2,:),'green')
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+[~, WhCtrPosi, MarkerPos, MarkerAngle] = ...
+  RollCorner( Curve_2, Curve_1, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+plot(WhCtrPosi(1,:),WhCtrPosi(2,:),'green')
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+%%
+
+[~, ~, MarkerPos, MarkerAngle] = ...
+  SingleBezierSegment( Curve_1, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+[~, ~, MarkerPos, MarkerAngle] = ...
+  RollCorner( Curve_1, Curve_2, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+[~, ~, MarkerPos, MarkerAngle] = ...
+  SingleBezierSegment( Curve_2, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
+
+[~, ~, MarkerPos, MarkerAngle] = ...
+  RollCorner( Curve_2, Curve_1, WheelRadius, MarkerRadius, MarkerAngle(end), Time0, MaxDistDelta, MarkerSpeed );
+
+plot(MarkerPos(1,:),MarkerPos(2,:),'yellow')
