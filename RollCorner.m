@@ -18,7 +18,6 @@
 %                wheelcenter-marker line [1]
 %         Time0  Initial timestamp [1]
 %  MaxDistDelta  Maximum allowable distance between neighboring points [1]
-%   MarkerSpeed  Speed at which the marker goes throuh its arc [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
 %          Time  Timestamps [1x?]
@@ -30,7 +29,7 @@
 %
 function [Time, WhCtrPosi, MarkerPos, MarkerAngle] = ...
   RollCorner( CtrlPtsPre, CtrlPtsPos, WheelRadius, MarkerRadius, ...
-  MarkerAngle0, Time0, MaxDistDelta, MarkerSpeed )
+  MarkerAngle0, Time0, MaxDistDelta )
 
 % compute arc angle that the wheel center will describe
 WhNormalPre = EvalBezierNormal( CtrlPtsPre, 1, WheelRadius );
@@ -53,7 +52,7 @@ LocalMarkerRadius = norm( MarkerPos0 - CtrlPtsPos(:,1) );
 WhCtrPosi = CtrlPtsPre(:,end) + [cos(LocalWhCtrAngle  + LocalTime*CornerAngle); sin(LocalWhCtrAngle  + LocalTime*CornerAngle)]*WheelRadius;
 MarkerPos = CtrlPtsPre(:,end) + [cos(LocalMarkerAngle + LocalTime*CornerAngle); sin(LocalMarkerAngle + LocalTime*CornerAngle)]*LocalMarkerRadius;
 
-Time = LocalTime*MarkerSpeed + Time0;
+Time = LocalTime + Time0;
 
 % technical
 MarkerAngle = mod(MarkerAngle, 2*pi);

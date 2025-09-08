@@ -10,7 +10,6 @@
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
 %  MaxDistDelta  Maximum allowable distance between neighboring points [1]
-%   MarkerSpeed  Speed at which the marker goes throuh its arc [1]
 %      CloseTol  Max distance between first and last point [1]
 %      MaxSpins  Max full rotations of wheel around whole shape [1]
 %
@@ -26,7 +25,7 @@
 %
 function [Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
   AllBeziers( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, MarkerSpeed, ...
+    MaxDistDelta, ...
     CloseTol, MaxSpins)
 
 % parameters
@@ -52,7 +51,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
       SingleBezierSegment( CurrCtrlPts, ...
         WheelRadius, MarkerRadius, ...
         CurrAngle0, CurrTime0, ...
-        MaxDistDelta, MarkerSpeed );
+        MaxDistDelta );
     %
     % concatenate results from the current segment to the overall outputs
     Time = [Time, locTime];
@@ -74,7 +73,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     % roll over the corner, if needed
     [locTime, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
       RollCorner( CurrCtrlPts, NextCtrlPts, WheelRadius, MarkerRadius, ...
-      CurrAngle0, CurrTime0, MaxDistDelta, MarkerSpeed );
+      CurrAngle0, CurrTime0, MaxDistDelta );
     %
     % concatenate results from the current segment to the overall outputs
     Time = [Time, locTime];

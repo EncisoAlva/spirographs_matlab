@@ -11,7 +11,6 @@
 %                wheelcenter-marker line [1]
 %         Time0  Initial timestamp [1]
 %  MaxDistDelta  Maximum allowable distance between neighboring points [1]
-%   MarkerSpeed  Speed at which the marker goes throuh its arc [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
 %          Time  Timestamps [1x?]
@@ -25,7 +24,7 @@
 %
 function [Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
   SingleBezierSegment( CtrlPts, WheelRadius, MarkerRadius, ...
-  MarkerAngle0, Time0, MaxDistDelta, MarkerSpeed )
+  MarkerAngle0, Time0, MaxDistDelta )
 
 % initial guess for time
 DistDelta = 1/ceil(1/MaxDistDelta);
@@ -77,7 +76,7 @@ end
 LocalTime = unique( [LocalTime, NewTimes], "sorted" );
 end
 
-Time = LocalTime*MarkerSpeed + Time0;
+Time = LocalTime + Time0;
 
 % technical
 MarkerAngle = mod(MarkerAngle, 2*pi);
