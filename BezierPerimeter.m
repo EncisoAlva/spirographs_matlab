@@ -8,7 +8,9 @@
 %           Tol  Max distance between points of the discretization [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
-%     Perimeter  Approximate perimeter of the shape [2x?]
+%          Time  Timestamps [1x?]
+%      WhCtrPos  Location of the wheel center at timestamps [2x?]
+%     MarkerPos  Location of marker at timepoints [2x?]
 %
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.

@@ -17,6 +17,8 @@
 %          Time  Timestamps [1x?]
 %      WhCtrPos  Location of the wheel center at timestamps [2x?]
 %     MarkerPos  Location of marker at timepoints [2x?]
+%   MarkerAngle  Angle of marker, at each timepoint, with respect to the
+%                x-axis [1x?]
 %
 % *Notice that some parameters are redundant; this is to avoid computing
 % multile times the same parameters.
