@@ -1,0 +1,164 @@
+% the code for the curve is known to work, this should be the first real
+% example
+% the sketch of the moon took me some time, as I did it analytically
+
+% designer stuff
+MarkerAngle0 = (3/2)*pi;
+
+% technical stuff
+MaxDistDelta = 0.001;
+CloseTol = 0.001;
+MaxSpins = 50;
+
+% dumb example
+%CtrlPtsArray = {...
+%  [-1,0;-4,4;4,7;3,0]',...
+%  [3,0; 2,0; 0,0; -1,0]'...
+%  };
+
+% specially crafted control points
+%CtrlPtsArray = {[...
+  [-1,0]', ...
+  [-1,0]'+(4/3)*(tan(pi/8)/sin(pi/2))*[0,1]',...
+  [0,1]'-(4/3)*(tan(pi/8)/sin(pi/2))*[sin(pi/2),cos(pi/2)]',...
+  [0,1]'...
+  ],[...
+  [0,1]', ...
+  [0, 1]'-(4/3)*(tan(pi/6)/sin(pi/3))*[sin(pi/3), cos(pi/3)]',...
+  [0,-1]'-(4/3)*(tan(pi/6)/sin(pi/3))*[sin(pi/3),-cos(pi/3)]',...
+  [0,-1]'...
+  ],[...
+  [0,-1]', ...
+  [0,-1]'-(4/3)*(tan(pi/8)/sin(pi/2))*[sin(pi/2),-cos(pi/2)]',...
+  [-1,0]'-(4/3)*(tan(pi/8)/sin(pi/2))*[0,1]',...
+  [-1,0]' ...
+  ]};
+
+% specific to this example
+WheelRadius  = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/6;
+MarkerRadius = WheelRadius*(1);
+
+% Bezier curve
+BezierPos = AllBezierEval( CtrlPtsArray, MaxDistDelta );
+
+% spirograph curve
+[~, WhCtrPos1, MarkerPos1, MarkerAngle1] = ...
+  AllBeziers( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
+
+[~, WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
+  AllBeziers( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0+pi+pi/3, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
+
+% time, parametrized by the arc of the marker or the ar of the wheel center
+TimeFromMarker = zeros(1,size(MarkerPos1,2));
+TimeFromMarker(2:end) = cumsum( vecnorm( diff(MarkerPos1,1,2), 2, 1 ) );
+
+TimeFromWheel1 = zeros(1,size(WhCtrPos1,2));
+TimeFromWheel1(2:end) = cumsum( vecnorm( diff(WhCtrPos1,1,2), 2, 1 ) );
+
+TimeFromWheel2 = zeros(1,size(WhCtrPos2,2));
+TimeFromWheel2(2:end) = cumsum( vecnorm( diff(WhCtrPos2,1,2), 2, 1 ) );
+
+% patch
+MarkerPos1(:,end+1) = MarkerPos1(:,1);
+MarkerAngle1(end+1) = MarkerAngle1(1);
+
+MarkerPos2(:,end+1) = MarkerPos2(:,1);
+MarkerAngle2(end+1) = MarkerAngle2(1);
+
+%%
+% plot everything
+if(false)
+figure()
+plot(BezierPos(1,:),BezierPos(2,:),'blue')
+hold on
+%plot(WhCtrPos1(1,:),WhCtrPos1(2,:),'green')
+axis equal
+grid on
+plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
+plot(MarkerPos2(1,:),MarkerPos2(2,:),'red')
+end
+
+%%
+% plot everything v2
+
+% artistic choice
+% video will last 30 seconds
+TimeFromWheel1 = TimeFromWheel1*(29.5/TimeFromWheel1(end));
+TimeFromWheel2 = TimeFromWheel2*(29.5/TimeFromWheel2(end));
+
+% parameters
+fps = 30;
+%MaxTime = ceil(TimeFromMarker(end)*fps)/fps;
+MaxTime = ceil(TimeFromWheel1(end)*fps)/fps;
+nTimes = MaxTime*fps;
+
+% help
+%idxx = 1:size(TimeFromMarker,2);
+idxx1 = 1:size(TimeFromWheel1,2);
+idxx2 = 1:size(TimeFromWheel2,2);
+aang = 0:(2*pi/ ceil( 2*pi/(MaxDistDelta/WheelRadius) )):(2*pi);
+circ = WheelRadius*[cos(aang); sin(aang)];
+aux_angles = 0:(pi/3):(2*pi);
+
+% original figure
+f1 = figure(1);
+hold on
+axis equal
+axis off
+xlim([min(MarkerPos1(1,:)) max(MarkerPos1(1,:))])
+ylim([min(MarkerPos1(2,:)) max(MarkerPos1(2,:))])
+xlim([min(MarkerPos2(1,:)) max(MarkerPos2(1,:))])
+ylim([min(MarkerPos2(2,:)) max(MarkerPos2(2,:))])
+f1.Visible = 'off';
+%
+figure(1)
+fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
+%
+f2 = figure(2);
+
+% video object
+v = VideoWriter("test_250908_11.mp4",'MPEG-4');
+v.Quality = 100;
+v.VideoBitsPerPixel
+open(v)
+
+% main loop
+for i = 0:nTimes
+  disp(i/nTimes)
+  %CurrPts = idxx(and(TimeFromMarker>=(i-1.1)/fps,TimeFromMarker<=(i+0.1)/fps));
+  CurrPts1 = idxx1(and(TimeFromWheel1>=(i-1.1)/fps,TimeFromWheel1<=(i+0.1)/fps));
+  CurrPts2 = idxx2(and(TimeFromWheel2>=(i-1.1)/fps,TimeFromWheel2<=(i+0.1)/fps));
+  %
+  % add a few strokes of the marker, then copy to figure 2
+  figure(1)
+  plot(MarkerPos1(1,CurrPts1),MarkerPos1(2,CurrPts1),'red')
+  plot(MarkerPos2(1,CurrPts2),MarkerPos2(2,CurrPts2),'yellow')
+  clf(2)
+  copyobj(gca,f2)
+  %
+  % add only the rotating wheel and the marker point
+  figure(2)
+  j1 = max(CurrPts1);
+  j2 = max(CurrPts2);
+  fill(WhCtrPos1(1,j1)+circ(1,:),WhCtrPos1(2,j1)+circ(2,:), 'b', 'EdgeColor', 'none','FaceAlpha',0.5); 
+  for w = 1:size(aux_angles,2)
+    plot(WhCtrPos1(1,j1)'+[0,cos(aux_angles(w)+MarkerAngle1(j1))*WheelRadius],WhCtrPos1(2,j1)'+[0,sin(aux_angles(w)+MarkerAngle1(j1))*WheelRadius],...
+      'Color',[0,0,0,0.5])
+  end
+  scatter(MarkerPos1(1,j1),MarkerPos1(2,j1),10,'red','filled')
+  scatter(MarkerPos2(1,j2),MarkerPos2(2,j2),10,'yellow','filled')
+
+  writeVideo(v,getframe)
+end
+
+% stop for some time after everything is finished
+for stopper = 1:(fps*0.5)
+  writeVideo(v,getframe)
+end
+
+% finalize the video object and close the figure
+close(v);
