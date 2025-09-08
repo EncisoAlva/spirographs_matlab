@@ -69,7 +69,7 @@ idxx = 1:size(TimeFromMarker,2);
 
 %M(nTimes) = struct('cdata',[],'colormap',[]);
 
-v = VideoWriter("test.mp4", 'MPEG-4');
+v = VideoWriter("test.mp4", 'MPEG-4');1
 open(v)
 
 close all
