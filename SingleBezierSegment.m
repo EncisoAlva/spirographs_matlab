@@ -34,11 +34,13 @@ while true
 
 % compute the points on the Bezier curve and the wheel that rolls over it
 BezierPos  = EvalBezier( CtrlPts, LocalTime );
+BezierNorm = EvalBezierNormal( CtrlPts, LocalTime, WheelRadius );
 if WheelRadius > 0
-  WhCtrPos = BezierPos + EvalBezierNormal( CtrlPts, LocalTime, WheelRadius );
+  WhCtrPos = BezierPos + BezierNorm;
 else
   WhCtrPos = BezierPos;
 end
+BezNormAngleDiff = diff( atan2(BezierNorm(2,:), BezierNorm(1,:)), 1, 2 );
 
 % angle that the wheel spun between two given points
 if WheelRadius > 0
@@ -48,14 +50,8 @@ else
 end
 
 % position and angle for the marker
-MarkerAngle = zeros(size(LocalTime));
-MarkerPos   = zeros(2, size(LocalTime,2));
-MarkerAngle(1) = MarkerAngle0;
-MarkerPos(:,1) = WhCtrPos(:,1) + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius;
-for i = 2:length(MarkerAngle)
-  MarkerAngle(i) = MarkerAngle(i-1) - DiffAngle(i-1);
-  MarkerPos(:,i) = WhCtrPos(:,i) + [cos(MarkerAngle(i)); sin(MarkerAngle(i))]*MarkerRadius;
-end
+MarkerAngle = cumsum([MarkerAngle0, -DiffAngle+BezNormAngleDiff]);
+MarkerPos   = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
 
 % check if the marker points are not too far from each other
 DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);
