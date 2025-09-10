@@ -35,7 +35,7 @@ function [Time, WhCtrPosi, MarkerPos, MarkerAngle] = ...
 WhNormalPre = EvalBezierNormal( CtrlPtsPre, 1, WheelRadius );
 WhNormalPos = EvalBezierNormal( CtrlPtsPos, 0, WheelRadius );
 WhCtrPre = CtrlPtsPre(:,end) + WhNormalPre;
-CornerAngle = atan2(WhNormalPos(2),WhNormalPos(1)) - atan2(WhNormalPre(2),WhNormalPre(1));
+CornerAngle = -abs( atan2(WhNormalPos(2),WhNormalPos(1)) - atan2(WhNormalPre(2),WhNormalPre(1)) );
 
 % compute the length that the marker will describe
 MarkerPos0 = WhCtrPre + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius;
