@@ -165,7 +165,7 @@ CloseTol = 0.001;
 MaxSpins = 50;
 
 % designer stuff
-MarkerAngle0 = 3*pi/4;
+MarkerAngle0 = pi/4;
 
 %% do curves
 [WheelRadius, MarkerRadius, BezierPos, ...

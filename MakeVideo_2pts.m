@@ -99,6 +99,7 @@ for i = 0:nTimes
   plot(MarkerPos2(1,CurrPts2),MarkerPos2(2,CurrPts2),'yellow')
   %
   % add only the rotating wheel and the marker point
+  clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
   j1 = max(CurrPts1);
@@ -122,8 +123,13 @@ for i = 0:nTimes
   writeVideo(v,getframe)
 end
 
-if ~getappdata(WB,'canceling')
-%
+if exist('WB','var')
+  if getappdata(WB,'canceling')
+    return
+  end
+  delete(WB)
+end
+
 % stop for some time after everything is finished
 for stopper = 0:(fps*AfterTime)
   writeVideo(v,getframe)
@@ -131,7 +137,5 @@ end
 
 % finalize the video object and close the figure
 close(v);
-delete(WB)
-end
 
 end
