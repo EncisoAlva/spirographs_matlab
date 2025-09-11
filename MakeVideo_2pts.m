@@ -24,6 +24,7 @@ function MakeVideo_2pts( WheelRadius, ...
   BezierPos, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
+  MaxDistDelta, ...
   TotalTime, AfterTime, VidName )
 
 % time, parametrized by the arc of the marker or the ar of the wheel center
@@ -55,7 +56,7 @@ circ = WheelRadius*[cos(aang); sin(aang)];
 aux_angles = 0:(pi/3):(2*pi);
 
 % original figure
-f1 = figure(1);
+f1 = figure('Visible','off','Name','Just the curve');
 hold on
 axis equal
 axis off
@@ -63,36 +64,44 @@ xlim([min(MarkerPos1(1,:)) max(MarkerPos1(1,:))])
 ylim([min(MarkerPos1(2,:)) max(MarkerPos1(2,:))])
 xlim([min(MarkerPos2(1,:)) max(MarkerPos2(1,:))])
 ylim([min(MarkerPos2(2,:)) max(MarkerPos2(2,:))])
-f1.Visible = 'off';
 %
-figure(1)
 fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
 %
-f2 = figure(2);
+f2 = figure('Visible','off','Name','With circle');
 
 % video object
-v = VideoWriter([VidName,".mp4"],'MPEG-4');
+v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
 v.Quality = 100;
-v.VideoBitsPerPixel
 open(v)
 
 % main loop
+WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
+  'Name','Spirograph over Bezier curves by Enciso-Alva (2025)');
 for i = 0:nTimes
-  disp(i/nTimes)
+  % 
+  % update progressbar
+  waitbar(i/nTimes,WB);
+  if getappdata(WB,'canceling')
+    disp('Ended by user.')
+    close(v);
+    delete(WB)
+    break
+  end
+  %
   %CurrPts = idxx(and(TimeFromMarker>=(i-1.1)/fps,TimeFromMarker<=(i+0.1)/fps));
   CurrPts1 = idxx1(and(TimeFromWheel1>=(i-1.1)/fps,TimeFromWheel1<=(i+0.1)/fps));
   CurrPts2 = idxx2(and(TimeFromWheel2>=(i-1.1)/fps,TimeFromWheel2<=(i+0.1)/fps));
   if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  figure(1)
+  set(0,"CurrentFigure",f1)
   plot(MarkerPos1(1,CurrPts1),MarkerPos1(2,CurrPts1),'magenta')
   plot(MarkerPos2(1,CurrPts2),MarkerPos2(2,CurrPts2),'yellow')
-  clf(2)
-  copyobj(gca,f2)
   %
   % add only the rotating wheel and the marker point
-  figure(2)
+  clf(f2)
+  copyobj(f1.Children,f2)
+  set(0,"CurrentFigure",f2)
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);
   if ~isempty(j1)
@@ -112,6 +121,13 @@ for i = 0:nTimes
   %
   end
   writeVideo(v,getframe)
+end
+
+if exist('WB','var')
+  if getappdata(WB,'canceling')
+    return
+  end
+  delete(WB)
 end
 
 % stop for some time after everything is finished
