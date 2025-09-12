@@ -64,6 +64,8 @@ CrossTime2 = LocalTime1(idx2);
 t1 = CrossTime1;
 t2 = CrossTime2;
 
+%%
+
 % Casteljau division at the point of intersection
 Curve1_updated = zeros(2,4);
 Curve2_updated = zeros(2,4);
