@@ -41,14 +41,14 @@ for i = 1:nCurves
   end
   %
   % find the cornering angle
-  TangentPre = EvalBezierNormal(CtrlPtsArray{i},  1, WheelRadius );
-  TangentPos = EvalBezierNormal(CtrlPtsArray{i_}, 0, WheelRadius );
-  CornerAngles(i) = atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1));
+  TangentPre = EvalBezierNormal(CtrlPtsArray_aux{i},  1, WheelRadius );
+  TangentPos = EvalBezierNormal(CtrlPtsArray_aux{i_}, 0, WheelRadius );
+  CornerAngles(i) = mod( atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1)), 2*pi);
   %
   % only act if wheel can't roll freely
   % worst-case scenario found: if the corner angle is -pi
-  if CornerAngles(i) < 0
-    if (CornerAngles(i) == -pi)&&(SkipNegPi)
+  if CornerAngles(i) >= pi
+    if (CornerAngles(i) == pi)&&(SkipNegPi)
       CornerAngles(i) = 0;
       continue
     end
@@ -67,9 +67,11 @@ end
 CtrlPtsArray_rounded = {};
 for i = 1:nCurves
   CtrlPtsArray_rounded{end+1} = CtrlPtsArray_aux{i};
-  if CornerAngles(i) < 0
+  if CornerAngles(i) >= pi
     CtrlPtsArray_rounded{end+1} = CtrlPtsArray_gap{i};
   end
 end
+
+CtrlPtsArray_rounded = RemovePointCurves( CtrlPtsArray_rounded, Tol );
 
 end

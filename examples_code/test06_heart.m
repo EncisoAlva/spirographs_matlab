@@ -5,6 +5,29 @@
 %%
 % Bezier curves used, I made a small collection so far
 
+% semicircles S
+CtrlPtsArray = {[...
+  [0,-1]',...
+  [-(8/3)*tan(pi/4)',-1]',...
+  [-(8/3)*tan(pi/4)',1]',...
+  [0,1]'...
+  ],[...
+  [0,1]',...
+  [-(4/3)*tan(pi/4)',1]',...
+  [-(4/3)*tan(pi/4)',0]',...
+  [0,0]'...
+  ],[...
+  [0,0]',...
+  [(8/3)*tan(pi/4)',0]',...
+  [(8/3)*tan(pi/4)',-2]',...
+  [0,-2]'...
+  ],[...
+  [0,-2]'...
+  [(4/3)*tan(pi/4)',-2]',...
+  [(4/3)*tan(pi/4)',-1]',...
+  [0,-1]'...
+  ]};
+
 % heart
 CtrlPtsArray = {[...
   [-2,0]',...
@@ -43,28 +66,86 @@ if false
 end
 
 %%
+%star with 5 spikes
+aang   = -(0:(2*pi/5):(2*pi));
+aang(end) = [];
+PtsOut = [cos(aang + pi/2); sin(aang + pi/2)]*2;
+PtsInn = [cos(aang + pi/2 - pi/5); sin(aang + pi/2 - pi/5)];
+
+PtsAll = zeros(2,2*size(PtsInn,2)+1);
+for i = 1:size(PtsInn,2)
+  PtsAll(:,2*i-1) = PtsOut(:,i);
+  PtsAll(:,2*i  ) = PtsInn(:,i);
+end
+PtsAll(:,end) = PtsOut(:,1);
+
+CtrlPtsArray = {};
+for i = 1:(size(PtsAll,2)-1)
+  CurrCurve = zeros(2,4);
+  CurrCurve(:,1) = PtsAll(:,i);
+  CurrCurve(:,2) = (2/3)*PtsAll(:,i)+(1/3)*PtsAll(:,i+1);
+  CurrCurve(:,3) = (1/3)*PtsAll(:,i)+(2/3)*PtsAll(:,i+1);
+  CurrCurve(:,4) = PtsAll(:,i+1);
+  %
+  CtrlPtsArray{end+1} = CurrCurve;
+end
+
+CtrlPtsArray_backup = CtrlPtsArray;
+[mid1, mid2] = HalfBezierSingle( CtrlPtsArray{1} );
+CtrlPtsArray = { mid1, mid2 };
+for i = 2:size(CtrlPtsArray_backup,2)
+  CtrlPtsArray{end+1} = CtrlPtsArray_backup{i};
+end
+
+figure()
+hold on
+axis equal
+grid on
+for i = 1:size(CtrlPtsArray,2)
+scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
+end
+
+%%
 % parameters
 
 % technical stuff
 MaxDistDelta = 0.001;
-CloseTol = 0.001;
+CloseTol = 0.01;
 MaxSpins = 100;
 
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 33/7;
+WheelBezRatio = 10+5/7;
 WheelMarkerRatio = 1;
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
-MarkerRadius = WheelRadius*WheelMarkerRatio;
+%WheelRadius  = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
+%MarkerRadius = WheelRadius*WheelMarkerRatio;
 
 % willing to loose 1% of total area due to each corner rounding
-CornerRoundingRadius = sqrt(0.001*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
+CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
 
-%% do curves
+%% 
+% remove inner corners
+[CtrlPtsArray_rounded_flipped] = ...
+  RemoveAllCorners( FlipBezierAll(CtrlPtsArray), CornerRoundingRadius, MaxDistDelta, false );
+CtrlPtsArray = FlipBezierAll(CtrlPtsArray_rounded_flipped);
+
+figure()
+hold on
+axis equal
+grid on
+for i = 1:size(CtrlPtsArray,2)
+scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
+end
+
+%%
+% plot
 if false
+WheelRadius = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
+MarkerRadius = WheelRadius*WheelMarkerRatio;
+
 [BezierPos, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
@@ -78,36 +159,13 @@ hold on
 axis equal
 grid on
 plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
-plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
-end
-
-%% 
-% remove inner corners
-[CtrlPtsArray_rounded_flipped] = ...
-  RemoveAllCorners( FlipBezierAll(CtrlPtsArray), CornerRoundingRadius, MaxDistDelta, true );
-CtrlPtsArray = FlipBezierAll(CtrlPtsArray_rounded_flipped);
-
-%WheelRadius = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
-
-%[BezierPos, ...
-%  WhCtrPos1, MarkerPos1, MarkerAngle1,...
-%  WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
-%  SetupCurves_2pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
-%    MaxDistDelta, CloseTol, MaxSpins);
-
-% preview
-%figure()
-%fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
-%hold on
-%axis equal
-%grid on
-%plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
 %plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
+end
 
 %% 
 % remove corners
 
-WheelRadiusTol = 0.0000001;
+WheelRadiusTol = 0.000001;
 
 WheelRadius_old = Inf;
 WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
@@ -117,15 +175,27 @@ while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
     RemoveAllCorners( CtrlPtsArray, WheelRadius_new, MaxDistDelta, false );
   %
   WheelRadius_old = WheelRadius_new;
-  WheelRadius_new = (BezierPerimeter(CtrlPtsArray_tmp,0.00001)/(2*pi))/WheelBezRatio;
+  WheelRadius_new = (BezierPerimeter(CtrlPtsArray_tmp,0.00001)/(2*pi))/WheelBezRatio
 end
 %CtrlPtsArray = CtrlPtsArray_tmp;
-WheelRadius = WheelRadius_new;
+WheelRadius  = WheelRadius_new;
+MarkerRadius = WheelRadius*WheelMarkerRatio;
 
 %CtrlPtsArray_backup = CtrlPtsArray;
 
+BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
+
+figure()
+hold on
+axis equal
+grid on
+for i = 1:size(CtrlPtsArray_tmp,2)
+scatter(CtrlPtsArray_tmp{i}(1,:), CtrlPtsArray_tmp{i}(2,:))
+end
+
 %%
 % checl
+if false
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
 BezNew = AllBezierEval(CtrlPtsArray_tmp, MaxDistDelta);
 
@@ -154,6 +224,7 @@ plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
 BezOG = AllBezierEval(CtrlPtsArray, MaxDistDelta);
 fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
 
+end
 %%
 % video
 
@@ -163,4 +234,5 @@ MakeVideo_2pts( WheelRadius, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
   MaxDistDelta,...
-  60, 5, 'test_250914_02' )
+  60, 5, 'test_250914_09' )
+%  60, 5, 'test_250914_02' )

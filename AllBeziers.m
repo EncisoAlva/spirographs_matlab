@@ -46,6 +46,7 @@ CurrSpin = 0; % index start at 0
 ClosedFlag = false;
 while (CurrSpin < MaxSpins) && (~ClosedFlag)
   for j = 1:nCurves
+    disp(strcat('Spin: ',num2str(CurrSpin),' , Curve: ',num2str(j)))
     CurrCtrlPts = CtrlPtsArray{j};
     %
     % run one single Bezier curve at the time
