@@ -31,7 +31,9 @@ function [Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
 % parameters
 nCurves    = length(CtrlPtsArray);
 CurrTime0  = 0;
-CurrAngle0 = MarkerAngle0;
+
+FirstTangent = EvalBezierNormal(CtrlPtsArray{1},0,1);
+CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0;
 
 % containers for results
 Time        = [];
@@ -54,7 +56,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
         MaxDistDelta );
     %
     % concatenate results from the current segment to the overall outputs
-    Time = [Time, locTime];
+    Time = [Time, locTime+CurrTime0];
     WhCtrPos = [WhCtrPos, locWhCtrPos];
     MarkerPos = [MarkerPos, locMarkerPos];
     MarkerAngle = [MarkerAngle, locMarkerAngle];

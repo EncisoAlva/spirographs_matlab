@@ -38,8 +38,8 @@ WhNormalPos = EvalBezierNormal( CtrlPtsPos, 0, WheelRadius );
 % early stop if the wheel won't actually roll
 if norm( (CtrlPtsPos(:,1) + WhNormalPos)-(CtrlPtsPre(:,end) + WhNormalPre) ) < MaxDistDelta
   Time = [];
-  WhCtrPosi = [;];
-  MarkerPos = [;];
+  WhCtrPosi = [];
+  MarkerPos = [];
   MarkerAngle = [];
   return
 end
