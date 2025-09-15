@@ -19,5 +19,5 @@ function [BezierNormal] = EvalBezierNormal( CtrlPts, TVals, CirRadius)
     6 * ((1-TVals).*(TVals)) .* (CtrlPts(:,3)-CtrlPts(:,2)) + ...
     3 * ( (TVals).^2) .* (CtrlPts(:,4)-CtrlPts(:,3)) ;
   % the normal tangent vector is obtained by rotating the tangent vector
-  BezierNormal = CirRadius * [ -BezierPrime(2,:); BezierPrime(1,:)] ./ vecnorm(BezierPrime,2,1);
+  BezierNormal = CirRadius * [0,-1; 1,0]*BezierPrime ./ vecnorm(BezierPrime,2,1);
 end

@@ -34,6 +34,16 @@ function [Time, WhCtrPosi, MarkerPos, MarkerAngle] = ...
 % compute arc angle that the wheel center will describe
 WhNormalPre = EvalBezierNormal( CtrlPtsPre, 1, WheelRadius );
 WhNormalPos = EvalBezierNormal( CtrlPtsPos, 0, WheelRadius );
+
+% early stop if the wheel won't actually roll
+if norm( (CtrlPtsPos(:,1) + WhNormalPos)-(CtrlPtsPre(:,end) + WhNormalPre) ) < MaxDistDelta
+  Time = [];
+  WhCtrPosi = [];
+  MarkerPos = [];
+  MarkerAngle = [];
+  return
+end
+
 WhCtrPre = CtrlPtsPre(:,end) + WhNormalPre;
 CornerAngle = atan2(WhNormalPos(2),WhNormalPos(1)) - atan2(WhNormalPre(2),WhNormalPre(1));
 %disp(['initial angle: ', num2str(CornerAngle)])
