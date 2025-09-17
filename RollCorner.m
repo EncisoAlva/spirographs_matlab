@@ -27,7 +27,7 @@
 % *Notice that some parameters are redundant; this is to avoid computing
 % multile times the same parameters.
 %
-function [Time, WhCtrPosi, MarkerPos, MarkerAngle] = ...
+function [Time, BezierPos, WhCtrPosi, MarkerPos, MarkerAngle] = ...
   RollCorner( CtrlPtsPre, CtrlPtsPos, WheelRadius, MarkerRadius, ...
   MarkerAngle0, Time0, MaxDistDelta )
 
@@ -38,6 +38,7 @@ WhNormalPos = EvalBezierNormal( CtrlPtsPos, 0, WheelRadius );
 % early stop if the wheel won't actually roll
 if norm( (CtrlPtsPos(:,1) + WhNormalPos)-(CtrlPtsPre(:,end) + WhNormalPre) ) < MaxDistDelta
   Time = [];
+  BezierPos = [];
   WhCtrPosi = [];
   MarkerPos = [];
   MarkerAngle = [];
@@ -71,5 +72,6 @@ Time = LocalTime + Time0;
 
 % technical
 MarkerAngle = mod(MarkerAngle, 2*pi);
+BezierPos   = CtrlPtsPos(:,1) * ones(size(Time));
 
 end

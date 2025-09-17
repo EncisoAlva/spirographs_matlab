@@ -224,12 +224,8 @@ MaxSpins = 100;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 4+3/5;
+WheelBezRatio = 5+5/7;
 WheelMarkerRatio = 1;
-
-% specific to this example
-%WheelRadius  = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
-%MarkerRadius = WheelRadius*WheelMarkerRatio;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
@@ -260,7 +256,7 @@ WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
 
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
   [CtrlPtsArray_tmp_inv] = ...
-    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new, MaxDistDelta, false );
+    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new, MaxDistDelta, true );
   [CtrlPtsArray_tmp] = ...
     RemoveAllCorners( FlipBezierAll(CtrlPtsArray_tmp_inv), WheelRadius_new, MaxDistDelta, false );
   %
@@ -293,18 +289,20 @@ figure()
 hold on
 axis equal
 grid on
-fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
-fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
+fill(BezOG(1,:),BezOG(2,:), 'y', 'EdgeColor', 'none');
+fill(BezNew(1,:),BezNew(2,:), 'r', 'EdgeColor', 'none');
 
 
-[BezierPos, ...
+[BezierPos, ~, ...
+  ~,...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
+  ~,...
   WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
   SetupCurves_2pts( CtrlPtsArray_tmp, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
 
 figure()
-fill(BezierPos(1,:),BezierPos(2,:), 'y', 'EdgeColor', 'none'); 
+fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
 hold on
 axis equal
 grid on
@@ -317,24 +315,34 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 end
 
 %%
-[BezierPos, ...
+[BezierPos1A, BezierPos2A, ...
+  LocTime1A,...
   WhCtrPos1A, MarkerPos1A, MarkerAngle1A,...
+  LocTime2A,...
   WhCtrPos2A, MarkerPos2A, MarkerAngle2A] = ...
   SetupCurves_2pts( CtrlPtsArray_tmp, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
 
-[~, ...
-  WhCtrPos2B, MarkerPos2B, MarkerAngle2B,...
-  WhCtrPos1B, MarkerPos1B, MarkerAngle1B] = ...
+[BezierPos1B, BezierPos2B, ...
+  LocTime1B,...
+  WhCtrPos1B, MarkerPos1B, MarkerAngle1B,...
+  LocTime2B,...
+  WhCtrPos2B, MarkerPos2B, MarkerAngle2B] = ...
   SetupCurves_2pts( FlipBezierAll(CtrlPtsArray_tmp), WheelRadius, MarkerRadius, MarkerAngle0+pi, ...
     MaxDistDelta, CloseTol, MaxSpins);
 
+BezierPos1B   = flip(BezierPos1B, 2);
 WhCtrPos1B    = flip( WhCtrPos1B, 2 );
 MarkerPos1B   = flip(MarkerPos1B, 2);
 MarkerAngle1B = flip(MarkerAngle1B, 2);
+%
+BezierPos2B   = flip(BezierPos2B, 2);
 WhCtrPos2B    = flip(WhCtrPos2B, 2);
 MarkerPos2B   = flip(MarkerPos2B, 2);
 MarkerAngle2B = flip(MarkerAngle2B, 2);
+
+LocTime1B = max(LocTime1B) - flip(LocTime1B);
+LocTime2B = max(LocTime2B) - flip(LocTime2B);
 
 %%
 % preview
@@ -353,24 +361,24 @@ plot(MarkerPos2B(1,:),MarkerPos2B(2,:),'magenta')
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250916';
+VidName = 'doubledouble250916_2';
 
 %%
 % video
 
 close all
 
-TimeFromBez1A = zeros(1,size(WhCtrPos1A,2));
-TimeFromBez1A(2:end) = cumsum( vecnorm( diff(WhCtrPos1A,1,2), 2, 1 ) );
+TimeFromBez1A = zeros(1,size(BezierPos1A,2));
+TimeFromBez1A(2:end) = cumsum( vecnorm( diff(BezierPos1A,1,2), 2, 1 ) );
 
-TimeFromBez2A = zeros(1,size(WhCtrPos2A,2));
-TimeFromBez2A(2:end) = cumsum( vecnorm( diff(WhCtrPos2A,1,2), 2, 1 ) );
+TimeFromBez2A = zeros(1,size(BezierPos2A,2));
+TimeFromBez2A(2:end) = cumsum( vecnorm( diff(BezierPos2A,1,2), 2, 1 ) );
 
-TimeFromBez1B = zeros(1,size(WhCtrPos1B,2));
-TimeFromBez1B(2:end) = cumsum( vecnorm( diff(WhCtrPos1B,1,2), 2, 1 ) );
+TimeFromBez1B = zeros(1,size(BezierPos1B,2));
+TimeFromBez1B(2:end) = cumsum( vecnorm( diff(BezierPos1B,1,2), 2, 1 ) );
 
-TimeFromBez2B = zeros(1,size(WhCtrPos2B,2));
-TimeFromBez2B(2:end) = cumsum( vecnorm( diff(WhCtrPos2B,1,2), 2, 1 ) );
+TimeFromBez2B = zeros(1,size(BezierPos2B,2));
+TimeFromBez2B(2:end) = cumsum( vecnorm( diff(BezierPos2B,1,2), 2, 1 ) );
 
 % duration of video
 TimeFromBez1A = TimeFromBez1A*((TotalTime-AfterTime)/TimeFromBez1A(end));
@@ -407,7 +415,7 @@ xlim([min(MarkerPos2A(1,:)) max(MarkerPos2A(1,:))])
 ylim([min(MarkerPos2A(2,:)) max(MarkerPos2A(2,:))])
 %
 %fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
-plot(BezierPos(1,:),BezierPos(2,:),'k','LineWidth',2)
+plot(BezNew(1,:),BezNew(2,:),'k','LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
@@ -431,23 +439,22 @@ for i = 0:nTimes
   end
   %
   %CurrPts = idxx(and(TimeFromMarker>=(i-1.1)/fps,TimeFromMarker<=(i+0.1)/fps));
-  CurrPts1A = idxx1A(and(TimeFromBez1A>=(i-1.1)/fps,TimeFromBez1A<=(i+0.1)/fps));
-  CurrPts2A = idxx2A(and(TimeFromBez2A>=(i-1.1)/fps,TimeFromBez2A<=(i+0.1)/fps));
-  CurrPts1B = idxx1B(and(TimeFromBez1B>=(i-1.1)/fps,TimeFromBez1B<=(i+0.1)/fps));
-  CurrPts2B = idxx2B(and(TimeFromBez2B>=(i-1.1)/fps,TimeFromBez2B<=(i+0.1)/fps));
+  CurrPts1A = idxx1A(TimeFromBez1A<=(i+0.1)/fps);
+  CurrPts2A = idxx2A(TimeFromBez2A<=(i+0.1)/fps);
+  CurrPts1B = idxx1B(TimeFromBez1B<=(i+0.1)/fps);
+  CurrPts2B = idxx2B(TimeFromBez2B<=(i+0.1)/fps);
   if ~( isempty(CurrPts1A) & isempty(CurrPts2A) ) % if no points will be added. skip drawing loop
   %
-  % add a few strokes of the marker, then copy to figure 2
-  set(0,"CurrentFigure",f1)
-  plot(MarkerPos1A(1,CurrPts1A),MarkerPos1A(2,CurrPts1A),'magenta')
-  plot(MarkerPos2A(1,CurrPts2A),MarkerPos2A(2,CurrPts2A),'yellow')
-  plot(MarkerPos1B(1,CurrPts1B),MarkerPos1B(2,CurrPts1B),'magenta')
-  plot(MarkerPos2B(1,CurrPts2B),MarkerPos2B(2,CurrPts2B),'yellow')
-  %
-  % add only the rotating wheel and the marker point
+  % keep the base elements
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  %
+  % add all strokes of the marker up to the current time
+  plot(MarkerPos1A(1,CurrPts1A),MarkerPos1A(2,CurrPts1A),'magenta')
+  plot(MarkerPos2A(1,CurrPts2A),MarkerPos2A(2,CurrPts2A),'yellow')
+  plot(MarkerPos1B(1,CurrPts1B),MarkerPos1B(2,CurrPts1B),'yellow')
+  plot(MarkerPos2B(1,CurrPts2B),MarkerPos2B(2,CurrPts2B),'magenta')
   %
   j1A = max(CurrPts1A);
   j2A = max(CurrPts2A);
@@ -477,8 +484,8 @@ for i = 0:nTimes
   end
   scatter(MarkerPos1A(1,j1A),MarkerPos1A(2,j1A),10,'magenta','filled')
   scatter(MarkerPos2A(1,j2A),MarkerPos2A(2,j2A),10,'yellow','filled')
-  scatter(MarkerPos1B(1,j1B),MarkerPos1B(2,j1B),10,'magenta','filled')
-  scatter(MarkerPos2B(1,j2B),MarkerPos2B(2,j2B),10,'yellow','filled')
+  scatter(MarkerPos1B(1,j1B),MarkerPos1B(2,j1B),10,'yellow','filled')
+  scatter(MarkerPos2B(1,j2B),MarkerPos2B(2,j2B),10,'magenta','filled')
   %
   end
   writeVideo(v,getframe)

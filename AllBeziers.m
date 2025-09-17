@@ -23,7 +23,7 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
+function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
   AllBeziers( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
     CloseTol, MaxSpins)
@@ -37,6 +37,7 @@ CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0;
 
 % containers for results
 Time        = [];
+BezierPos   = [];
 WhCtrPos    = [];
 MarkerPos   = [];
 MarkerAngle = [];
@@ -50,16 +51,17 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     CurrCtrlPts = CtrlPtsArray{j};
     %
     % run one single Bezier curve at the time
-    [locTime, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
+    [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
       SingleBezierSegment( CurrCtrlPts, ...
         WheelRadius, MarkerRadius, ...
         CurrAngle0, CurrTime0, ...
         MaxDistDelta );
     %
     % concatenate results from the current segment to the overall outputs
-    Time = [Time, locTime+CurrTime0];
-    WhCtrPos = [WhCtrPos, locWhCtrPos];
-    MarkerPos = [MarkerPos, locMarkerPos];
+    Time        = [Time,        locTime];
+    BezierPos   = [BezierPos,   locBezierPos];
+    WhCtrPos    = [WhCtrPos,    locWhCtrPos];
+    MarkerPos   = [MarkerPos,   locMarkerPos];
     MarkerAngle = [MarkerAngle, locMarkerAngle];
     %
     % update initial values
@@ -74,14 +76,15 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     end
     %
     % roll over the corner, if needed
-    [locTime, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
+    [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
       RollCorner( CurrCtrlPts, NextCtrlPts, WheelRadius, MarkerRadius, ...
       CurrAngle0, CurrTime0, MaxDistDelta );
     %
     % concatenate results from the current segment to the overall outputs
-    Time = [Time, locTime];
-    WhCtrPos = [WhCtrPos, locWhCtrPos];
-    MarkerPos = [MarkerPos, locMarkerPos];
+    Time        = [Time,        locTime];
+    BezierPos   = [BezierPos,   locBezierPos];
+    WhCtrPos    = [WhCtrPos,    locWhCtrPos];
+    MarkerPos   = [MarkerPos,   locMarkerPos];
     MarkerAngle = [MarkerAngle, locMarkerAngle];
     %
     % update initial values

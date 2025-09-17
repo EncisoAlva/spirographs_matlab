@@ -22,7 +22,7 @@
 % *Notice that some parameters are redundant; this is to avoid computing
 % multile times the same parameters.
 %
-function [Time, WhCtrPos, MarkerPos, MarkerAngle] = ...
+function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
   SingleBezierSegment( CtrlPts, WheelRadius, MarkerRadius, ...
   MarkerAngle0, Time0, MaxDistDelta )
 
@@ -31,9 +31,10 @@ BezierPos  = EvalBezier( CtrlPts, [0,1] );
 BezierNorm = EvalBezierNormal( CtrlPts, [0,1], WheelRadius );
 WhCtrPos = BezierPos + BezierNorm;
 if norm( WhCtrPos(:,1) - WhCtrPos(:,2) ) < MaxDistDelta
-  Time = [];
-  WhCtrPos = [];
-  MarkerPos = [];
+  Time        = [];
+  BezierPos   = [];
+  WhCtrPos    = [];
+  MarkerPos   = [];
   MarkerAngle = [];
   return
 end
