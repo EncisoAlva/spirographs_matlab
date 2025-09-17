@@ -88,20 +88,20 @@ for i = 0:nTimes
     break
   end
   %
-  %CurrPts = idxx(and(TimeFromMarker>=(i-1.1)/fps,TimeFromMarker<=(i+0.1)/fps));
-  CurrPts1 = idxx1(and(TimeFromWheel1>=(i-1.1)/fps,TimeFromWheel1<=(i+0.1)/fps));
-  CurrPts2 = idxx2(and(TimeFromWheel2>=(i-1.1)/fps,TimeFromWheel2<=(i+0.1)/fps));
-  if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
-  % add a few strokes of the marker, then copy to figure 2
-  set(0,"CurrentFigure",f1)
-  plot(MarkerPos1(1,CurrPts1),MarkerPos1(2,CurrPts1),'magenta')
-  plot(MarkerPos2(1,CurrPts2),MarkerPos2(2,CurrPts2),'yellow')
-  %
-  % add only the rotating wheel and the marker point
+  % take specifications from figure 1
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  %
+  CurrPts1 = idxx1(TimeFromWheel1<=(i+0.1)/fps);
+  CurrPts2 = idxx2(TimeFromWheel2<=(i+0.1)/fps);
+  if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
+  %
+  % add a few strokes of the marker, then copy to figure 2
+  plot(MarkerPos1(1,CurrPts1),MarkerPos1(2,CurrPts1),'magenta')
+  plot(MarkerPos2(1,CurrPts2),MarkerPos2(2,CurrPts2),'yellow')
+  %
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);
   if ~isempty(j1)
@@ -111,7 +111,7 @@ for i = 0:nTimes
     RefWheelCtr = WhCtrPos2(:,j2);
     RefAngle = MarkerAngle2(j2);
   end
-  fill(RefWheelCtr(1)+circ(1,:),RefWheelCtr(2)+circ(2,:), 'b', 'EdgeColor', 'none','FaceAlpha',0.5); 
+  fill(RefWheelCtr(1)+circ(1,:),RefWheelCtr(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
   for w = 1:size(aux_angles,2)
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
       'Color',[0,0,0,0.5])
