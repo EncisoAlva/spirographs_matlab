@@ -56,7 +56,6 @@ CtrlPtsArray = {[...
   ]};
 
 % heart
-
 CtrlPtsArray = {[...
   [-2,0]',...
   [-2,(4/3)*tan(pi/4)]',...
@@ -290,14 +289,14 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 % parameters
 
 % technical stuff
-MaxDistDelta = 0.001;
+MaxDistDelta = 0.0005;
 CloseTol = 0.01;
 MaxSpins = 100;
 
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 8+1/5;
+WheelBezRatio = 10+1/7;
 WheelMarkerRatio = 1;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -420,7 +419,7 @@ LocTime2B = max(LocTime2B) - flip(LocTime2B);
 %%
 % preview
 figure()
-fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
+fill(BezNew(1,:),BezNew(2,:), 'k', 'EdgeColor', 'none'); 
 hold on
 axis equal
 grid on

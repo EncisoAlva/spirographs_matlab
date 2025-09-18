@@ -251,7 +251,7 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 % parameters
 
 % technical stuff
-MaxDistDelta = 0.001;
+MaxDistDelta = 0.005;
 CloseTol = 0.01;
 MaxSpins = 100;
 

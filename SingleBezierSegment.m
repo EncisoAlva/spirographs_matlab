@@ -31,11 +31,13 @@ BezierPos  = EvalBezier( CtrlPts, [0,1] );
 BezierNorm = EvalBezierNormal( CtrlPts, [0,1], WheelRadius );
 WhCtrPos = BezierPos + BezierNorm;
 if norm( WhCtrPos(:,1) - WhCtrPos(:,2) ) < MaxDistDelta
-  Time        = [];
-  BezierPos   = [];
-  WhCtrPos    = [];
-  MarkerPos   = [];
-  MarkerAngle = [];
+  Time        = 0:1/ceil(1/MaxDistDelta):1;
+  BezierPos   = EvalBezier( CtrlPts, Time );
+  %
+  WhCtrPos    = WhCtrPos(:,1) * ones(size(Time));
+  MarkerPos   = (WhCtrPos(:,1) + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius )* ones(size(Time));
+  MarkerAngle = MarkerAngle0 * ones(size(Time));
+  %MarkerAngle = [];
   return
 end
 
