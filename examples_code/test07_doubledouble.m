@@ -270,6 +270,66 @@ for i = 2:size(CtrlPtsArray_backup,2)
 end
 
 %%
+% blobby star with 8 spikes
+% unit circle
+CtrlPtsArray = {[...
+  [-1,0]',...
+  [-1,(4/3)*tan(pi/8)]',...
+  [-(4/3)*tan(pi/8),1]',...
+  [0,1]'...
+  ],[...
+  [0,1]',...
+  [1-(4/3)*tan(pi/8),1]',...
+  [1,(4/3)*tan(pi/8)]',...
+  [1,0]'...
+  ],[...
+  [1,0]',...
+  [1,-(4/3)*tan(pi/8)]',...
+  [(4/3)*tan(pi/8),-1]',...
+  [0,-1]'...
+  ],[
+  [0,-1]',...
+  [-(4/3)*tan(pi/8),-1]',...
+  [-1,-(4/3)*tan(pi/8)]',...
+  [-1,0]'
+  ]};
+
+% subdivide
+CtrlPtsArray_backup = CtrlPtsArray;
+CtrlPtsArray = {};
+for i = 1:size(CtrlPtsArray_backup,2)
+  [c1, c2] = HalfBezierSingle(CtrlPtsArray_backup{i});
+  CtrlPtsArray{end+1} = c1;
+  CtrlPtsArray{end+1} = c2;
+end
+CtrlPtsArray_backup = CtrlPtsArray;
+CtrlPtsArray = {};
+for i = 1:size(CtrlPtsArray_backup,2)
+  [c1, c2] = HalfBezierSingle(CtrlPtsArray_backup{i});
+  CtrlPtsArray{end+1} = c1;
+  CtrlPtsArray{end+1} = c2;
+end
+%CtrlPtsArray = CtrlPtsArray_backup;
+
+% make the wobly thingy
+for i = 1:(size(CtrlPtsArray,2)/2)
+  CurrCurve = CtrlPtsArray{2*i-1};
+  CurrDisplace = (1-5/6)*CurrCurve(:,1);
+  CurrCurve(:,[1,2]) = CurrCurve(:,[1,2]) - CurrDisplace;
+  CurrDisplace = (7/6-1)*CurrCurve(:,4);
+  CurrCurve(:,[3,4]) = CurrCurve(:,[3,4]) + CurrDisplace;
+  CtrlPtsArray{2*i-1} = CurrCurve;
+  %
+  %
+  CurrCurve = CtrlPtsArray{2*i};
+  CurrDisplace = (7/6-1)*CurrCurve(:,1);
+  CurrCurve(:,[1,2]) = CurrCurve(:,[1,2]) + CurrDisplace;
+  CurrDisplace = (1-5/6)*CurrCurve(:,4);
+  CurrCurve(:,[3,4]) = CurrCurve(:,[3,4]) - CurrDisplace;
+  CtrlPtsArray{2*i} = CurrCurve;
+end
+
+%%
 figure()
 hold on
 axis equal
@@ -401,23 +461,24 @@ fill(DecorativeBez(1,:),DecorativeBez(2,:), 'k', 'EdgeColor', 'none');
 hold on
 axis equal
 grid on
-plot(AllBezierPos{1}(1,:),AllBezierPos{1}(2,:),'yellow')
-plot(AllBezierPos{2}(1,:),AllBezierPos{2}(2,:),'magenta')
-plot(AllBezierPos{3}(1,:),AllBezierPos{3}(2,:),'yellow')
-plot(AllBezierPos{4}(1,:),AllBezierPos{4}(2,:),'magenta')
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta')
+plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'yellow')
+plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'magenta')
 
 %%
 % video parameters
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250917_12';
+VidName = 'doubledouble250918_14';
 
 %%
 % video
 
 MakeVideo_4pts( WheelRadius, ...
   DecorativeBez,...
-  AllBezierPos, AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  AllBezierPos, AllLocTime, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName )

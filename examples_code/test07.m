@@ -278,17 +278,17 @@ end
 % make the wobly thingy
 for i = 1:(size(CtrlPtsArray,2)/2)
   CurrCurve = CtrlPtsArray{2*i-1};
-  CurrDisplace = (1-5/6)*CurrCurve(:,1);
+  CurrDisplace = (1-7/8)*CurrCurve(:,1);
   CurrCurve(:,[1,2]) = CurrCurve(:,[1,2]) - CurrDisplace;
-  CurrDisplace = (7/6-1)*CurrCurve(:,4);
+  CurrDisplace = (9/8-1)*CurrCurve(:,4);
   CurrCurve(:,[3,4]) = CurrCurve(:,[3,4]) + CurrDisplace;
   CtrlPtsArray{2*i-1} = CurrCurve;
   %
   %
   CurrCurve = CtrlPtsArray{2*i};
-  CurrDisplace = (7/6-1)*CurrCurve(:,1);
+  CurrDisplace = (9/8-1)*CurrCurve(:,1);
   CurrCurve(:,[1,2]) = CurrCurve(:,[1,2]) + CurrDisplace;
-  CurrDisplace = (1-5/6)*CurrCurve(:,4);
+  CurrDisplace = (1-7/8)*CurrCurve(:,4);
   CurrCurve(:,[3,4]) = CurrCurve(:,[3,4]) - CurrDisplace;
   CtrlPtsArray{2*i} = CurrCurve;
 end
@@ -320,7 +320,7 @@ MaxSpins = 100;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 10+1/7;
+WheelBezRatio = 10+1/9;
 WheelMarkerRatio = 4/5;
 
 % specific to this example
@@ -418,5 +418,5 @@ MakeVideo_2pts( WheelRadius, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
   MaxDistDelta,...
-  60, 5, 'test_250918_13' )
+  60, 5, 'test_250918_15' )
 %  60, 5, 'test_250914_02' )
