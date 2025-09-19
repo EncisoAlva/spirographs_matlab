@@ -356,7 +356,7 @@ MaxSpins = 100;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 10+1/7;
+WheelBezRatio = 16+1/5;
 WheelMarkerRatio = 1;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -471,7 +471,7 @@ plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'magenta')
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250918_14';
+VidName = 'doubledouble250918_18';
 
 %%
 % video

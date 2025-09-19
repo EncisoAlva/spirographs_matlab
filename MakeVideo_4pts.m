@@ -48,13 +48,11 @@ TimeFromBez1B = TimeFromBez1B*((TotalTime-AfterTime)/TimeFromBez1B(end));
 TimeFromBez2B = TimeFromBez2B*((TotalTime-AfterTime)/TimeFromBez2B(end));
 
 % parameters
-fps = 30;
-%MaxTime = ceil(TimeFromMarker(end)*fps)/fps;
+fps     = 30;
 MaxTime = ceil(TimeFromBez1A(end)*fps)/fps;
-nTimes = MaxTime*fps;
+nTimes  = MaxTime*fps;
 
 % help
-%idxx = 1:size(TimeFromMarker,2);
 idxx1A = 1:size(TimeFromBez1A,2);
 idxx2A = 1:size(TimeFromBez2A,2);
 idxx1B = 1:size(TimeFromBez1B,2);
@@ -100,10 +98,10 @@ for i = 0:nTimes
   end
   %
   %CurrPts = idxx(and(TimeFromMarker>=(i-1.1)/fps,TimeFromMarker<=(i+0.1)/fps));
-  CurrPts1A = idxx1A(TimeFromBez1A<=(i+0.1)/fps);
-  CurrPts2A = idxx2A(TimeFromBez2A<=(i+0.1)/fps);
-  CurrPts1B = idxx1B(TimeFromBez1B<=(i+0.1)/fps);
-  CurrPts2B = idxx2B(TimeFromBez2B<=(i+0.1)/fps);
+  CurrPts1A = idxx1A(TimeFromBez1A<=i/fps);
+  CurrPts2A = idxx2A(TimeFromBez2A<=i/fps);
+  CurrPts1B = idxx1B(TimeFromBez1B<=i/fps);
+  CurrPts2B = idxx2B(TimeFromBez2B<=i/fps);
   if ~( isempty(CurrPts1A) & isempty(CurrPts2A) ) % if no points will be added. skip drawing loop
   %
   % keep the base elements
@@ -117,10 +115,10 @@ for i = 0:nTimes
   plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),'yellow')
   plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),'magenta')
   %
-  j1A = max(CurrPts1A);
-  j2A = max(CurrPts2A);
-  j1B = max(CurrPts1B);
-  j2B = max(CurrPts2B);
+  j1A = min( [max(CurrPts1A), size(AllLocTime{1},2), size(AllBezierPos{1},2)]);
+  j2A = min( [max(CurrPts2A), size(AllLocTime{2},2), size(AllBezierPos{2},2)]);
+  j1B = min( [max(CurrPts1B), size(AllLocTime{3},2), size(AllBezierPos{3},2)]);
+  j2B = min( [max(CurrPts2B), size(AllLocTime{4},2), size(AllBezierPos{4},2)]);
   if ~isempty(j1A)
     RefWheelCtrA = AllWhCtrPos{1}(:,j1A);
     RefAngleA = AllMarkerAngle{1}(j1A);
@@ -137,9 +135,9 @@ for i = 0:nTimes
   end
   %
   % the white dot is unnecessarily challenging
-  compTimes  = [AllLocTime{1}(j1A), AllLocTime{2}(j1B), AllLocTime{3}(j2A), AllLocTime{4}(j2B)];
+  compTimes  = [AllLocTime{1}(j1A), AllLocTime{2}(j2A), AllLocTime{3}(j1B), AllLocTime{4}(j2B)];
   [~,refIdx] = max(compTimes);
-  compRefBez = [AllBezierPos{1}(:,j1A), AllBezierPos{3}(:,j1B), AllBezierPos{2}(:,j2A), AllBezierPos{4}(:,j2B)];
+  compRefBez = [AllBezierPos{1}(:,j1A), AllBezierPos{2}(:,j2A), AllBezierPos{3}(:,j1B), AllBezierPos{4}(:,j2B)];
   RefBez = compRefBez(:,refIdx);
   %
   fill(RefWheelCtrA(1)+circ(1,:),RefWheelCtrA(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
