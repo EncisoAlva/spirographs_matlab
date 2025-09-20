@@ -35,16 +35,13 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 MaxDistDelta = 0.005;
 CloseTol = 0.01;
 MaxSpins = 100;
+WheelRadiusTol = 0.000001;
 
 % designer stuff
 MarkerAngle0 = 0;
 
 WheelBezRatio = 10+1/9;
 WheelMarkerRatio = 4/5;
-
-% specific to this example
-%WheelRadius  = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
-%MarkerRadius = WheelRadius*WheelMarkerRatio;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
@@ -60,46 +57,38 @@ hold on
 axis equal
 grid on
 for i = 1:size(CtrlPtsArray,2)
-scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
+  scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
 end
 
 %% 
-% remove corners
-
-WheelRadiusTol = 0.000001;
-
+% remove outer corners
 WheelRadius_old = Inf;
 WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
-
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
-  [CtrlPtsArray_tmp] = ...
+  [CtrlPtsArray_new] = ...
     RemoveAllCorners( CtrlPtsArray, WheelRadius_new, MaxDistDelta, true );
   %
   WheelRadius_old = WheelRadius_new;
-  WheelRadius_new = (BezierPerimeter(CtrlPtsArray_tmp,0.00001)/(2*pi))/WheelBezRatio
+  WheelRadius_new = (BezierPerimeter(CtrlPtsArray_new,0.00001)/(2*pi))/WheelBezRatio
 end
-%CtrlPtsArray = CtrlPtsArray_tmp;
+%CtrlPtsArray = CtrlPtsArray_new;
 WheelRadius  = WheelRadius_new;
 MarkerRadius = WheelRadius*WheelMarkerRatio;
 
-%CtrlPtsArray_backup = CtrlPtsArray;
+%% 
 
-BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
-
+% show control points
 figure()
 hold on
 axis equal
 grid on
-for i = 1:size(CtrlPtsArray_tmp,2)
-scatter(CtrlPtsArray_tmp{i}(1,:), CtrlPtsArray_tmp{i}(2,:))
+for i = 1:size(CtrlPtsArray_new,2)
+scatter(CtrlPtsArray_new{i}(1,:), CtrlPtsArray_new{i}(2,:))
 end
 
-%%
-% checl
-if false
+% difference from rounding
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
-BezNew = AllBezierEval(CtrlPtsArray_tmp, MaxDistDelta);
-
+BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
 figure()
 hold on
 axis equal
@@ -107,30 +96,33 @@ grid on
 fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
 fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 
+% preview result
+[~, ~, ~, ~, MarkerPos1, ~, ~, ~, MarkerPos2, ~] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    MaxDistDelta, CloseTol, MaxSpins);
 
+figure()
+hold on
+axis equal
+grid on
+fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
+fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
+plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
+plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
+
+
+%%
+
+% make curves
 [BezierPos, ~, ...
   ~,...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   ~,...
   WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
-  SetupCurves_2pts( CtrlPtsArray_tmp, WheelRadius, MarkerRadius, MarkerAngle0, ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
 
-figure()
-fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
-hold on
-axis equal
-grid on
-plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
-plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
-
-BezOG = AllBezierEval(CtrlPtsArray, MaxDistDelta);
-fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
-
-end
-%%
 % video
-
 close all
 MakeVideo_2pts( WheelRadius, ...
   BezOG, ...
@@ -138,4 +130,3 @@ MakeVideo_2pts( WheelRadius, ...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
   MaxDistDelta,...
   60, 5, 'test_250918_15' )
-%  60, 5, 'test_250914_02' )
