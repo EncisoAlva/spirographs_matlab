@@ -26,21 +26,6 @@ function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
   SingleBezierSegment( CtrlPts, WheelRadius, MarkerRadius, ...
   MarkerAngle0, Time0, MaxDistDelta )
 
-% check if the current curve is a corner
-BezierPos  = EvalBezier( CtrlPts, [0,1] );
-BezierNorm = EvalBezierNormal( CtrlPts, [0,1], WheelRadius );
-WhCtrPos = BezierPos + BezierNorm;
-if norm( WhCtrPos(:,1) - WhCtrPos(:,2) ) < MaxDistDelta
-  Time        = 0:1/ceil(1/MaxDistDelta):1;
-  BezierPos   = EvalBezier( CtrlPts, Time );
-  %
-  WhCtrPos    = WhCtrPos(:,1) * ones(size(Time));
-  MarkerPos   = (WhCtrPos(:,1) + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius )* ones(size(Time));
-  MarkerAngle = MarkerAngle0 * ones(size(Time));
-  %MarkerAngle = [];
-  return
-end
-
 % initial guess for time
 DistDelta = 1/ceil(1/MaxDistDelta);
 LocalTime = 0:DistDelta:1;
