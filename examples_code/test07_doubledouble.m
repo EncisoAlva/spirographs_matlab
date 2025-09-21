@@ -7,10 +7,22 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','BumpCircle'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','LetterI'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %CtrlPtsArray = Fidget3;
+
+%%
+% load from file
+AllCtrlPtsArray = LoadSVG( 'svg_test_01.svg' );
+CtrlPtsArray = AllCtrlPtsArray{1};
+
+%%
+% pre-processing
+CtrlPtsArray = RemovePointCurves( CtrlPtsArray, 0.0001 );
+
+% this one is because I'm using absolute tolerance instead of relative
+CtrlPtsArray = RescaleShape( CtrlPtsArray, 2, 2 );
 
 %%
 % show control points
@@ -34,7 +46,7 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 % parameters
 
 % technical stuff
-MaxDistDelta = 0.0005;
+MaxDistDelta = 0.0002;
 CloseTol = 0.01;
 MaxSpins = 100;
 WheelRadiusTol = 0.0001;
@@ -42,7 +54,7 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 15+1/5;
+WheelBezRatio = 8+1/5;
 WheelMarkerRatio = 1;
 
 %% 
@@ -82,7 +94,6 @@ hold on
 axis equal
 grid on
 fill(BezOG(1,:), BezOG(2,:),  'y', 'EdgeColor', 'none');
-fill(BezOG(1,:), -BezOG(2,:),  'r', 'EdgeColor', 'none');
 fill(BezNew(1,:),BezNew(2,:), 'r', 'EdgeColor', 'none');
 
 % preview of the result
@@ -123,7 +134,7 @@ plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'magenta')
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250920_15';
+VidName = 'doubledouble250921_15';
 
 %%
 % update curve 

@@ -11,6 +11,11 @@ CtrlPtsArray = struct2cell(load('ExampleCurves.mat','BumpCircle'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
+% load from file
+AllCtrlPtsArray = LoadSVG( 'svg_test_01.svg' );
+CtrlPtsArray = AllCtrlPtsArray{1};
+
+%%
 % show control points
 figure()
 hold on
@@ -40,7 +45,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 10+1/9;
+WheelBezRatio = 30+1/5;
 WheelMarkerRatio = 4/5;
 
 % willing to loose 1% of total area due to each corner rounding

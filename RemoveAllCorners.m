@@ -72,6 +72,7 @@ for i = 1:nCurves
   end
 end
 
+% remove curves with all 4 points equal to each other
 CtrlPtsArray_rounded = RemovePointCurves( CtrlPtsArray_rounded, Tol );
 
 end
