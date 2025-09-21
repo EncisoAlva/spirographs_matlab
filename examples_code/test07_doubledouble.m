@@ -10,25 +10,7 @@ who -file ExampleCurves.mat
 CtrlPtsArray = struct2cell(load('ExampleCurves.mat','BumpCircle'));
 CtrlPtsArray = CtrlPtsArray{1};
 
-%%
-% 5 eyes thingy
-aang = -(0:(2*pi/5):2*pi)+pi/2+pi/5;
-hex_pts = [cos(aang); sin(aang)]*cot(pi/5);
-
-CtrlPtsArray = {};
-for i = 1:5
-  CurrCtrl = zeros(2,4);
-  CurrCtrl(:,1) = hex_pts(:,i  );
-  CurrCtrl(:,2) = hex_pts(:,i  )*(1 +(4/3)*tan(7*pi/5) );
-  CurrCtrl(:,3) = hex_pts(:,i+1)*(1 +(4/3)*tan(7*pi/5) );
-  CurrCtrl(:,4) = hex_pts(:,i+1);
-  CtrlPtsArray{end+1} = CurrCtrl;
-end
-
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(CtrlPtsArray{1});
-CtrlPtsArray{1} = c2;
-CtrlPtsArray{end+1} = c1;
+%CtrlPtsArray = Fidget3;
 
 %%
 % show control points
@@ -100,6 +82,7 @@ hold on
 axis equal
 grid on
 fill(BezOG(1,:), BezOG(2,:),  'y', 'EdgeColor', 'none');
+fill(BezOG(1,:), -BezOG(2,:),  'r', 'EdgeColor', 'none');
 fill(BezNew(1,:),BezNew(2,:), 'r', 'EdgeColor', 'none');
 
 % preview of the result
@@ -126,7 +109,7 @@ plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
     MaxDistDelta, CloseTol, MaxSpins);
 
 figure()
-fill(DecorativeBez(1,:),DecorativeBez(2,:), 'k', 'EdgeColor', 'none'); 
+fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
 hold on
 axis equal
 grid on
@@ -140,7 +123,7 @@ plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'magenta')
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250920_12';
+VidName = 'doubledouble250920_15';
 
 %%
 % update curve 

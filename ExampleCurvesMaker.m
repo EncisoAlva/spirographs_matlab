@@ -412,4 +412,92 @@ end
 clear Blob8_backup c1 c2 CurrCurve CurrDisplace i iter
 
 %%
+% 5 eyes thingy
+aang = -(0:(2*pi/5):2*pi)+pi/2+pi/5;
+hex_pts = [cos(aang); sin(aang)]*cot(pi/5);
+
+Angel5 = {};
+for i = 1:5
+  CurrCtrl = zeros(2,4);
+  CurrCtrl(:,1) = hex_pts(:,i  );
+  CurrCtrl(:,2) = hex_pts(:,i  )*(1 +(4/3)*tan(7*pi/5) );
+  CurrCtrl(:,3) = hex_pts(:,i+1)*(1 +(4/3)*tan(7*pi/5) );
+  CurrCtrl(:,4) = hex_pts(:,i+1);
+  Angel5{end+1} = CurrCtrl;
+end
+
+% change starting point (artistic choice)
+[c1,c2] = HalfBezierSingle(Angel5{1});
+Angel5{1} = c2;
+Angel5{end+1} = c1;
+
+clear aang hex_pts CurrCtrl c1 c2 i
+
+%%
+% 6 eyes thingy
+aang = -(0:(2*pi/6):2*pi)+pi/2+pi/6;
+hex_pts = [cos(aang); sin(aang)]*cot(pi/6);
+
+Angel6 = {};
+for i = 1:6
+  CurrCtrl = zeros(2,4);
+  CurrCtrl(:,1) = hex_pts(:,i  );
+  CurrCtrl(:,2) = hex_pts(:,i  )*(1 +(4/3)*tan(pi/3) );
+  CurrCtrl(:,3) = hex_pts(:,i+1)*(1 +(4/3)*tan(pi/3) );
+  CurrCtrl(:,4) = hex_pts(:,i+1);
+  Angel6{end+1} = CurrCtrl;
+end
+
+% change starting point (artistic choice)
+[c1,c2] = HalfBezierSingle(Angel6{1});
+Angel6{1} = c2;
+Angel6{end+1} = c1;
+
+clear aang hex_pts CurrCtrl c1 c2 i
+
+%%
+% error on fidget, maybe profitable
+aang = -(0:(2*pi/6):2*pi)+pi/2+pi/6;
+hex_pts = [cos(aang); sin(aang)]*cot(pi/6);
+
+Fidget3 = {};
+for i = 1:6
+  CurrCtrl = zeros(2,4);
+  CurrCtrl(:,1) = hex_pts(:,i  );
+  CurrCtrl(:,2) = hex_pts(:,i  )*(1 +(4/3)*tan(pi/3)*(-1)^i );
+  CurrCtrl(:,3) = hex_pts(:,i+1)*(1 +(4/3)*tan(pi/3)*(-1)^i );
+  CurrCtrl(:,4) = hex_pts(:,i+1);
+  Fidget3{end+1} = CurrCtrl;
+end
+
+% change starting point (artistic choice)
+[c1,c2] = HalfBezierSingle(Fidget3{1});
+Fidget3{1} = c2;
+Fidget3{end+1} = c1;
+
+clear aang hex_pts CurrCtrl c1 c2 i
+
+%%
+% 3 fidget spinner
+aang = -(0:(2*pi/6):2*pi)+pi/2+pi/6;
+hex_pts = [cos(aang); sin(aang)]*cot(pi/6);
+
+Fidget3 = {};
+for i = 1:6
+  CurrCtrl = zeros(2,4);
+  CurrCtrl(:,1) = hex_pts(:,i  );
+  CurrCtrl(:,2) = hex_pts(:,i  )*(1 -(4/3)*tan(pi/6)*(-1)^i );
+  CurrCtrl(:,3) = hex_pts(:,i+1)*(1 -(4/3)*tan(pi/6)*(-1)^i );
+  CurrCtrl(:,4) = hex_pts(:,i+1);
+  Fidget3{end+1} = CurrCtrl;
+end
+
+% change starting point (artistic choice)
+[c1,c2] = HalfBezierSingle(Fidget3{1});
+Fidget3{1} = c2;
+Fidget3{end+1} = c1;
+
+clear aang hex_pts CurrCtrl c1 c2 i
+
+%%
 save('ExampleCurves.mat')

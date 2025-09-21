@@ -64,6 +64,8 @@ aux_angles = 0:(pi/3):(2*pi);
 
 % original figure
 close all
+set(0, 'DefaultFigureColor', 'k');
+
 f1 = figure('Visible','off','Name','Just the curve');
 hold on
 axis equal
@@ -74,7 +76,7 @@ xlim([min(AllMarkerPos{2}(1,:)) max(AllMarkerPos{2}(1,:))])
 ylim([min(AllMarkerPos{2}(2,:)) max(AllMarkerPos{2}(2,:))])
 %
 %fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'k','LineWidth',2)
+plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
