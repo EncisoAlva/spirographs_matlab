@@ -56,6 +56,9 @@ circ = WheelRadius*[cos(aang); sin(aang)];
 aux_angles = 0:(pi/3):(2*pi);
 
 % original figure
+close all
+set(0, 'DefaultFigureColor', 'k');
+
 f1 = figure('Visible','off','Name','Just the curve');
 hold on
 axis equal
@@ -65,7 +68,7 @@ ylim([min(MarkerPos1(2,:)) max(MarkerPos1(2,:))])
 xlim([min(MarkerPos2(1,:)) max(MarkerPos2(1,:))])
 ylim([min(MarkerPos2(2,:)) max(MarkerPos2(2,:))])
 %
-fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
+fill(BezierPos(1,:),BezierPos(2,:),'Color',[.3 .3 .3], 'EdgeColor', 'none'); 
 %
 f2 = figure('Visible','off','Name','With circle');
 

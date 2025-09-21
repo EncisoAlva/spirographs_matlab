@@ -12,8 +12,15 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( 'svg_test_01.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/empire_like.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
+
+%%
+% pre-processing
+CtrlPtsArray = RemovePointCurves( CtrlPtsArray, 0.0001 );
+
+% this one is because I'm using absolute tolerance instead of relative
+CtrlPtsArray = RescaleShape( CtrlPtsArray, 2, 2 );
 
 %%
 % show control points
@@ -45,7 +52,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 30+1/5;
+WheelBezRatio = 21+1/5;
 WheelMarkerRatio = 4/5;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -105,6 +112,7 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 [~, ~, ~, ~, MarkerPos1, ~, ~, ~, MarkerPos2, ~] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
+BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
 
 figure()
 hold on
@@ -134,4 +142,4 @@ MakeVideo_2pts( WheelRadius, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
   MaxDistDelta,...
-  60, 5, 'test_250918_15' )
+  60, 5, 'test_250918_18' )
