@@ -60,7 +60,7 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 17+1/3;
+WheelBezRatio = 15+1/5;
 WheelMarkerRatio = 1;
 
 %% 
@@ -124,41 +124,26 @@ plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
 %%
 % preview
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
-  SetupCurves_4pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, CloseTol, MaxSpins);
-
-figure()
-fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
-hold on
-axis equal
-grid on
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta')
-plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'yellow')
-plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'magenta')
-
-%%
-% preview
-[ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, CloseTol, MaxSpins,3);
+    MaxDistDelta, CloseTol, MaxSpins,5);
 
 figure()
-fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
+%fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
 hold on
 axis equal
-grid on
+axis off
+grid off
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta')
-plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'yellow')
-plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'magenta')
+plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'magenta')
+plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'yellow')
 
 %%
 % video parameters
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250921_15';
+VidName = 'doubledouble250921_21';
 
 %%
 % update curve 
@@ -172,7 +157,7 @@ CtrlPtsArray = CtrlPtsArray_new;
     MaxDistDelta, CloseTol, MaxSpins);
 
 % video
-MakeVideo_4pts( WheelRadius, ...
+MakeVideo_4pts( WheelRadius, 1, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...

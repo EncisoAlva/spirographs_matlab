@@ -68,7 +68,7 @@ ylim([min(MarkerPos1(2,:)) max(MarkerPos1(2,:))])
 xlim([min(MarkerPos2(1,:)) max(MarkerPos2(1,:))])
 ylim([min(MarkerPos2(2,:)) max(MarkerPos2(2,:))])
 %
-fill(BezierPos(1,:),BezierPos(2,:),'Color',[.3 .3 .3], 'EdgeColor', 'none'); 
+fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
 %
 f2 = figure('Visible','off','Name','With circle');
 

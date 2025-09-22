@@ -12,7 +12,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/empire_like.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/cutting5.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -21,6 +21,14 @@ CtrlPtsArray = RemovePointCurves( CtrlPtsArray, 0.0001 );
 
 % this one is because I'm using absolute tolerance instead of relative
 CtrlPtsArray = RescaleShape( CtrlPtsArray, 2, 2 );
+
+%CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
+
+if false
+for i = 1:size(CtrlPtsArray, 2)
+  CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
+end
+end
 
 %%
 % show control points
@@ -52,7 +60,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 21+1/5;
+WheelBezRatio = 25+1/3;
 WheelMarkerRatio = 4/5;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -87,6 +95,8 @@ end
 WheelRadius  = WheelRadius_new;
 MarkerRadius = WheelRadius*WheelMarkerRatio;
 
+%CtrlPtsArray_new = CtrlPtsArray;
+
 %% 
 
 % show control points
@@ -118,10 +128,24 @@ figure()
 hold on
 axis equal
 grid on
-fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
-fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
+fill(BezNew(1,:),BezNew(2,:), .15*[1,1,1], 'EdgeColor', 'none')
+%fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
+%fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
 plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
 plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
+set(gca,'color', 'k');
+
+figure()
+hold on
+axis equal
+grid off
+axis off
+fill(BezNew(1,:),BezNew(2,:), .15*[1,1,1], 'EdgeColor', 'none')
+%fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
+%fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
+plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
+plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
+set(gca,'color', 'k');
 
 
 %%
