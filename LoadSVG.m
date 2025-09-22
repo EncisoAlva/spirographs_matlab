@@ -1,7 +1,11 @@
 % Load paths (concatenated Bezier corves) from an SVG file. Returns a cell
 % array with all the paths found on the file.
-%
 % Doesn't check if paths are connected, or if they are closed.
+%
+% Based on the code by Tommy, with modifications.
+% Tommy (2025). Load SVG into your MATLAB code 
+% (https://www.mathworks.com/matlabcentral/fileexchange/72225-load-svg-into-your-matlab-code), 
+% MATLAB Central File Exchange. Retrieved September 22, 2025. 
 %
 % ---- INUPUT ------------------------------------------------------------
 %         svgname  File name of SVG file [string]
