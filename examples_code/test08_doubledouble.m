@@ -14,7 +14,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/letterJ_01.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/arrows4.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -60,23 +60,24 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 15+1/5;
+WheelBezRatio = 20 + 1/15;
 WheelMarkerRatio = 1;
 
 %% 
 % remove corners inside and outside
 WheelRadius_old = Inf;
-WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
+WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
 
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
   [CtrlPtsArray_new_inv] = ...
-    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new, MaxDistDelta, true );
+    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/3, MaxDistDelta, true );
   [CtrlPtsArray_new] = ...
     RemoveAllCorners( FlipBezierAll(CtrlPtsArray_new_inv), WheelRadius_new, MaxDistDelta, false );
   %
   WheelRadius_old = WheelRadius_new;
   WheelRadius_new = (BezierPerimeter(CtrlPtsArray_new,0.00001)/(2*pi))/WheelBezRatio
 end
+
 WheelRadius  = WheelRadius_new;
 MarkerRadius = WheelRadius*WheelMarkerRatio;
 
@@ -125,7 +126,7 @@ plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
 % preview
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, CloseTol, MaxSpins,5);
+    MaxDistDelta/2, CloseTol, MaxSpins,3);
 
 figure()
 %fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
@@ -137,6 +138,18 @@ plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta')
 plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'magenta')
 plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'yellow')
+
+%%
+
+figure()
+%fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
+hold on
+axis equal
+axis off
+grid off
+%fill(MarkerPos2(1,:),MarkerPos2(2,:), 'yellow', 'EdgeColor', 'none');
+fill(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:), 'magenta', 'EdgeColor', 'none');
+fill(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:), 'k', 'EdgeColor', 'none');
 
 %%
 % video parameters

@@ -25,7 +25,7 @@ function MakeVideo_2pts( WheelRadius, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
   MaxDistDelta, ...
-  TotalTime, AfterTime, VidName )
+  TotalTime, BeforeTime, AfterTime, VidName )
 
 % time, parametrized by the arc of the marker or the ar of the wheel center
 %TimeFromMarker = zeros(1,size(MarkerPos1,2));
@@ -38,8 +38,8 @@ TimeFromWheel2 = zeros(1,size(WhCtrPos2,2));
 TimeFromWheel2(2:end) = cumsum( vecnorm( diff(WhCtrPos2,1,2), 2, 1 ) );
 
 % duration of video
-TimeFromWheel1 = TimeFromWheel1*((TotalTime-AfterTime)/TimeFromWheel1(end));
-TimeFromWheel2 = TimeFromWheel2*((TotalTime-AfterTime)/TimeFromWheel2(end));
+TimeFromWheel1 = TimeFromWheel1*((TotalTime-AfterTime-BeforeTime)/TimeFromWheel1(end));
+TimeFromWheel2 = TimeFromWheel2*((TotalTime-AfterTime-BeforeTime)/TimeFromWheel2(end));
 
 % parameters
 fps = 30;
@@ -68,7 +68,8 @@ ylim([min(MarkerPos1(2,:)) max(MarkerPos1(2,:))])
 xlim([min(MarkerPos2(1,:)) max(MarkerPos2(1,:))])
 ylim([min(MarkerPos2(2,:)) max(MarkerPos2(2,:))])
 %
-fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
+%fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
+plot(BezierPos(1,:),BezierPos(2,:),'Color',.15*[1,1,1],'LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
@@ -76,6 +77,18 @@ f2 = figure('Visible','off','Name','With circle');
 v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
 v.Quality = 100;
 open(v)
+
+% prepare finished figure for sneek peek
+% take specifications from figure 1
+copyobj(f1.Children,f2)
+set(0,"CurrentFigure",f2)
+plot(MarkerPos1(1,:),MarkerPos1(2,:),'magenta')
+plot(MarkerPos2(1,:),MarkerPos2(2,:),'yellow')
+
+% stop for some time before, showing spoilers everything is finished
+for stopper = 0:(fps*BeforeTime)
+  writeVideo(v,getframe)
+end
 
 % main loop
 WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
