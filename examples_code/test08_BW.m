@@ -13,7 +13,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 %%
 % load from file
 AllCtrlPtsArray = LoadSVG( './curves_svg/MYNAME.svg' );
-CtrlPtsArray = AllCtrlPtsArray{1};
+CtrlPtsArray = AllCtrlPtsArray{2};
 
 %%
 % pre-processing
@@ -24,10 +24,8 @@ CtrlPtsArray = RescaleShape( CtrlPtsArray, 2, 2 );
 
 %CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
 
-if false
 for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
-end
 end
 
 %%
@@ -60,8 +58,8 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 40+1/3;
-WheelMarkerRatio = 4/5;
+WheelBezRatio = 20+1/6;
+WheelMarkerRatio = 4/3;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
@@ -109,8 +107,6 @@ scatter(CtrlPtsArray_new{i}(1,:), CtrlPtsArray_new{i}(2,:))
 end
 
 % difference from rounding
-BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
-BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
 figure()
 hold on
 axis equal
@@ -122,7 +118,9 @@ fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 [~, ~, ~, ~, MarkerPos1, ~, ~, ~, MarkerPos2, ~] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
+BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
 BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
+
 
 figure()
 hold on
@@ -151,24 +149,3 @@ axis off
 grid off
 %fill(MarkerPos2(1,:),MarkerPos2(2,:), 'yellow', 'EdgeColor', 'none');
 fill(MarkerPos1(1,:),MarkerPos1(2,:), 'magenta', 'EdgeColor', 'none');
-
-
-%%
-
-% make curves
-[BezierPos, ~, ...
-  ~,...
-  WhCtrPos1, MarkerPos1, MarkerAngle1,...
-  ~,...
-  WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
-  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, CloseTol, MaxSpins);
-
-% video
-close all
-MakeVideo_2pts( WheelRadius, ...
-  BezOG, ...
-  WhCtrPos1, MarkerPos1, MarkerAngle1,...
-  WhCtrPos2, MarkerPos2, MarkerAngle2,...
-  MaxDistDelta,...
-  60, 2, 5, 'test_250923_09' )
