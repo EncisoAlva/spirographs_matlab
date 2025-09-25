@@ -12,7 +12,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/MYNAME.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/bombini01.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -22,12 +22,30 @@ CtrlPtsArray = RemovePointCurves( CtrlPtsArray, 0.0001 );
 % this one is because I'm using absolute tolerance instead of relative
 CtrlPtsArray = RescaleShape( CtrlPtsArray, 2, 2 );
 
-%CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
+% line with bad encoding, the normal vector will be wrong
+nCurves = size(CtrlPtsArray,2);
+for i = 1:nCurves
+  CurrCurve = CtrlPtsArray{i};
+  if norm(CurrCurve(:,1)-CurrCurve(:,2)) < 0.001
+    if abs( norm(CurrCurve(:,2)-CurrCurve(:,3)) + norm(CurrCurve(:,3)-CurrCurve(:,4)) - norm(CurrCurve(:,2)-CurrCurve(:,4)) ) < 0.001
+      CtrlPtsArray{i} = LineToBezier( CurrCurve(:,1), CurrCurve(:,4) );
+      continue
+    end
+  end
+  if norm(CurrCurve(:,3)-CurrCurve(:,4)) < 0.001
+    if abs( norm(CurrCurve(:,1)-CurrCurve(:,2)) + norm(CurrCurve(:,2)-CurrCurve(:,3)) - norm(CurrCurve(:,1)-CurrCurve(:,3)) ) < 0.001
+      CtrlPtsArray{i} = LineToBezier( CurrCurve(:,1), CurrCurve(:,4) );
+      continue
+    end
+  end
+end
 
-if false
 for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
 end
+
+if false
+  CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
 end
 
 %%
@@ -60,8 +78,8 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 40+1/3;
-WheelMarkerRatio = 4/5;
+WheelBezRatio = 9+3/5;
+WheelMarkerRatio = 3/4;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
@@ -83,7 +101,7 @@ end
 %% 
 % remove outer corners
 WheelRadius_old = Inf;
-WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio;
+WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
   [CtrlPtsArray_new] = ...
     RemoveAllCorners( CtrlPtsArray, WheelRadius_new, MaxDistDelta, true );
@@ -163,6 +181,7 @@ fill(MarkerPos1(1,:),MarkerPos1(2,:), 'magenta', 'EdgeColor', 'none');
   WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
+BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
 
 % video
 close all
@@ -171,4 +190,4 @@ MakeVideo_2pts( WheelRadius, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
   MaxDistDelta,...
-  60, 2, 5, 'test_250923_09' )
+  60, 2, 5, 'test_250925_12' )
