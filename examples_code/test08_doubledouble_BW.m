@@ -8,7 +8,7 @@ who -file ExampleCurves.mat
 
 % load curve
 CtrlPtsArray = struct2cell(load('ExampleCurves.mat','LetterI'));
-CtrlPtsArray = CtrlPtsArray{3};
+CtrlPtsArray = CtrlPtsArray{1};
 
 %CtrlPtsArray = Fidget3;
 
@@ -86,7 +86,7 @@ WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
 
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
   [CtrlPtsArray_new_inv] = ...
-    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/2, MaxDistDelta, true );
+    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/3, MaxDistDelta, true );
   [CtrlPtsArray_new] = ...
     RemoveAllCorners( FlipBezierAll(CtrlPtsArray_new_inv), WheelRadius_new, MaxDistDelta, false );
   %
@@ -100,26 +100,10 @@ MarkerRadius = WheelRadius*WheelMarkerRatio;
 %CtrlPtsArray_new = CtrlPtsArray;
 
 %%
-% check if results are good enough
-
-% control points[
-figure()
-hold on
-axis equal
-grid on
-for i = 1:size(CtrlPtsArray_new,2)
-scatter(CtrlPtsArray_new{i}(1,:), CtrlPtsArray_new{i}(2,:))
-end
-
-% difference induced by rounding
-BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
-BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
-
-%%
 % preview
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta/2, CloseTol, MaxSpins,2);
+    MaxDistDelta/2, CloseTol, MaxSpins,3);
 
 figure()
 %fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
@@ -128,19 +112,5 @@ axis equal
 axis off
 grid off
 set(gcf,'Color','white')
-%plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'blue')
-plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'blue')
-%plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'yellow')
-
-%%
-
-figure()
-%fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
-hold on
-axis equal
-axis off
-grid off
-%fill(MarkerPos2(1,:),MarkerPos2(2,:), 'yellow', 'EdgeColor', 'none');
-fill(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:), 'magenta', 'EdgeColor', 'none');
-fill(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:), 'k', 'EdgeColor', 'none');
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'blue', 'LineWidth',1.5)
+plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'blue', 'LineWidth',1.5)
