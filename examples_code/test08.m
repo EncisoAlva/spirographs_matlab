@@ -12,7 +12,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/bombini01.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/batH.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
