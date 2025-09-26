@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','LetterI'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Heart'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %CtrlPtsArray = Fidget3;
@@ -46,6 +46,10 @@ for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
 end
 
+if false
+  CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
+end
+
 %%
 % show control points
 figure()
@@ -76,7 +80,7 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 40 + 1/9;
+WheelBezRatio = 10 + 1/12;
 WheelMarkerRatio = 1;
 
 %% 
@@ -113,9 +117,9 @@ end
 [ ~,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-  SetupCurves_4pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
+  SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, 3);
 
 
 %%
@@ -131,25 +135,35 @@ axis off
 grid off
 
 for i = 0:(nSpins-1)
-  if i < 5
-    currColor = [1,1,0,.5];
-  else
+  if ismember(i, [0,1, 4,5, 8,9])
     currColor = [1,0,1,.5];
+  else
+    currColor = [1,1,0,.5];
   end
-
-  for j = 2:3
+  for j = 2:2
     currCurve = AllMarkerPos{j}(:,(floor(AllLocTime{j}/nCurves)>=i)&(floor(AllLocTime{j}/nCurves)<(i+1)));
     plot(currCurve(1,:),currCurve(2,:),'Color',currColor, 'LineWidth',0.2)
   end
+  %
+  %
+  if ismember(i, [0,1])
+    currColor = [1,0,1,.5];
+  else
+    currColor = [1,1,0,.5];
+  end
+   for j = 3:3
+    currCurve = AllMarkerPos{j}(:,(floor(AllLocTime{j}/nCurves)>=i)&(floor(AllLocTime{j}/nCurves)<(i+1)));
+    plot(currCurve(1,:),currCurve(2,:),'Color',currColor, 'LineWidth',0.2)
+  end
+
 end
 
 %%
 
 TotalTime = 5;
-AfterTime = 5;
 LoopTime0 = 5;
 
-VidName = 'snake_250924_24';
+VidName = 'snake_250925_19';
 
 %%
 
@@ -194,22 +208,33 @@ ylim([min(BezNew(2,:))-2*WheelRadius , max(BezNew(2,:))+2*WheelRadius])
 [ ~,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-  SetupCurves_4pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0+currFrame*AngleIncr, ...
+  SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0+currFrame*AngleIncr, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, 3);
 
 % make curves for different marker radius ratios
 for i = 0:(nSpins-1)
-  if i < 5
-    currColor = [1,1,0,.5];
-  else
+  if ismember(i, [0,1, 4,5, 8,9])
     currColor = [1,0,1,.5];
+  else
+    currColor = [1,1,0,.5];
   end
-
-  for j = 2:3
+  for j = 2:2
     currCurve = AllMarkerPos{j}(:,(floor(AllLocTime{j}/nCurves)>=i)&(floor(AllLocTime{j}/nCurves)<(i+1)));
     plot(currCurve(1,:),currCurve(2,:),'Color',currColor, 'LineWidth',0.2)
   end
+  %
+  %
+  if ismember(i, [0,1])
+    currColor = [1,0,1,.5];
+  else
+    currColor = [1,1,0,.5];
+  end
+   for j = 3:3
+    currCurve = AllMarkerPos{j}(:,(floor(AllLocTime{j}/nCurves)>=i)&(floor(AllLocTime{j}/nCurves)<(i+1)));
+    plot(currCurve(1,:),currCurve(2,:),'Color',currColor, 'LineWidth',0.2)
+  end
+
 end
 
 
