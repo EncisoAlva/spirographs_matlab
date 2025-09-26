@@ -67,6 +67,8 @@ xlim([min(MarkerPos1(1,:)) max(MarkerPos1(1,:))])
 ylim([min(MarkerPos1(2,:)) max(MarkerPos1(2,:))])
 xlim([min(MarkerPos2(1,:)) max(MarkerPos2(1,:))])
 ylim([min(MarkerPos2(2,:)) max(MarkerPos2(2,:))])
+xlim([min(BezierPos(1,:)) max(BezierPos(1,:))])
+ylim([min(BezierPos(2,:)) max(BezierPos(2,:))])
 %
 %fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
 plot(BezierPos(1,:),BezierPos(2,:),'Color',.15*[1,1,1],'LineWidth',2)
