@@ -14,7 +14,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/wobbly01.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/HilbertCurve.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -80,8 +80,10 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 10 + 1/12;
+WheelBezRatio = 70+1/8;
 WheelMarkerRatio = 1;
+
+ScaleFactor = 1;
 
 %% 
 % remove corners inside and outside
@@ -90,9 +92,9 @@ WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
 
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
   [CtrlPtsArray_new_inv] = ...
-    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/3, MaxDistDelta, true );
+    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/ScaleFactor, MaxDistDelta, true );
   [CtrlPtsArray_new] = ...
-    RemoveAllCorners( FlipBezierAll(CtrlPtsArray_new_inv), WheelRadius_new, MaxDistDelta, false );
+    RemoveAllCorners( FlipBezierAll(CtrlPtsArray_new_inv), WheelRadius_new, MaxDistDelta, true );
   %
   WheelRadius_old = WheelRadius_new;
   WheelRadius_new = (BezierPerimeter(CtrlPtsArray_new,0.00001)/(2*pi))/WheelBezRatio
@@ -119,7 +121,7 @@ end
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins, 3);
+    CloseTol, MaxSpins, ScaleFactor);
 
 
 %%
@@ -135,7 +137,8 @@ axis off
 grid off
 
 for i = 0:(nSpins-1)
-  if ismember(i, [0,1, 4,5, 8,9])
+  %if ismember(i, [0,1, 4,5, 8,9])
+  if ismember(i, [0,1,2,3,4])
     currColor = [1,0,1,.5];
   else
     currColor = [1,1,0,.5];
@@ -146,12 +149,12 @@ for i = 0:(nSpins-1)
   end
   %
   %
-  if ismember(i, [0,1])
-    currColor = [1,0,1,.5];
-  else
-    currColor = [1,1,0,.5];
-  end
-   for j = 3:3
+  %if ismember(i, [0,1])
+  %  currColor = [1,0,1,.5];
+  %else
+  %  currColor = [1,1,0,.5];
+  %end
+  for j = 3:3
     currCurve = AllMarkerPos{j}(:,(floor(AllLocTime{j}/nCurves)>=i)&(floor(AllLocTime{j}/nCurves)<(i+1)));
     plot(currCurve(1,:),currCurve(2,:),'Color',currColor, 'LineWidth',0.2)
   end
@@ -160,10 +163,10 @@ end
 
 %%
 
-TotalTime = 5;
-LoopTime0 = 5;
+TotalTime = 10;
+LoopTime0 = 10;
 
-VidName = 'snake_250925_19';
+VidName = 'snake_250926_02';
 
 %%
 
@@ -210,11 +213,12 @@ ylim([min(BezNew(2,:))-2*WheelRadius , max(BezNew(2,:))+2*WheelRadius])
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0+currFrame*AngleIncr, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins, 3);
+    CloseTol, MaxSpins, ScaleFactor);
 
 % make curves for different marker radius ratios
 for i = 0:(nSpins-1)
-  if ismember(i, [0,1, 4,5, 8,9])
+  %if ismember(i, [0,1, 4,5, 8,9])
+  if ismember(i, [0,1,2,3,4])
     currColor = [1,0,1,.5];
   else
     currColor = [1,1,0,.5];
@@ -225,12 +229,12 @@ for i = 0:(nSpins-1)
   end
   %
   %
-  if ismember(i, [0,1])
-    currColor = [1,0,1,.5];
-  else
-    currColor = [1,1,0,.5];
-  end
-   for j = 3:3
+  %if ismember(i, [0,1])
+  %  currColor = [1,0,1,.5];
+  %else
+  %  currColor = [1,1,0,.5];
+  %end
+  for j = 3:3
     currCurve = AllMarkerPos{j}(:,(floor(AllLocTime{j}/nCurves)>=i)&(floor(AllLocTime{j}/nCurves)<(i+1)));
     plot(currCurve(1,:),currCurve(2,:),'Color',currColor, 'LineWidth',0.2)
   end

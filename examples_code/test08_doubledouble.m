@@ -60,7 +60,7 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 20 + 1/15;
+WheelBezRatio = 5 + 1/5;
 WheelMarkerRatio = 1;
 
 %% 
@@ -126,7 +126,7 @@ plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
 % preview
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta/2, CloseTol, MaxSpins,3);
+    MaxDistDelta/2, CloseTol, MaxSpins,1);
 
 figure()
 %fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
@@ -156,7 +156,7 @@ fill(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:), 'k', 'EdgeColor', 'none');
 TotalTime = 60;
 AfterTime = 5;
 
-VidName = 'doubledouble250921_21';
+VidName = 'doubledouble250926_21';
 
 %%
 % update curve 
@@ -170,9 +170,10 @@ CtrlPtsArray = CtrlPtsArray_new;
     MaxDistDelta, CloseTol, MaxSpins);
 
 % video
-MakeVideo_4pts( WheelRadius, 1, ...
+MakeVideo_4pts( WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName )
+

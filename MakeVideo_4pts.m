@@ -20,43 +20,59 @@
 % ** No explicit output. Video is saved to path. **
 %
 %
-function MakeVideo_4pts( WheelRadius, ...
+function MakeVideo_4pts( WheelRadius, TimerefCurve, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName )
 
-% time is parametrized by the path over the Bezier curve
-TimeFromBez1A = zeros(1,size(AllBezierPos{1},2));
-TimeFromBez1A(2:end) = cumsum( vecnorm( diff(AllBezierPos{1},1,2), 2, 1 ) );
+% time is parametrized by the path over the Bezier curve or the path
+% described by the wheel center
+switch TimerefCurve
+  case 'Bezier'
+    TimeFromCurve1A = zeros(1,size(AllBezierPos{1},2));
+    TimeFromCurve1A(2:end) = cumsum( vecnorm( diff(AllBezierPos{1},1,2), 2, 1 ) );
 
-TimeFromBez2A = zeros(1,size(AllBezierPos{2},2));
-TimeFromBez2A(2:end) = cumsum( vecnorm( diff(AllBezierPos{2},1,2), 2, 1 ) );
+    TimeFromCurve2A = zeros(1,size(AllBezierPos{2},2));
+    TimeFromCurve2A(2:end) = cumsum( vecnorm( diff(AllBezierPos{2},1,2), 2, 1 ) );
 
-TimeFromBez1B = zeros(1,size(AllBezierPos{3},2));
-TimeFromBez1B(2:end) = cumsum( vecnorm( diff(AllBezierPos{3},1,2), 2, 1 ) );
+    TimeFromCurve1B = zeros(1,size(AllBezierPos{3},2));
+    TimeFromCurve1B(2:end) = cumsum( vecnorm( diff(AllBezierPos{3},1,2), 2, 1 ) );
 
-TimeFromBez2B = zeros(1,size(AllBezierPos{4},2));
-TimeFromBez2B(2:end) = cumsum( vecnorm( diff(AllBezierPos{4},1,2), 2, 1 ) );
+    TimeFromCurve2B = zeros(1,size(AllBezierPos{4},2));
+    TimeFromCurve2B(2:end) = cumsum( vecnorm( diff(AllBezierPos{4},1,2), 2, 1 ) );
+  case 'Wheel'
+    TimeFromCurve1A = zeros(1,size(AllBezierPos{1},2));
+    TimeFromCurve1A(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{1},1,2), 2, 1 ) );
+
+    TimeFromCurve2A = zeros(1,size(AllBezierPos{2},2));
+    TimeFromCurve2A(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{2},1,2), 2, 1 ) );
+
+    TimeFromCurve1B = zeros(1,size(AllBezierPos{3},2));
+    TimeFromCurve1B(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{3},1,2), 2, 1 ) );
+
+    TimeFromCurve2B = zeros(1,size(AllBezierPos{4},2));
+    TimeFromCurve2B(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{4},1,2), 2, 1 ) );
+end
 
 % duration of video
-TimeFromBez1A = TimeFromBez1A*((TotalTime-AfterTime)/TimeFromBez1A(end));
-TimeFromBez2A = TimeFromBez2A*((TotalTime-AfterTime)/TimeFromBez2A(end));
+TimeFromCurve1A = TimeFromCurve1A*((TotalTime-AfterTime)/TimeFromCurve1A(end));
+TimeFromCurve2A = TimeFromCurve2A*((TotalTime-AfterTime)/TimeFromCurve2A(end));
 
-TimeFromBez1B = TimeFromBez1B*((TotalTime-AfterTime)/TimeFromBez1B(end));
-TimeFromBez2B = TimeFromBez2B*((TotalTime-AfterTime)/TimeFromBez2B(end));
+TimeFromCurve1B = TimeFromCurve1B*((TotalTime-AfterTime)/TimeFromCurve1B(end));
+TimeFromCurve2B = TimeFromCurve2B*((TotalTime-AfterTime)/TimeFromCurve2B(end));
 
 % parameters
 fps     = 30;
-MaxTime = ceil(TimeFromBez1A(end)*fps)/fps;
+MaxTime = ceil(TimeFromCurve1A(end)*fps)/fps;
 nTimes  = MaxTime*fps;
 
 % help
-idxx1A = 1:size(TimeFromBez1A,2);
-idxx2A = 1:size(TimeFromBez2A,2);
-idxx1B = 1:size(TimeFromBez1B,2);
-idxx2B = 1:size(TimeFromBez2B,2);
+idxx1A = 1:size(TimeFromCurve1A,2);
+idxx2A = 1:size(TimeFromCurve2A,2);
+idxx1B = 1:size(TimeFromCurve1B,2);
+idxx2B = 1:size(TimeFromCurve2B,2);
 
 aang = 0:(2*pi/ ceil( 2*pi/(MaxDistDelta/WheelRadius) )):(2*pi);
 circ = WheelRadius*[cos(aang); sin(aang)];
@@ -100,10 +116,10 @@ for i = 0:nTimes
   end
   %
   %CurrPts = idxx(and(TimeFromMarker>=(i-1.1)/fps,TimeFromMarker<=(i+0.1)/fps));
-  CurrPts1A = idxx1A(TimeFromBez1A<=i/fps);
-  CurrPts2A = idxx2A(TimeFromBez2A<=i/fps);
-  CurrPts1B = idxx1B(TimeFromBez1B<=i/fps);
-  CurrPts2B = idxx2B(TimeFromBez2B<=i/fps);
+  CurrPts1A = idxx1A(TimeFromCurve1A<=i/fps);
+  CurrPts2A = idxx2A(TimeFromCurve2A<=i/fps);
+  CurrPts1B = idxx1B(TimeFromCurve1B<=i/fps);
+  CurrPts2B = idxx2B(TimeFromCurve2B<=i/fps);
   if ~( isempty(CurrPts1A) & isempty(CurrPts2A) ) % if no points will be added. skip drawing loop
   %
   % keep the base elements
