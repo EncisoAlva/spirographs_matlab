@@ -69,14 +69,30 @@ f1 = figure('Visible','off','Name','Just the curve');
 hold on
 axis equal
 axis off
-xlim([ ...
-  min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllBezierPos{1}(1,:))] )...
-  max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllBezierPos{1}(1,:))] )...
-  ])
-ylim([ ...
-  min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllBezierPos{1}(2,:))] )...
-  max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllBezierPos{1}(2,:))] )...
-  ])
+%
+% make sure that everything fits, and the creen ratio is ok
+switch Orientation
+  case 'in'
+    ExtraBorder = 0;
+  case 'out'
+    ExtraBorder = 2*WheelRadius;
+end
+x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllBezierPos{1}(1,:))-ExtraBorder] );
+xF = min( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllBezierPos{1}(1,:))+ExtraBorder] );
+y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllBezierPos{1}(2,:))-ExtraBorder] );
+yF = min( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllBezierPos{1}(2,:))+ExtraBorder] );
+%
+x_ran = xF - x0;
+y_ran = yF - y0;
+ref_ran = max(x_ran, y_ran);
+%
+x0 = x0 - (ref_ran - x_ran)/2;
+xF = xF + (ref_ran - x_ran)/2;
+y0 = y0 - (ref_ran - y_ran)/2;
+yF = yF + (ref_ran - y_ran)/2;
+%
+xlim([x0 xF])
+ylim([y0 yF])
 %
 %fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
 plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',.15*[1,1,1],'LineWidth',2)
