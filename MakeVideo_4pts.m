@@ -24,6 +24,7 @@ function MakeVideo_4pts( WheelRadius, TimerefCurve, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  CurveColor, ...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName )
 
@@ -86,10 +87,14 @@ f1 = figure('Visible','off','Name','Just the curve');
 hold on
 axis equal
 axis off
-xlim([min(AllMarkerPos{1}(1,:)) max(AllMarkerPos{1}(1,:))])
-ylim([min(AllMarkerPos{1}(2,:)) max(AllMarkerPos{1}(2,:))])
-xlim([min(AllMarkerPos{2}(1,:)) max(AllMarkerPos{2}(1,:))])
-ylim([min(AllMarkerPos{2}(2,:)) max(AllMarkerPos{2}(2,:))])
+xlim([ ...
+  min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllBezierPos{1}(1,:))] )...
+  max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllBezierPos{1}(1,:))] )...
+  ])
+ylim([ ...
+  min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllBezierPos{1}(2,:))] )...
+  max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllBezierPos{1}(2,:))] )...
+  ])
 %
 %fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
 plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
@@ -128,10 +133,10 @@ for i = 0:nTimes
   set(0,"CurrentFigure",f2)
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),'magenta')
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),'yellow')
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),'yellow')
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),'magenta')
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1})
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2})
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3})
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4})
   %
   j1A = min( [max(CurrPts1A), size(AllLocTime{1},2), size(AllBezierPos{1},2)]);
   j2A = min( [max(CurrPts2A), size(AllLocTime{2},2), size(AllBezierPos{2},2)]);
@@ -166,10 +171,10 @@ for i = 0:nTimes
     plot(RefWheelCtrB(1)+[0,cos(aux_angles(w)+RefAngleB)*WheelRadius],RefWheelCtrB(2)+[0,sin(aux_angles(w)+RefAngleB)*WheelRadius],...
       'Color',[0,0,0,0.5])
   end
-  scatter(AllMarkerPos{1}(1,j1A),AllMarkerPos{1}(2,j1A),10,'magenta','filled')
-  scatter(AllMarkerPos{2}(1,j2A),AllMarkerPos{2}(2,j2A),10,'yellow','filled')
-  scatter(AllMarkerPos{3}(1,j1B),AllMarkerPos{3}(2,j1B),10,'yellow','filled')
-  scatter(AllMarkerPos{4}(1,j2B),AllMarkerPos{4}(2,j2B),10,'magenta','filled')
+  scatter(AllMarkerPos{1}(1,j1A),AllMarkerPos{1}(2,j1A),10,CurveColor{1},'filled')
+  scatter(AllMarkerPos{2}(1,j2A),AllMarkerPos{2}(2,j2A),10,CurveColor{2},'filled')
+  scatter(AllMarkerPos{3}(1,j1B),AllMarkerPos{3}(2,j1B),10,CurveColor{3},'filled')
+  scatter(AllMarkerPos{4}(1,j2B),AllMarkerPos{4}(2,j2B),10,CurveColor{4},'filled')
   scatter(RefBez(1),RefBez(2),10,'white','filled')
   %
   end
