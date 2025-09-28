@@ -20,7 +20,7 @@
 % ** No explicit output. Video is saved to path. **
 %
 %
-function MakeVideo_2pts( WheelRadius, TimerefCurve, ...
+function MakeVideo_2pts( WheelRadius, TimerefCurve, Orientation, ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
@@ -44,8 +44,8 @@ switch TimerefCurve
 end
 
 % duration of video
-TimeFromCurve1 = TimeFromCurve1*((TotalTime-AfterTime-BeforeTime)/TimeFromCurve1(end));
-TimeFromCurve2 = TimeFromCurve2*((TotalTime-AfterTime-BeforeTime)/TimeFromCurve2(end));
+TimeFromCurve1 = TimeFromCurve1*((TotalTime-AfterTime)/TimeFromCurve1(end));
+TimeFromCurve2 = TimeFromCurve2*((TotalTime-AfterTime)/TimeFromCurve2(end));
 
 % parameters
 fps = 30;
@@ -77,10 +77,10 @@ switch Orientation
   case 'out'
     ExtraBorder = 2*WheelRadius;
 end
-x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllBezierPos{1}(1,:))-ExtraBorder] );
-xF = min( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllBezierPos{1}(1,:))+ExtraBorder] );
-y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllBezierPos{1}(2,:))-ExtraBorder] );
-yF = min( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllBezierPos{1}(2,:))+ExtraBorder] );
+x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), (min(AllBezierPos{1}(1,:))-ExtraBorder)] );
+xF = max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), (max(AllBezierPos{1}(1,:))+ExtraBorder)] );
+y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), (min(AllBezierPos{1}(2,:))-ExtraBorder)] );
+yF = max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), (max(AllBezierPos{1}(2,:))+ExtraBorder)] );
 %
 x_ran = xF - x0;
 y_ran = yF - y0;
@@ -110,11 +110,6 @@ copyobj(f1.Children,f2)
 set(0,"CurrentFigure",f2)
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'magenta')
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'yellow')
-
-% stop for some time before, showing spoilers everything is finished
-for stopper = 0:(fps*BeforeTime)
-  writeVideo(v,getframe)
-end
 
 % main loop
 WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...

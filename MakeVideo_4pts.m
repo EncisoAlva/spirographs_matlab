@@ -95,10 +95,10 @@ switch Orientation
   case 'out'
     ExtraBorder = 2*WheelRadius;
 end
-x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllMarkerPos{3}(1,:)), min(AllMarkerPos{4}(1,:)), min(AllBezierPos{1}(1,:))-ExtraBorder] );
-xF = min( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllMarkerPos{3}(1,:)), max(AllMarkerPos{4}(1,:)), max(AllBezierPos{1}(1,:))+ExtraBorder] );
-y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllMarkerPos{3}(2,:)), min(AllMarkerPos{4}(2,:)), min(AllBezierPos{1}(2,:))-ExtraBorder] );
-yF = min( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllMarkerPos{3}(2,:)), max(AllMarkerPos{4}(2,:)), max(AllBezierPos{1}(2,:))+ExtraBorder] );
+x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllMarkerPos{3}(1,:)), min(AllMarkerPos{4}(1,:)), (min(AllBezierPos{1}(1,:))-ExtraBorder)] );
+xF = max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllMarkerPos{3}(1,:)), max(AllMarkerPos{4}(1,:)), (max(AllBezierPos{1}(1,:))+ExtraBorder)] );
+y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllMarkerPos{3}(2,:)), min(AllMarkerPos{4}(2,:)), (min(AllBezierPos{1}(2,:))-ExtraBorder)] );
+yF = max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllMarkerPos{3}(2,:)), max(AllMarkerPos{4}(2,:)), (max(AllBezierPos{1}(2,:))+ExtraBorder)] );
 %
 x_ran = xF - x0;
 y_ran = yF - y0;
