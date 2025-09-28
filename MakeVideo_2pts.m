@@ -20,37 +20,43 @@
 % ** No explicit output. Video is saved to path. **
 %
 %
-function MakeVideo_2pts( WheelRadius, ...
-  BezierPos, ...
-  WhCtrPos1, MarkerPos1, MarkerAngle1,...
-  WhCtrPos2, MarkerPos2, MarkerAngle2,...
+function MakeVideo_2pts( WheelRadius, TimerefCurve, ...
+  DecorativeBez,...
+  AllBezierPos, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
-  TotalTime, BeforeTime, AfterTime, VidName )
+  TotalTime, AfterTime, VidName )
 
 % time, parametrized by the arc of the marker or the ar of the wheel center
-%TimeFromMarker = zeros(1,size(MarkerPos1,2));
-%TimeFromMarker(2:end) = cumsum( vecnorm( diff(MarkerPos1,1,2), 2, 1 ) );
+switch TimerefCurve
+  case 'Bezier'
+    TimeFromCurve1 = zeros(1,size(AllBezierPos{1},2));
+    TimeFromCurve1(2:end) = cumsum( vecnorm( diff(AllBezierPos{1},1,2), 2, 1 ) );
 
-TimeFromWheel1 = zeros(1,size(WhCtrPos1,2));
-TimeFromWheel1(2:end) = cumsum( vecnorm( diff(WhCtrPos1,1,2), 2, 1 ) );
+    TimeFromCurve2 = zeros(1,size(AllBezierPos{2},2));
+    TimeFromCurve2(2:end) = cumsum( vecnorm( diff(AllBezierPos{2},1,2), 2, 1 ) );
+  case 'Wheel'
+    TimeFromCurve1 = zeros(1,size(AllWhCtrPos{1},2));
+    TimeFromCurve1(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{1},1,2), 2, 1 ) );
 
-TimeFromWheel2 = zeros(1,size(WhCtrPos2,2));
-TimeFromWheel2(2:end) = cumsum( vecnorm( diff(WhCtrPos2,1,2), 2, 1 ) );
+    TimeFromCurve2 = zeros(1,size(AllWhCtrPos{2},2));
+    TimeFromCurve2(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{2},1,2), 2, 1 ) );
+end
 
 % duration of video
-TimeFromWheel1 = TimeFromWheel1*((TotalTime-AfterTime-BeforeTime)/TimeFromWheel1(end));
-TimeFromWheel2 = TimeFromWheel2*((TotalTime-AfterTime-BeforeTime)/TimeFromWheel2(end));
+TimeFromCurve1 = TimeFromCurve1*((TotalTime-AfterTime-BeforeTime)/TimeFromCurve1(end));
+TimeFromCurve2 = TimeFromCurve2*((TotalTime-AfterTime-BeforeTime)/TimeFromCurve2(end));
 
 % parameters
 fps = 30;
 %MaxTime = ceil(TimeFromMarker(end)*fps)/fps;
-MaxTime = ceil(TimeFromWheel1(end)*fps)/fps;
+MaxTime = ceil(TimeFromCurve1(end)*fps)/fps;
 nTimes = MaxTime*fps;
 
 % help
 %idxx = 1:size(TimeFromMarker,2);
-idxx1 = 1:size(TimeFromWheel1,2);
-idxx2 = 1:size(TimeFromWheel2,2);
+idxx1 = 1:size(TimeFromCurve1,2);
+idxx2 = 1:size(TimeFromCurve2,2);
 aang = 0:(2*pi/ ceil( 2*pi/(MaxDistDelta/WheelRadius) )):(2*pi);
 circ = WheelRadius*[cos(aang); sin(aang)];
 aux_angles = 0:(pi/3):(2*pi);
@@ -64,16 +70,16 @@ hold on
 axis equal
 axis off
 xlim([ ...
-  min( [min(MarkerPos1(1,:)), min(MarkerPos2(1,:)), min(BezierPos(1,:))] )...
-  max( [max(MarkerPos1(1,:)), max(MarkerPos2(1,:)), max(BezierPos(1,:))] )...
+  min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), min(AllBezierPos{1}(1,:))] )...
+  max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), max(AllBezierPos{1}(1,:))] )...
   ])
 ylim([ ...
-  min( [min(MarkerPos1(2,:)), min(MarkerPos2(2,:)), min(BezierPos(2,:))] )...
-  max( [max(MarkerPos1(2,:)), max(MarkerPos2(2,:)), max(BezierPos(2,:))] )...
+  min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), min(AllBezierPos{1}(2,:))] )...
+  max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllBezierPos{1}(2,:))] )...
   ])
 %
 %fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
-plot(BezierPos(1,:),BezierPos(2,:),'Color',.15*[1,1,1],'LineWidth',2)
+plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',.15*[1,1,1],'LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
@@ -86,8 +92,8 @@ open(v)
 % take specifications from figure 1
 copyobj(f1.Children,f2)
 set(0,"CurrentFigure",f2)
-plot(MarkerPos1(1,:),MarkerPos1(2,:),'magenta')
-plot(MarkerPos2(1,:),MarkerPos2(2,:),'yellow')
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'magenta')
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'yellow')
 
 % stop for some time before, showing spoilers everything is finished
 for stopper = 0:(fps*BeforeTime)
@@ -114,30 +120,30 @@ for i = 0:nTimes
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
   %
-  CurrPts1 = idxx1(TimeFromWheel1<=(i+0.1)/fps);
-  CurrPts2 = idxx2(TimeFromWheel2<=(i+0.1)/fps);
+  CurrPts1 = idxx1(TimeFromCurve1<=(i+0.1)/fps);
+  CurrPts2 = idxx2(TimeFromCurve2<=(i+0.1)/fps);
   if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(MarkerPos1(1,CurrPts1),MarkerPos1(2,CurrPts1),'magenta')
-  plot(MarkerPos2(1,CurrPts2),MarkerPos2(2,CurrPts2),'yellow')
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta')
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow')
   %
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);
   if ~isempty(j1)
-    RefWheelCtr = WhCtrPos1(:,j1);
-    RefAngle = MarkerAngle1(j1);
+    RefWheelCtr = AllWhCtrPos{1}(:,j1);
+    RefAngle = AllMarkerAngle{1}(j1);
   else
-    RefWheelCtr = WhCtrPos2(:,j2);
-    RefAngle = MarkerAngle2(j2);
+    RefWheelCtr = AllWhCtrPos{2}(:,j2);
+    RefAngle = AllMarkerAngle{2}(j2);
   end
   fill(RefWheelCtr(1)+circ(1,:),RefWheelCtr(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
   for w = 1:size(aux_angles,2)
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
       'Color',[0,0,0,0.5])
   end
-  scatter(MarkerPos1(1,j1),MarkerPos1(2,j1),10,'magenta','filled')
-  scatter(MarkerPos2(1,j2),MarkerPos2(2,j2),10,'yellow','filled')
+  scatter(AllMarkerPos{1}(1,j1),AllMarkerPos{1}(2,j1),10,'magenta','filled')
+  scatter(AllMarkerPos{2}(1,j2),AllMarkerPos{2}(2,j2),10,'yellow','filled')
   %
   end
   writeVideo(v,getframe)

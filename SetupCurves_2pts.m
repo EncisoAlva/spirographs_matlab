@@ -28,17 +28,22 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BezierPos1, BezierPos2, ...
-  LocTime1, ...
-  WhCtrPos1, MarkerPos1, MarkerAngle1,...
-  LocTime2, ...
-  WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
+function [ DecorativeBez,...
+  AllBezierPos, AllLocTime, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_2pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
     CloseTol, MaxSpins)
 
-% Bezier curve
-%BezierPos = AllBezierEval( CtrlPtsArray, MaxDistDelta );
+% this evaluation is for background decoration only
+DecorativeBez = AllBezierEval(CtrlPtsArray, MaxDistDelta);
+
+% containers
+AllBezierPos   = {};
+AllLocTime     = {};
+AllWhCtrPos    = {};
+AllMarkerPos   = {};
+AllMarkerAngle = {};
 
 % spirograph curve
 [LocTime1, BezierPos1, WhCtrPos1, MarkerPos1, MarkerAngle1] = ...
@@ -57,5 +62,21 @@ MarkerAngle1(end+1) = MarkerAngle1(1);
 
 MarkerPos2(:,end+1) = MarkerPos2(:,1);
 MarkerAngle2(end+1) = MarkerAngle2(1);
+
+% Store results in containers
+AllBezierPos{1} = BezierPos1;
+AllBezierPos{2} = BezierPos2;
+%
+AllLocTime{1} = LocTime1;
+AllLocTime{2} = LocTime2;
+%
+AllWhCtrPos{1} = WhCtrPos1;
+AllWhCtrPos{2} = WhCtrPos2;
+%
+AllMarkerPos{1} = MarkerPos1;
+AllMarkerPos{2} = MarkerPos2;
+%
+AllMarkerAngle{1} = MarkerAngle1;
+AllMarkerAngle{2} = MarkerAngle2;
 
 end

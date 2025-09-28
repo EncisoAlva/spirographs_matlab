@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','BumpCircle'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Balls6'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -78,11 +78,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9+3/5;
+WheelBezRatio = 6;
 WheelMarkerRatio = 3/4;
 
 % willing to loose 1% of total area due to each corner rounding
-CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
+CornerRoundingRadius = sqrt(0.01*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
 
 %% 
 % remove inner corners
@@ -134,7 +134,7 @@ hold on
 axis equal
 grid on
 fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
-fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
+%fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 
 % preview result
 [~, ~, ~, ~, MarkerPos1, ~, ~, ~, MarkerPos2, ~] = ...
@@ -149,6 +149,15 @@ grid on
 fill(BezNew(1,:),BezNew(2,:), .15*[1,1,1], 'EdgeColor', 'none')
 %fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none'); 
 %fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none'); 
+plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
+plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
+set(gca,'color', 'k');
+
+[~, ~, ~, ~, MarkerPos1, ~, ~, ~, MarkerPos2, ~] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, WheelRadius, MarkerAngle0, ...
+    MaxDistDelta, CloseTol, MaxSpins);
+BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
+
 plot(MarkerPos1(1,:),MarkerPos1(2,:),'yellow')
 plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
 set(gca,'color', 'k');
@@ -181,13 +190,21 @@ fill(MarkerPos1(1,:),MarkerPos1(2,:), 'magenta', 'EdgeColor', 'none');
   WhCtrPos2, MarkerPos2, MarkerAngle2] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, CloseTol, MaxSpins);
+[~, ~, ...
+  ~,...
+  ~, MarkerPos3, ~,...
+  ~,...
+  ~, MarkerPos4, ~] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, WheelRadius, MarkerAngle0, ...
+    MaxDistDelta, CloseTol, MaxSpins);
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
 
 % video
 close all
-MakeVideo_2pts( WheelRadius, ...
+MakeVideo_2pts_multi( WheelRadius, ...
   BezOG, ...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
   WhCtrPos2, MarkerPos2, MarkerAngle2,...
+  MarkerPos3, MarkerPos4, ...
   MaxDistDelta,...
-  60, 0, 5, 'test_250925_12' )
+  60, 0, 5, 'test_250927_21' )

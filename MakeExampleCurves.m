@@ -2,6 +2,12 @@
 % to use them for exploring.
 
 %%
+% line
+Line = { LineToBezier([0,0]', [1,0]'), ...
+  LineToBezier([1,0]', [-1,0]'),...
+  LineToBezier([-1,0]', [0,0]')};
+
+%%
 % letter C from circles
 LetterC = {[...
   [-3,0]',...
@@ -603,6 +609,28 @@ end
 [c1,c2] = HalfBezierSingle(Angel6{1});
 Angel6{1} = c2;
 Angel6{end+1} = c1;
+
+clear aang hex_pts CurrCtrl c1 c2 i
+
+%%
+% 6 hexagon circles stitched together
+aang = -(0:(2*pi/6):2*pi)+pi/2+pi/6;
+hex_pts = [cos(aang); sin(aang)]*cot(pi/6);
+
+Balls6 = {};
+for i = 1:6
+  CurrCtrl = zeros(2,4);
+  CurrCtrl(:,1) = hex_pts(:,i  );
+  CurrCtrl(:,2) = hex_pts(:,i  )*(1 +(4/3)*tan(pi/3) );
+  CurrCtrl(:,3) = hex_pts(:,i+1)*(1 +(4/3)*tan(pi/3) );
+  CurrCtrl(:,4) = hex_pts(:,i+1);
+  Balls6{end+1} = CurrCtrl;
+end
+
+% change starting point (artistic choice)
+[c1,c2] = HalfBezierSingle(Balls6{1});
+Balls6{1} = c2;
+Balls6{end+1} = c1;
 
 clear aang hex_pts CurrCtrl c1 c2 i
 
