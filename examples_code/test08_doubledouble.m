@@ -14,7 +14,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/arrows4.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/CopperBlack_M.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -24,10 +24,32 @@ CtrlPtsArray = RemovePointCurves( CtrlPtsArray, 0.0001 );
 % this one is because I'm using absolute tolerance instead of relative
 CtrlPtsArray = RescaleShape( CtrlPtsArray, 2, 2 );
 
-if false
+% line with bad encoding, the normal vector will be wrong
+nCurves = size(CtrlPtsArray,2);
+for i = 1:nCurves
+  CurrCurve = CtrlPtsArray{i};
+  if norm(CurrCurve(:,1)-CurrCurve(:,2)) < 0.001
+    if abs( norm(CurrCurve(:,2)-CurrCurve(:,3)) + norm(CurrCurve(:,3)-CurrCurve(:,4)) - norm(CurrCurve(:,2)-CurrCurve(:,4)) ) < 0.001
+      CtrlPtsArray{i} = LineToBezier( CurrCurve(:,1), CurrCurve(:,4) );
+      continue
+    end
+  end
+  if norm(CurrCurve(:,3)-CurrCurve(:,4)) < 0.001
+    if abs( norm(CurrCurve(:,1)-CurrCurve(:,2)) + norm(CurrCurve(:,2)-CurrCurve(:,3)) - norm(CurrCurve(:,1)-CurrCurve(:,3)) ) < 0.001
+      CtrlPtsArray{i} = LineToBezier( CurrCurve(:,1), CurrCurve(:,4) );
+      continue
+    end
+  end
+end
+
+% rotate half a spin
 for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
 end
+
+% invert orientation, if needed
+if false
+  CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
 end
 
 %%
@@ -60,8 +82,10 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5 + 1/5;
+WheelBezRatio = 40 + 1/6;
 WheelMarkerRatio = 1;
+
+ScalingFactor = 3;
 
 %% 
 % remove corners inside and outside
@@ -70,18 +94,22 @@ WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
 
 while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
   [CtrlPtsArray_new_inv] = ...
-    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/3, MaxDistDelta, true );
+    RemoveAllCorners( FlipBezierAll(CtrlPtsArray), WheelRadius_new/ScalingFactor, MaxDistDelta, true );
   [CtrlPtsArray_new] = ...
     RemoveAllCorners( FlipBezierAll(CtrlPtsArray_new_inv), WheelRadius_new, MaxDistDelta, false );
   %
   WheelRadius_old = WheelRadius_new;
   WheelRadius_new = (BezierPerimeter(CtrlPtsArray_new,0.00001)/(2*pi))/WheelBezRatio
 end
-
 WheelRadius  = WheelRadius_new;
 MarkerRadius = WheelRadius*WheelMarkerRatio;
 
-%CtrlPtsArray_new = CtrlPtsArray;
+if false
+  WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
+  CtrlPtsArray_new = CtrlPtsArray;
+  WheelRadius  = WheelRadius_new;
+  MarkerRadius = WheelRadius*WheelMarkerRatio;
+end
 
 %%
 % check if results are good enough
@@ -105,7 +133,15 @@ grid on
 fill(BezOG(1,:), BezOG(2,:),  'y', 'EdgeColor', 'none');
 fill(BezNew(1,:),BezNew(2,:), 'r', 'EdgeColor', 'none');
 
+%%
+
 % preview of the result
+[ DecorativeBez,...
+  AllBezierPos, AllLocTime, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
+  SetupCurves_2pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins)
 [~, ~, ...
   ~,...
   WhCtrPos1, MarkerPos1, MarkerAngle1,...
@@ -125,11 +161,12 @@ plot(MarkerPos2(1,:),MarkerPos2(2,:),'magenta')
 %%
 % preview
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
-  SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta/2, CloseTol, MaxSpins,1);
+  SetupCurves_4pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    ScalingFactor, ...
+    MaxDistDelta/2, CloseTol, MaxSpins);
 
 figure()
-%fill(DecorativeBez(1,:),DecorativeBez(2,:), [.4,.4,.4], 'EdgeColor', 'none'); 
+plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color', [.4,.4,.4], 'EdgeColor', 'none'); 
 hold on
 axis equal
 axis off

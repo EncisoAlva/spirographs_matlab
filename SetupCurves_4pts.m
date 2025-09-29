@@ -32,6 +32,7 @@ function [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_4pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    ScaleFactor, ...
     MaxDistDelta, ...
     CloseTol, MaxSpins)
 
@@ -46,59 +47,53 @@ AllMarkerPos   = {};
 AllMarkerAngle = {};
 
 % outer curves
-[BezierPos1A, BezierPos2A, ...
-  LocTime1A,...
-  WhCtrPos1A, MarkerPos1A, MarkerAngle1A,...
-  LocTime2A,...
-  WhCtrPos2A, MarkerPos2A, MarkerAngle2A] = ...
+[ DecorativeBez,...
+  AllBezierPosA, AllLocTimeA, ...
+  AllWhCtrPosA, AllMarkerPosA, AllMarkerAngleA ] = ...
   SetupCurves_2pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, CloseTol, MaxSpins);
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
 
-[BezierPos1B, BezierPos2B, ...
-  LocTime1B,...
-  WhCtrPos1B, MarkerPos1B, MarkerAngle1B,...
-  LocTime2B,...
-  WhCtrPos2B, MarkerPos2B, MarkerAngle2B] = ...
-  SetupCurves_2pts( FlipBezierAll(CtrlPtsArray), WheelRadius, MarkerRadius, -MarkerAngle0+pi, ...
-    MaxDistDelta, CloseTol, MaxSpins);
+% inner curves
+[ ~,...
+  AllBezierPosB, AllLocTimeB, ...
+  AllWhCtrPosB, AllMarkerPosB, AllMarkerAngleB ] = ...
+  SetupCurves_2pts( FlipBezierAll(CtrlPtsArray), WheelRadius/ScaleFactor, MarkerRadius/ScaleFactor, -MarkerAngle0+pi, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
 
-BezierPos1B   = flip(BezierPos1B, 2);
-WhCtrPos1B    = flip( WhCtrPos1B, 2 );
-MarkerPos1B   = flip(MarkerPos1B, 2);
-MarkerAngle1B = flip(MarkerAngle1B, 2);
+AllBezierPosB{1}   = flip(AllBezierPosB{1}, 2);
+AllWhCtrPosB{1}    = flip( AllWhCtrPosB{1}, 2 );
+AllMarkerPosB{1}   = flip(AllMarkerPosB{1}, 2);
+AllMarkerAngleB{1} = flip(AllMarkerAngleB{1}, 2);
 %
-BezierPos2B   = flip(BezierPos2B, 2);
-WhCtrPos2B    = flip(WhCtrPos2B, 2);
-MarkerPos2B   = flip(MarkerPos2B, 2);
-MarkerAngle2B = flip(MarkerAngle2B, 2);
+AllBezierPosB{2}   = flip(AllBezierPosB{2}, 2);
+AllWhCtrPosB{2}    = flip(AllWhCtrPosB{2}, 2);
+AllMarkerPosB{2}   = flip(AllMarkerPosB{2}, 2);
+AllMarkerAngleB{2} = flip(AllMarkerAngleB{2}, 2);
 
-LocTime1B = max(LocTime1B) - flip(LocTime1B);
-LocTime2B = max(LocTime2B) - flip(LocTime2B);
+AllLocTimeB{1} = max(AllLocTimeB{1}) - flip(AllLocTimeB{1});
+AllLocTimeB{2} = max(AllLocTimeB{2}) - flip(AllLocTimeB{2});
+
+% multiplicity due to scaling factor
+if ScaleFactor > 1
+  AllBezierPosB{1}   = kron(ones(1,ScaleFactor), AllBezierPosB{1});
+  AllBezierPosB{2}   = kron(ones(1,ScaleFactor), AllBezierPosB{2});
+  AllLocTimeB{1}     = kron(ones(1,ScaleFactor), AllLocTimeB{1}) + kron( AllLocTimeB{1}(end)*(0:(ScaleFactor-1)), ones(size(AllLocTimeB{1})) );
+  AllLocTimeB{2}     = kron(ones(1,ScaleFactor), AllLocTimeB{2}) + kron( AllLocTimeB{2}(end)*(0:(ScaleFactor-1)), ones(size(AllLocTimeB{2})) );
+  AllWhCtrPosB{1}    = kron(ones(1,ScaleFactor), AllWhCtrPosB{1});
+  AllWhCtrPosB{2}    = kron(ones(1,ScaleFactor), AllWhCtrPosB{2});
+  AllMarkerPosB{1}   = kron(ones(1,ScaleFactor), AllMarkerPosB{1});
+  AllMarkerPosB{2}   = kron(ones(1,ScaleFactor), AllMarkerPosB{2});
+  AllMarkerAngleB{1} = kron(ones(1,ScaleFactor), AllMarkerAngleB{1});
+  AllMarkerAngleB{2} = kron(ones(1,ScaleFactor), AllMarkerAngleB{2});
+end
 
 % Store results in containers
-AllBezierPos{1} = BezierPos1A;
-AllBezierPos{2} = BezierPos2A;
-AllBezierPos{3} = BezierPos1B;
-AllBezierPos{4} = BezierPos2B;
-%
-AllLocTime{1} = LocTime1A;
-AllLocTime{2} = LocTime2A;
-AllLocTime{3} = LocTime1B;
-AllLocTime{4} = LocTime2B;
-%
-AllWhCtrPos{1} = WhCtrPos1A;
-AllWhCtrPos{2} = WhCtrPos2A;
-AllWhCtrPos{3} = WhCtrPos1B;
-AllWhCtrPos{4} = WhCtrPos2B;
-%
-AllMarkerPos{1} = MarkerPos1A;
-AllMarkerPos{2} = MarkerPos2A;
-AllMarkerPos{3} = MarkerPos1B;
-AllMarkerPos{4} = MarkerPos2B;
-%
-AllMarkerAngle{1} = MarkerAngle1A;
-AllMarkerAngle{2} = MarkerAngle2A;
-AllMarkerAngle{3} = MarkerAngle1B;
-AllMarkerAngle{4} = MarkerAngle2B;
+AllBezierPos = [ AllBezierPosA, AllBezierPosB ];
+AllLocTime   = [ AllLocTimeA, AllLocTimeB ];
+AllWhCtrPos  = [ AllWhCtrPosA, AllWhCtrPosB ];
+AllMarkerPos = [ AllMarkerPosA, AllMarkerPosB ];
+AllMarkerAngle = [ AllMarkerAngleA, AllMarkerAngleB ];
 
 end
