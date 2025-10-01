@@ -82,10 +82,10 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 35 + 1/6;
+WheelBezRatio = 40 + 1/5;
 WheelMarkerRatio = 1;
 
-ScalingFactor = 2;
+ScalingFactor = 5;
 
 %% 
 % remove corners inside and outside
@@ -146,10 +146,13 @@ hold on
 axis equal
 axis off
 grid off
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
+%plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow')
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta')
 plot(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:),'magenta')
-plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'yellow')
+%plot(AllMarkerPos{4}(1,:),AllMarkerPos{4}(2,:),'yellow')
+
+plot(AllWhCtrPos{2}(1,:),AllWhCtrPos{2}(2,:),'red')
+plot(AllWhCtrPos{3}(1,:),AllWhCtrPos{3}(2,:),'red')
 
 %%
 
@@ -165,27 +168,27 @@ fill(AllMarkerPos{3}(1,:),AllMarkerPos{3}(2,:), 'k', 'EdgeColor', 'none');
 
 %%
 % video parameters
-TotalTime = 60;
+TotalTime = 55;
 AfterTime = 5;
 
-VidName = 'doubledouble250926_21';
+VidName = 'doubledouble250928_24_2';
 
 %%
-% update curve 
-CtrlPtsArray = CtrlPtsArray_new;
 
 % make curves
 [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-  SetupCurves_4pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, CloseTol, MaxSpins);
+  SetupCurves_4pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    ScalingFactor, ...
+    MaxDistDelta/2, CloseTol, MaxSpins);
 
 % video
-MakeVideo_4pts( WheelRadius, ...
+MakeVideo_INO( WheelRadius, 'Bezier', 'out', ...
+  ScalingFactor, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  {'yellow', 'yellow', 'yellow', 'yellow'}, ...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName )
-
