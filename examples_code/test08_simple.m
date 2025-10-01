@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Fidget3'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Number8'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -45,6 +45,15 @@ for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
 end
 
+% rotate by an angle
+if false
+  th = pi/2;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  for i = 1:size(CtrlPtsArray, 2)
+    CtrlPtsArray{i} = ROT * CtrlPtsArray{i};
+  end
+end
+
 % invert orientation, if needed
 if false
   CtrlPtsArray = FlipBezierAll(CtrlPtsArray);
@@ -80,7 +89,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9;
+WheelBezRatio = 5;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -187,7 +196,7 @@ axis equal
 axis off
 grid off
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow', 'LineWidth',2)
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta', 'LineWidth',2)
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'yellow', 'LineWidth',2)
 set(gca,'color', 'k');
 
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
@@ -195,8 +204,8 @@ set(gca,'color', 'k');
     MaxDistDelta, ...
     CloseTol, MaxSpins);
 
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'red', 'LineWidth',2)
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'red', 'LineWidth',2)
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'magenta', 'LineWidth',2)
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta', 'LineWidth',2)
 set(gca,'color', 'k');
 
 %%
@@ -232,13 +241,15 @@ AllMarkerAngle = [ AllMarkerAngle1, AllMarkerAngle2 ];
 AllLocTime     = [ AllLocTime1,     AllLocTime2 ];
 
 % video
-MakeVideo_4pts( WheelRadius, 'Wheel', 'out', ...
+MakeVideo_4pts( WheelRadius, 'Wheel', 'in', ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
-  {'yellow', 'magenta', 'red', 'red'},...
+  {'yellow','yellow', 'magenta', 'magenta'},...
   MaxDistDelta, ...
-  40, 10, 'test_250928_18_2' )
+  40, 10, 'test_251001_01' )
+
+%  {'yellow', 'magenta', 'red', 'red'},...
 
 %%
 
@@ -256,4 +267,4 @@ MakeVideo_2pts( WheelRadius, 'Wheel', 'out', ...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
-  40, 10, 'test_250928_18' )
+  40, 10, 'test_251001_02' )

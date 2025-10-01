@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','LetterI'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Star5'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %CtrlPtsArray = Fidget3;
