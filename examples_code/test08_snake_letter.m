@@ -14,7 +14,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/LetterG.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/CopperBlack_K.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%

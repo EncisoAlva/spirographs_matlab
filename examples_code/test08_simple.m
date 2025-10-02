@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Number8'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','LetterC'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -89,7 +89,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5;
+WheelBezRatio = 1;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -157,6 +157,9 @@ fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
 %fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 
 %%
+ColorVector = {'yellow','magenta', 'red', 'red'};
+
+%%
 
 % preview result
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
@@ -170,8 +173,8 @@ hold on
 axis equal
 grid on
 fill(BezNew(1,:),BezNew(2,:), .15*[1,1,1], 'EdgeColor', 'none')
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow', 'LineWidth',2)
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta', 'LineWidth',2)
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{1}, 'LineWidth',2)
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{2}, 'LineWidth',2)
 set(gca,'color', 'k');
 
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
@@ -179,8 +182,8 @@ set(gca,'color', 'k');
     MaxDistDelta, ...
     CloseTol, MaxSpins);
 
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'red', 'LineWidth',2)
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'red', 'LineWidth',2)
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{3}, 'LineWidth',2)
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{4}, 'LineWidth',2)
 set(gca,'color', 'k');
 
 %%
@@ -195,8 +198,8 @@ hold on
 axis equal
 axis off
 grid off
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'yellow', 'LineWidth',2)
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'yellow', 'LineWidth',2)
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{1}, 'LineWidth',2)
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{2}, 'LineWidth',2)
 set(gca,'color', 'k');
 
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
@@ -204,8 +207,8 @@ set(gca,'color', 'k');
     MaxDistDelta, ...
     CloseTol, MaxSpins);
 
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'magenta', 'LineWidth',2)
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'magenta', 'LineWidth',2)
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{3}, 'LineWidth',2)
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{4}, 'LineWidth',2)
 set(gca,'color', 'k');
 
 %%
@@ -245,9 +248,9 @@ MakeVideo_4pts( WheelRadius, 'Wheel', 'in', ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
-  {'yellow','yellow', 'magenta', 'magenta'},...
+  ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251001_01' )
+  40, 10, 'test_251002_01' )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
@@ -262,9 +265,11 @@ MakeVideo_4pts( WheelRadius, 'Wheel', 'in', ...
     CloseTol, MaxSpins);
 
 % video
-MakeVideo_2pts( WheelRadius, 'Wheel', 'out', ...
+MakeVideo_2pts( WheelRadius, 'Bezier', 'in', ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
   40, 10, 'test_251001_02' )
+
+%Wheel
