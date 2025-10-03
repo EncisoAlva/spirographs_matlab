@@ -12,7 +12,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/CopperBlack_M.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/disc_line.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -44,10 +44,15 @@ end
 for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
 end
+if false
+  for i = 1:size(CtrlPtsArray_new, 2)
+  CtrlPtsArray_new{i} = [1,0; 0,-1] * CtrlPtsArray_new{i};
+  end
+end
 
 % rotate by an angle
 if false
-  th = pi/2;
+  th = 4*pi/3;
   ROT = [cos(th), -sin(th); sin(th), cos(th)];
   for i = 1:size(CtrlPtsArray, 2)
     CtrlPtsArray{i} = ROT * CtrlPtsArray{i};
@@ -89,7 +94,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 1;
+WheelBezRatio = 6;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -157,7 +162,9 @@ fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
 %fill(BezOG(1,:),BezOG(2,:), 'r', 'EdgeColor', 'none');
 
 %%
-ColorVector = {'yellow','magenta', 'red', 'red'};
+ColorVector = {'magenta','yellow', 'red', 'red'};
+
+%CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, -3, false );
 
 %%
 
@@ -176,6 +183,8 @@ fill(BezNew(1,:),BezNew(2,:), .15*[1,1,1], 'EdgeColor', 'none')
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{1}, 'LineWidth',2)
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{2}, 'LineWidth',2)
 set(gca,'color', 'k');
+scatter(AllMarkerPos{1}(1,1),AllMarkerPos{1}(2,1),'red','filled','o')
+scatter(AllMarkerPos{2}(1,1),AllMarkerPos{2}(2,1),'red','filled','o')
 
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 +pi/2, ...
@@ -210,6 +219,21 @@ set(gca,'color', 'k');
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{3}, 'LineWidth',2)
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{4}, 'LineWidth',2)
 set(gca,'color', 'k');
+
+XL = xlim;
+YL = ylim;
+%
+x_ran = XL(2) - XL(1);
+y_ran = YL(2) - YL(1);
+ref_ran = max(x_ran, y_ran);
+%
+XL(1) = XL(1) - (ref_ran - x_ran)/2;
+XL(2) = XL(2) + (ref_ran - x_ran)/2;
+YL(1) = YL(1) - (ref_ran - y_ran)/2;
+YL(2) = YL(2) + (ref_ran - y_ran)/2;
+%
+xlim([XL(1) XL(2)])
+ylim([YL(1) YL(2)])
 
 %%
 figure()
@@ -244,13 +268,13 @@ AllMarkerAngle = [ AllMarkerAngle1, AllMarkerAngle2 ];
 AllLocTime     = [ AllLocTime1,     AllLocTime2 ];
 
 % video
-MakeVideo_4pts( WheelRadius, 'Wheel', 'in', ...
+MakeVideo_4pts( WheelRadius, 'Wheel', 'out', ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251002_01' )
+  40, 10, 'test_251002_20' )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
@@ -265,11 +289,12 @@ MakeVideo_4pts( WheelRadius, 'Wheel', 'in', ...
     CloseTol, MaxSpins);
 
 % video
-MakeVideo_2pts( WheelRadius, 'Bezier', 'in', ...
+MakeVideo_2pts( WheelRadius, 'Wheel', 'in', ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
-  40, 10, 'test_251001_02' )
+  40, 10, 'test_251002_21' )
 
 %Wheel
+%Bezier

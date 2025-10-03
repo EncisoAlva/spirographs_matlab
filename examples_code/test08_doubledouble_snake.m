@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Heart'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Star5'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %CtrlPtsArray = Fidget3;
@@ -80,10 +80,10 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 70+1/8;
+WheelBezRatio = 5+1/6;
 WheelMarkerRatio = 1;
 
-ScaleFactor = 1;
+ScaleFactor = 2;
 
 %% 
 % remove corners inside and outside
@@ -116,12 +116,10 @@ end
 
 %%
 
-[ ~,...
-  AllBezierPos, AllLocTime, ...
-  AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-  SetupCurves_4pts_smaller( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, ...
-    CloseTol, MaxSpins, ScaleFactor);
+[ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
+  SetupCurves_4pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    ScalingFactor, ...
+    MaxDistDelta/2, CloseTol, MaxSpins);
 
 
 %%

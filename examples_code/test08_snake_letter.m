@@ -82,7 +82,7 @@ WheelRadiusTol = 0.0001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 30+1/6;
+WheelBezRatio = 15+1/6;
 WheelMarkerRatio = 1;
 
 ScaleFactor = 2;
@@ -167,7 +167,7 @@ end
 TotalTime = 10;
 LoopTime0 = 10;
 
-VidName = 'snake_251001_21';
+VidName = 'snake_251002_15';
 
 ColorPattern = [0,1, 3,4];
 
