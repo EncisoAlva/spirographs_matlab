@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','LetterC'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Number8'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -52,7 +52,7 @@ end
 
 % rotate by an angle
 if false
-  th = 4*pi/3;
+  th = -pi/2;
   ROT = [cos(th), -sin(th); sin(th), cos(th)];
   for i = 1:size(CtrlPtsArray, 2)
     CtrlPtsArray{i} = ROT * CtrlPtsArray{i};
@@ -94,7 +94,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 6;
+WheelBezRatio = 5;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -241,7 +241,63 @@ hold on
 axis equal
 axis off
 grid off
+
 fill(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:), 'magenta', 'EdgeColor', 'none');
+fill(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:), 'magenta', 'EdgeColor', 'none');
+
+%%
+
+[ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 +pi/2, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
+
+figure()
+hold on
+axis equal
+axis off
+grid off
+AlternatePos = [AllMarkerPos{1}, AllMarkerPos{2}];
+
+fill(AlternatePos(1,:),AlternatePos(2,:), 'red', 'EdgeColor', 'none');
+
+
+%%
+
+figure()
+hold on
+axis equal
+axis off
+grid off
+
+[ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 +pi/2, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
+AlternatePos = [AllMarkerPos{1}, AllMarkerPos{2}];
+fill(AlternatePos(1,:),AlternatePos(2,:), 'green', 'EdgeColor', 'none');
+
+[ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 , ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins);
+AlternatePos = [AllMarkerPos{1}, AllMarkerPos{2}];
+fill(AlternatePos(1,:),AlternatePos(2,:), 'red', 'EdgeColor', 'none');
+
+XL = xlim;
+YL = ylim;
+%
+x_ran = XL(2) - XL(1);
+y_ran = YL(2) - YL(1);
+ref_ran = max(x_ran, y_ran);
+%
+XL(1) = XL(1) - (ref_ran - x_ran)/2;
+XL(2) = XL(2) + (ref_ran - x_ran)/2;
+YL(1) = YL(1) - (ref_ran - y_ran)/2;
+YL(2) = YL(2) + (ref_ran - y_ran)/2;
+%
+xlim([XL(1) XL(2)])
+ylim([YL(1) YL(2)])
 
 
 %%
@@ -268,13 +324,13 @@ AllMarkerAngle = [ AllMarkerAngle1, AllMarkerAngle2 ];
 AllLocTime     = [ AllLocTime1,     AllLocTime2 ];
 
 % video
-MakeVideo_4pts( WheelRadius, 'Wheel', 'out', ...
+MakeVideo_4pts( WheelRadius, 'Bezier', 'out', ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251002_20' )
+  40, 10, 'test_251003_22' )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
@@ -294,7 +350,7 @@ MakeVideo_2pts( WheelRadius, 'Wheel', 'in', ...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
-  40, 10, 'test_251002_21' )
+  40, 10, 'test_251003_22' )
 
 %Wheel
 %Bezier

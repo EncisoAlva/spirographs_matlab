@@ -59,7 +59,7 @@ idxx1 = 1:size(TimeFromCurve1,2);
 idxx2 = 1:size(TimeFromCurve2,2);
 aang = 0:(2*pi/ ceil( 2*pi/(MaxDistDelta/WheelRadius) )):(2*pi);
 circ = WheelRadius*[cos(aang); sin(aang)];
-aux_angles = 0:(pi/3):(2*pi);
+aux_angles = 0:(pi/6):(2*pi);
 
 % original figure
 close all
@@ -144,10 +144,13 @@ for i = 0:nTimes
   if ~isempty(j1)
     RefWheelCtr = AllWhCtrPos{1}(:,j1);
     RefAngle = AllMarkerAngle{1}(j1);
+    RefBez = AllBezierPos{1}(:,j1);
   else
     RefWheelCtr = AllWhCtrPos{2}(:,j2);
     RefAngle = AllMarkerAngle{2}(j2);
+    RefBez = AllBezierPos{2}(:,j2);
   end
+  %
   fill(RefWheelCtr(1)+circ(1,:),RefWheelCtr(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
   for w = 1:size(aux_angles,2)
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
@@ -155,6 +158,7 @@ for i = 0:nTimes
   end
   scatter(AllMarkerPos{1}(1,j1),AllMarkerPos{1}(2,j1),10,'magenta','filled')
   scatter(AllMarkerPos{2}(1,j2),AllMarkerPos{2}(2,j2),10,'yellow','filled')
+  scatter(RefBez(1),RefBez(2),10,'white','filled')
   %
   end
   writeVideo(v,getframe)
