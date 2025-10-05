@@ -12,7 +12,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/disc_line.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/square_circle.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -73,6 +73,7 @@ grid on
 for i = 1:size(CtrlPtsArray,2)
   scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
 end
+scatter(CtrlPtsArray{1}(1,1),CtrlPtsArray{1}(2,1),'red','filled','o')
 
 % show shape
 BezOG  = AllBezierEval(CtrlPtsArray, 0.001);
@@ -94,7 +95,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5;
+WheelBezRatio = 3;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -323,14 +324,17 @@ AllMarkerPos   = [ AllMarkerPos1,   AllMarkerPos2 ];
 AllMarkerAngle = [ AllMarkerAngle1, AllMarkerAngle2 ];
 AllLocTime     = [ AllLocTime1,     AllLocTime2 ];
 
+ExtraOpts = {};
+ExtraOpts.Plot2Circles = false;
+
 % video
-MakeVideo_4pts( WheelRadius, 'Bezier', 'out', ...
+MakeVideo_4pts( WheelRadius, 'Wheel', 'in', ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251003_22' )
+  40, 10, 'test_251004_17', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 

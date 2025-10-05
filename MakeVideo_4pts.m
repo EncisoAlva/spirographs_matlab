@@ -26,7 +26,7 @@ function MakeVideo_4pts( WheelRadius, TimerefCurve, Orientation, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   CurveColor, ...
   MaxDistDelta, ...
-  TotalTime, AfterTime, VidName )
+  TotalTime, AfterTime, VidName, ExtraOpts )
 
 % time is parametrized by the path over the Bezier curve or the path
 % described by the wheel center
@@ -102,15 +102,21 @@ yF = max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), max(AllMarkerPo
 %
 x_ran = xF - x0;
 y_ran = yF - y0;
-ref_ran = max(x_ran, y_ran);
-%
-x0 = x0 - (ref_ran - x_ran)/2;
-xF = xF + (ref_ran - x_ran)/2;
-y0 = y0 - (ref_ran - y_ran)/2;
-yF = yF + (ref_ran - y_ran)/2;
+if y_ran/x_ran < 16/9
+  y_ran_new = x_ran*(16/9);
+  y0 = y0 - (y_ran_new - y_ran)/2;
+  yF = yF + (y_ran_new - y_ran)/2;
+else 
+  if y_ran/x_ran > 16/9
+    x_ran_new = x_ran/(16/9);
+    x0 = x0 - (x_ran_new - x_ran)/2;
+    xF = xF + (x_ran_new - x_ran)/2;
+  end
+end
 %
 xlim([x0 xF])
 ylim([y0 yF])
+set(f1,'PaperPosition',[0 0 1080 1920],'PaperUnits','points');
 %
 %fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
 plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
@@ -146,13 +152,13 @@ for i = 0:nTimes
   % keep the base elements
   clf(f2)
   copyobj(f1.Children,f2)
-  set(0,"CurrentFigure",f2)
+  %f2.Position = [1 1 1080 1920];
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',1.5)
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',1.5)
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',1.5)
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',1.5)
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',2)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',2)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',2)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',2)
   %
   j1A = min( [max(CurrPts1A), size(AllLocTime{1},2), size(AllBezierPos{1},2)]);
   j2A = min( [max(CurrPts2A), size(AllLocTime{2},2), size(AllBezierPos{2},2)]);
@@ -180,7 +186,9 @@ for i = 0:nTimes
   RefBez = compRefBez(:,refIdx);
   %
   fill(RefWheelCtrA(1)+circ(1,:),RefWheelCtrA(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
-  fill(RefWheelCtrB(1)+circ(1,:),RefWheelCtrB(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+  if ExtraOpts.Plot2Circles
+    fill(RefWheelCtrB(1)+circ(1,:),RefWheelCtrB(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+  end
   for w = 1:size(aux_angles,2)
     plot(RefWheelCtrA(1)+[0,cos(aux_angles(w)+RefAngleA)*WheelRadius],RefWheelCtrA(2)+[0,sin(aux_angles(w)+RefAngleA)*WheelRadius],...
       'Color',[0,0,0,0.5])
@@ -197,16 +205,36 @@ for i = 0:nTimes
   writeVideo(v,getframe)
 end
 
+%%
+% stop for some time after everything is finished, WITH the wheel on
+for stopper = 0:(fps*(AfterTime/2))
+  writeVideo(v,getframe)
+end
+
+% plot again, without the wheel
+for tmp = 1:1
+  % keep the base elements
+  clf(f2)
+  copyobj(f1.Children,f2)
+  %
+  % add all strokes of the marker up to the current time
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',2)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',2)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',2)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',2)
+  %
+end
+
+% stop for some time after everything is finished
+for stopper = 0:(fps*(AfterTime/2))
+  writeVideo(v,getframe)
+end
+
 if exist('WB','var')
   if getappdata(WB,'canceling')
     return
   end
   delete(WB)
-end
-
-% stop for some time after everything is finished
-for stopper = 0:(fps*AfterTime)
-  writeVideo(v,getframe)
 end
 
 % finalize the video object and close the figure
