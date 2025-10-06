@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg7572"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="coin_line.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7574"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.4681257"
+     inkscape:cx="305.49155"
+     inkscape:cy="155.64062"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs7569" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path7655"
+       style="fill:#800000;stroke-width:4.77301;stroke-linecap:round"
+       d="M 186.14258 0.037109375 C 83.082332 1.5542814 0 85.555428 0 188.97656 C -4.7369516e-15 241.16095 21.151611 288.40552 55.349609 322.60352 C 89.547606 356.80151 136.79218 377.95312 188.97656 377.95312 C 241.16095 377.95312 288.40552 356.80151 322.60352 322.60352 C 356.80151 288.40552 377.95312 241.16095 377.95312 188.97656 C 377.95312 85.555428 294.87079 1.5542814 191.81055 0.037109375 L 191.81055 296.83984 A 2.8346457 2.8346457 0 0 1 188.97656 299.67578 A 2.8346457 2.8346457 0 0 1 186.14258 296.83984 L 186.14258 0.037109375 z "
+       transform="scale(0.26458333)" />
+  </g>
+</svg>

@@ -12,7 +12,7 @@ CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/disc_line.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/Yscavenge.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -44,11 +44,6 @@ end
 for i = 1:size(CtrlPtsArray, 2)
   CtrlPtsArray{i} = [1,0; 0,-1] * CtrlPtsArray{i};
 end
-if false
-  for i = 1:size(CtrlPtsArray_new, 2)
-  CtrlPtsArray_new{i} = [1,0; 0,-1] * CtrlPtsArray_new{i};
-  end
-end
 
 % rotate by an angle
 if false
@@ -74,6 +69,12 @@ for i = 1:size(CtrlPtsArray,2)
   scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
 end
 scatter(CtrlPtsArray{1}(1,1),CtrlPtsArray{1}(2,1),'red','filled','o')
+NormVec = EvalBezierNormal(CtrlPtsArray{1},0,1);
+plot(CtrlPtsArray{1}(1,1)+[0,NormVec(1)],CtrlPtsArray{1}(2,1)+[0,NormVec(2)],'red')
+
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -8, Halfen );
+%CtrlPtsArray_back = CtrlPtsArray;
+%CtrlPtsArray = CtrlPtsArray_back;
 
 % show shape
 BezOG  = AllBezierEval(CtrlPtsArray, 0.001);
@@ -98,7 +99,7 @@ MarkerAngle0 = 0;
 WheelBezRatio = 6;
 WheelMarkerRatio = 4/5;
 
-Shift  = 5;
+Shift  = 0;
 Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -108,16 +109,21 @@ CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
 % remove inner corners
 [CtrlPtsArray_rounded_flipped] = ...
   RemoveAllCorners( FlipBezierAll(CtrlPtsArray), CornerRoundingRadius, MaxDistDelta, false );
-CtrlPtsArray = FlipBezierAll(CtrlPtsArray_rounded_flipped);
+CtrlPtsArray_tmp = FlipBezierAll(CtrlPtsArray_rounded_flipped);
 
 figure()
 hold on
 axis equal
 grid on
-for i = 1:size(CtrlPtsArray,2)
-  scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
+for i = 1:size(CtrlPtsArray_tmp,2)
+  scatter(CtrlPtsArray_tmp{i}(1,:), CtrlPtsArray_tmp{i}(2,:))
 end
-scatter(CtrlPtsArray{1}(1,1),CtrlPtsArray{1}(2,1),'red','filled','o')
+scatter(CtrlPtsArray_tmp{1}(1,1),CtrlPtsArray_tmp{1}(2,1),'red','filled','o')
+NormVec = EvalBezierNormal(CtrlPtsArray_tmp{1},0,1);
+plot(CtrlPtsArray_tmp{1}(1,1)+[0,NormVec(1)],CtrlPtsArray_tmp{1}(2,1)+[0,NormVec(2)],'red')
+
+%
+CtrlPtsArray = CtrlPtsArray_tmp;
 
 %% 
 % remove outer corners
@@ -153,6 +159,8 @@ for i = 1:size(CtrlPtsArray_new,2)
 scatter(CtrlPtsArray_new{i}(1,:), CtrlPtsArray_new{i}(2,:))
 end
 scatter(CtrlPtsArray_new{1}(1,1),CtrlPtsArray_new{1}(2,1),'red','filled','o')
+NormVec = EvalBezierNormal(CtrlPtsArray_new{1},0,1);
+plot(CtrlPtsArray_new{1}(1,1)+[0,NormVec(1)],CtrlPtsArray_new{1}(2,1)+[0,NormVec(2)],'red')
 
 % difference from rounding
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
@@ -360,7 +368,7 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimerefCurve = 'Average';
+ExtraOpts.TimerefCurve = 'Wheel';
 
 % video
 MakeVideo_2pts( WheelRadius, ...
@@ -368,7 +376,7 @@ MakeVideo_2pts( WheelRadius, ...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   MaxDistDelta, ...
-  40, 10, 'test_251005_19', ExtraOpts )
+  40, 10, 'test_251006_01_3', ExtraOpts )
 
 %Wheel
 %Bezier
