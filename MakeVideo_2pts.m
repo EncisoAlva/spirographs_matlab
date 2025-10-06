@@ -20,7 +20,7 @@
 % ** No explicit output. Video is saved to path. **
 %
 %
-function MakeVideo_2pts( WheelRadius, TimerefCurve, Orientation, ...
+function MakeVideo_2pts( WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
@@ -28,7 +28,7 @@ function MakeVideo_2pts( WheelRadius, TimerefCurve, Orientation, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
 % time, parametrized by the arc of the marker or the ar of the wheel center
-switch TimerefCurve
+switch ExtraOpts.TimerefCurve
   case 'Bezier'
     TimeFromCurve1 = zeros(1,size(AllBezierPos{1},2));
     TimeFromCurve1(2:end) = cumsum( vecnorm( diff(AllBezierPos{1},1,2), 2, 1 ) );
@@ -41,6 +41,16 @@ switch TimerefCurve
 
     TimeFromCurve2 = zeros(1,size(AllWhCtrPos{2},2));
     TimeFromCurve2(2:end) = cumsum( vecnorm( diff(AllWhCtrPos{2},1,2), 2, 1 ) );
+  case 'Average'
+    TimeFromCurve1_pre = zeros(2,size(AllBezierPos{1},2));
+    TimeFromCurve1_pre(1,2:end) = cumsum( vecnorm( diff(AllBezierPos{1},1,2), 2, 1 ) );
+    TimeFromCurve1_pre(2,2:end) = cumsum( vecnorm( diff(AllWhCtrPos{1}, 1,2), 2, 1 ) );
+    TimeFromCurve1 = mean(TimeFromCurve1_pre,1);
+
+    TimeFromCurve2_pre = zeros(2,size(AllBezierPos{2},2));
+    TimeFromCurve2_pre(1,2:end) = cumsum( vecnorm( diff(AllBezierPos{2},1,2), 2, 1 ) );
+    TimeFromCurve2_pre(2,2:end) = cumsum( vecnorm( diff(AllWhCtrPos{2}, 1,2), 2, 1 ) );
+    TimeFromCurve2 = mean(TimeFromCurve2_pre,1);
 end
 
 % duration of video
@@ -71,12 +81,22 @@ axis equal
 axis off
 %
 % make sure that everything fits, and the creen ratio is ok
-switch Orientation
+if ~isfield(ExtraOpts,'Ratio')
+  ExpectedRatio = 1;
+else
+  ExpectedRatio =  ExtraOpts.Ratio;
+end
+% if the curve is outside the path, prepare space beforehand
+if ~isfield(ExtraOpts,'Orientation')
+  ExtraOpts.Orientation = 'in';
+end
+switch ExtraOpts.Orientation
   case 'in'
     ExtraBorder = 0;
   case 'out'
     ExtraBorder = 2*WheelRadius;
 end
+%
 x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), (min(AllBezierPos{1}(1,:))-ExtraBorder)] );
 xF = max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), (max(AllBezierPos{1}(1,:))+ExtraBorder)] );
 y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), (min(AllBezierPos{1}(2,:))-ExtraBorder)] );
@@ -84,23 +104,41 @@ yF = max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), (max(AllBezierP
 %
 x_ran = xF - x0;
 y_ran = yF - y0;
-ref_ran = max(x_ran, y_ran);
 %
-x0 = x0 - (ref_ran - x_ran)/2;
-xF = xF + (ref_ran - x_ran)/2;
-y0 = y0 - (ref_ran - y_ran)/2;
-yF = yF + (ref_ran - y_ran)/2;
+if y_ran/x_ran < ExpectedRatio
+  y_ran_new = x_ran*ExpectedRatio;
+  y0 = y0 - (y_ran_new - y_ran)/2;
+  yF = yF + (y_ran_new - y_ran)/2;
+else 
+  if y_ran/x_ran > ExpectedRatio
+    x_ran_new = x_ran/ExpectedRatio;
+    x0 = x0 - (x_ran_new - x_ran)/2;
+    xF = xF + (x_ran_new - x_ran)/2;
+  end
+end
 %
 xlim([x0 xF])
 ylim([y0 yF])
+if ExpectedRatio == 16/9
+  set(f1,'PaperPosition',[0 0 [1080 1920]*2],'PaperUnits','points');
+end
 %
 %fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',.15*[1,1,1],'LineWidth',2)
+plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
 % video object
-v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
+if ~isfield(ExtraOpts,'Format') 
+  ExtraOpts.format = 'mp4';
+else
+  switch ExtraOpts.Format
+    case 'avi'
+      v = VideoWriter(strcat(VidName,".avi"),'Motion JPEG AVI');
+    otherwise
+      v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
+  end
+end
 v.Quality = 100;
 open(v)
 
@@ -136,8 +174,8 @@ for i = 0:nTimes
   if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta')
-  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow')
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta','LineWidth',2)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow', 'LineWidth',2)
   %
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);
@@ -151,7 +189,7 @@ for i = 0:nTimes
     RefBez = AllBezierPos{2}(:,j2);
   end
   %
-  fill(RefWheelCtr(1)+circ(1,:),RefWheelCtr(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+  fill(RefWheelCtr(1)+circ(1,:),RefWheelCtr(2)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.25); 
   for w = 1:size(aux_angles,2)
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
       'Color',[0,0,0,0.5])
@@ -164,16 +202,36 @@ for i = 0:nTimes
   writeVideo(v,getframe)
 end
 
+%%
+% stop for some time after everything is finished, WITH the wheel on
+for stopper = 0:(fps*(AfterTime/2))
+  writeVideo(v,getframe)
+end
+
+% plot again, without the wheel
+for i = 1:1
+  % take specifications from figure 1
+  clf(f2)
+  copyobj(f1.Children,f2)
+  set(0,"CurrentFigure",f2)
+  %
+  % add a few strokes of the marker, then copy to figure 2
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta','LineWidth',2)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow', 'LineWidth',2)
+end
+
+
+%%
+% stop for some time after everything is finished
+for stopper = 0:(fps*(AfterTime/2))
+  writeVideo(v,getframe)
+end
+
 if exist('WB','var')
   if getappdata(WB,'canceling')
     return
   end
   delete(WB)
-end
-
-% stop for some time after everything is finished
-for stopper = 0:(fps*AfterTime)
-  writeVideo(v,getframe)
 end
 
 % finalize the video object and close the figure
