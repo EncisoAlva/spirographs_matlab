@@ -197,10 +197,10 @@ for i = 0:nTimes
   set(0,"CurrentFigure",f2)
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',2)
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',2)
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',2)
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',2)
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',1.75)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',1.75)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',1.75)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',1.75)
   %
   j1A = min( [max(CurrPts1A), size(AllLocTime{1},2), size(AllBezierPos{1},2)]);
   j2A = min( [max(CurrPts2A), size(AllLocTime{2},2), size(AllBezierPos{2},2)]);

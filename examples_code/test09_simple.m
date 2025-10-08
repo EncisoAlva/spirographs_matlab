@@ -7,12 +7,12 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Number8'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Trefoil'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
 % load from file
-AllCtrlPtsArray = LoadSVG( './curves_svg/Yscavenge.svg' );
+AllCtrlPtsArray = LoadSVG( './curves_svg/coin_line.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
 
 %%
@@ -61,18 +61,10 @@ end
 
 %%
 % show control points
-figure()
-hold on
-axis equal
-grid on
-for i = 1:size(CtrlPtsArray,2)
-  scatter(CtrlPtsArray{i}(1,:), CtrlPtsArray{i}(2,:))
-end
-scatter(CtrlPtsArray{1}(1,1),CtrlPtsArray{1}(2,1),'red','filled','o')
-NormVec = EvalBezierNormal(CtrlPtsArray{1},0,1);
-plot(CtrlPtsArray{1}(1,1)+[0,NormVec(1)],CtrlPtsArray{1}(2,1)+[0,NormVec(2)],'red')
 
-%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -8, Halfen );
+PlotBezierCtrlPts(CtrlPtsArray)
+
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -6, false );
 %CtrlPtsArray_back = CtrlPtsArray;
 %CtrlPtsArray = CtrlPtsArray_back;
 
@@ -96,7 +88,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 6;
+WheelBezRatio = 4;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -111,16 +103,7 @@ CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
   RemoveAllCorners( FlipBezierAll(CtrlPtsArray), CornerRoundingRadius, MaxDistDelta, false );
 CtrlPtsArray_tmp = FlipBezierAll(CtrlPtsArray_rounded_flipped);
 
-figure()
-hold on
-axis equal
-grid on
-for i = 1:size(CtrlPtsArray_tmp,2)
-  scatter(CtrlPtsArray_tmp{i}(1,:), CtrlPtsArray_tmp{i}(2,:))
-end
-scatter(CtrlPtsArray_tmp{1}(1,1),CtrlPtsArray_tmp{1}(2,1),'red','filled','o')
-NormVec = EvalBezierNormal(CtrlPtsArray_tmp{1},0,1);
-plot(CtrlPtsArray_tmp{1}(1,1)+[0,NormVec(1)],CtrlPtsArray_tmp{1}(2,1)+[0,NormVec(2)],'red')
+PlotBezierCtrlPts(CtrlPtsArray_tmp)
 
 %
 CtrlPtsArray = CtrlPtsArray_tmp;
@@ -151,16 +134,7 @@ end
 %% 
 
 % show control points
-figure()
-hold on
-axis equal
-grid on
-for i = 1:size(CtrlPtsArray_new,2)
-scatter(CtrlPtsArray_new{i}(1,:), CtrlPtsArray_new{i}(2,:))
-end
-scatter(CtrlPtsArray_new{1}(1,1),CtrlPtsArray_new{1}(2,1),'red','filled','o')
-NormVec = EvalBezierNormal(CtrlPtsArray_new{1},0,1);
-plot(CtrlPtsArray_new{1}(1,1)+[0,NormVec(1)],CtrlPtsArray_new{1}(2,1)+[0,NormVec(2)],'red')
+PlotBezierCtrlPts(CtrlPtsArray_new)
 
 % difference from rounding
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
@@ -174,6 +148,10 @@ fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
 
 %%
 ColorVector = {'yellow','magenta', 'red', 'red'};
+
+%ColorVector = {'yellow','white', 'red', 'red'};
+
+%ColorVector = {'white', 'red'};
 
 %CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, -3, false );
 
@@ -338,17 +316,17 @@ ExtraOpts = {};
 ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
-ExtraOpts.Ratio = '16_9';
+ExtraOpts.Ratio = 16/9;
+ExtraOpts.TimerefCurve = 'Wheel';
 
 % video
-MakeVideo_4pts( WheelRadius, 'Wheel' ...
-  , ...
+MakeVideo_4pts( WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251005_01', ExtraOpts )
+  40, 10, 'test_251007', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
@@ -375,8 +353,9 @@ MakeVideo_2pts( WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251006_01_3', ExtraOpts )
+  40, 10, 'test_251007_25', ExtraOpts )
 
 %Wheel
 %Bezier

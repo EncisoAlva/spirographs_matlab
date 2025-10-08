@@ -24,6 +24,7 @@ function MakeVideo_2pts( WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  CurveColor, ...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
@@ -146,8 +147,8 @@ open(v)
 % take specifications from figure 1
 copyobj(f1.Children,f2)
 set(0,"CurrentFigure",f2)
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'magenta')
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'yellow')
+plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),CurveColor{2})
+plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),CurveColor{1})
 
 % main loop
 WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
@@ -174,8 +175,8 @@ for i = 0:nTimes
   if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta','LineWidth',2)
-  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow', 'LineWidth',2)
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),CurveColor{2},'LineWidth',1.75)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),CurveColor{1}, 'LineWidth',1.75)
   %
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);
@@ -194,8 +195,8 @@ for i = 0:nTimes
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
       'Color',[0,0,0,0.5])
   end
-  scatter(AllMarkerPos{1}(1,j1),AllMarkerPos{1}(2,j1),10,'magenta','filled')
-  scatter(AllMarkerPos{2}(1,j2),AllMarkerPos{2}(2,j2),10,'yellow','filled')
+  scatter(AllMarkerPos{1}(1,j1),AllMarkerPos{1}(2,j1),10,CurveColor{2},'filled')
+  scatter(AllMarkerPos{2}(1,j2),AllMarkerPos{2}(2,j2),10,CurveColor{1},'filled')
   scatter(RefBez(1),RefBez(2),10,'white','filled')
   %
   end
@@ -216,8 +217,8 @@ for i = 1:1
   set(0,"CurrentFigure",f2)
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta','LineWidth',2)
-  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow', 'LineWidth',2)
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),CurveColor{2},'LineWidth',1.75)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),CurveColor{1}, 'LineWidth',1.75)
 end
 
 
