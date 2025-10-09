@@ -64,7 +64,7 @@ end
 
 PlotBezierCtrlPts(CtrlPtsArray)
 
-%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -4, false );
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, 1, false );
 %CtrlPtsArray_back = CtrlPtsArray;
 %CtrlPtsArray = CtrlPtsArray_back;
 
@@ -157,11 +157,14 @@ ColorVector = {'yellow','magenta', 'red', 'red'};
 
 %%
 
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
+
 % preview result
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
 
 figure()
@@ -178,7 +181,7 @@ scatter(AllMarkerPos{2}(1,1),AllMarkerPos{2}(2,1),'red','filled','o')
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 +pi/2, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{3}, 'LineWidth',2)
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{4}, 'LineWidth',2)

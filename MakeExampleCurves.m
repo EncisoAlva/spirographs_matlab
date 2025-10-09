@@ -830,13 +830,21 @@ clear aang hex_pts CurrCtrl c1 c2 i
 
 %%
 % trefoil
-R = 3;
-r = 1;
-b = 1;
-t = (0:(pi/12):(2*pi));
+R  = 3;
+r  = 1;
+b  = 1;
+Rr = (R+r)/r;
+dt = pi/15;
+t = (0:dt:(2*pi));
 
-xy     = [ (R+r)*cos(t) -           b*cos(((R+r)/r)*t); (R+r)*sin(t) -           b*sin(((R+r)/r)*t)];
-xy_der = [-(R+r)*sin(t) + b*((R+r)/r)*sin(((R+r)/r)*t); (R+r)*cos(t) - b*((R+r)/r)*cos(((R+r)/r)*t)];
+xy     = [ (R+r)*cos(t) -    b*cos(Rr*t); (R+r)*sin(t) -    b*sin(Rr*t)];
+xy_der = [-(R+r)*sin(t) + b*Rr*sin(Rr*t); (R+r)*cos(t) - b*Rr*cos(Rr*t)];
+
+% robust derivative
+eps = dt/10;
+xy_der_p = [-(R+r)*sin(t+eps) + b*Rr*sin(Rr*(t+eps)); (R+r)*cos(t+eps) - b*Rr*cos(Rr*(t+eps))];
+xy_der_m = [-(R+r)*sin(t-eps) + b*Rr*sin(Rr*(t-eps)); (R+r)*cos(t-eps) - b*Rr*cos(Rr*(t-eps))];
+xy_der = ( xy_der_m + xy_der_p + 2*xy_der )/4;
 
 Trefoil = cell(1,size(t,2)-1);
 for i = 2:size(t,2)
@@ -844,10 +852,24 @@ for i = 2:size(t,2)
   CurrCurve = zeros(2,4);
   CurrCurve(:,1) = xy(:,i-1);
   CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
-  CurrCurve(:,3) = xy(:,i)   + (1/3)*xy_der(:,i)  *del_i;
+  CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
   CurrCurve(:,4) = xy(:,i);
   Trefoil{i-1} = CurrCurve;
 end
+
+th = -pi/2;
+ROT = [cos(th), -sin(th); sin(th), cos(th)];
+for i = 1:size(Trefoil, 2)
+  Trefoil{i} = ROT * Trefoil{i};
+end
+xy = ROT*xy;
+
+CtrlPtsArray = Trefoil;
+
+PlotBezierCtrlPts(Trefoil)
+hold on
+plot(xy(1,:),xy(2,:))
+axis equal
 
 clear R r b t xy xy_der i CurrCurve del_i
 
