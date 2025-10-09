@@ -92,8 +92,8 @@ WheelBezRatio = 6+1/16;
 WheelMarkerRatio = 4/5;
 MaxSpins = 4;
 
-Shift  = 0;
-Halfen = false;
+Shift  = 1;
+Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.005*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
@@ -138,9 +138,11 @@ end
 PlotBezierCtrlPts(CtrlPtsArray_new)
 
 %%
-%ColorVector = {'yellow','yellow',[1,.5,0]',[1,.5,0]'};
+%ColorVector = {'yellow','yellow',[1,.5,0],[1,.5,0]};
 
 ColorVector = {'yellow','yellow','red','red'};
+
+%ColorVector = {'yellow','yellow','magenta','magenta'};
 
 %ColorVector  = {'cyan','cyan','yellow','yellow'};
 
@@ -210,7 +212,9 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimerefCurve = 'Wheel';
+ExtraOpts.TimerefCurve = 'Average';
+%ExtraOpts.TimerefCurve = 'Bezier';
+%ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 1;
 
 % video
@@ -220,7 +224,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251008_20', ExtraOpts )
+  70, 10, 'test_251008_24_2', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 

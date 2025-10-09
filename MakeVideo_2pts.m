@@ -130,12 +130,9 @@ end
 %
 xlim([x0 xF])
 ylim([y0 yF])
-%if ExpectedRatio == 16/9
-%  set(f1,'PaperPosition',[0 0 [1080 1920]*2],'PaperUnits','points');
-%end
-%
-%fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
+if ExpectedRatio == 16/9
+  set(f1,'PaperPosition',[0 0 [1080 1920]*4],'PaperUnits','points');
+end
 %
 f2 = figure('Visible','off','Name','With circle');
 
@@ -151,10 +148,10 @@ open(v)
 
 % prepare finished figure for sneek peek
 % take specifications from figure 1
-copyobj(f1.Children,f2)
-set(0,"CurrentFigure",f2)
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),CurveColor{2})
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),CurveColor{1})
+%copyobj(f1.Children,f2)
+%set(0,"CurrentFigure",f2)
+%plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'Color',CurveColor{2})
+%plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'Color',CurveColor{1})
 
 % main loop
 WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
@@ -175,14 +172,15 @@ for i = 0:nTimes
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
   %
   CurrPts1 = idxx1(TimeFromCurve1<=(i+0.1)/fps);
   CurrPts2 = idxx2(TimeFromCurve2<=(i+0.1)/fps);
   if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
   %
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);

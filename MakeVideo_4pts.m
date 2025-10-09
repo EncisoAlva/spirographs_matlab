@@ -157,12 +157,9 @@ end
 %
 xlim([x0 xF])
 ylim([y0 yF])
-%if ExpectedRatio == 16/9
-%  set(f1,'PaperPosition',[0 0 [1080 1920]/2],'PaperUnits','points');
-%end
-%
-%fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
+if ExpectedRatio == 16/9
+  set(f1,'PaperPosition',[0 0 [1080 1920]*4],'PaperUnits','points');
+end
 %
 f2 = figure('Visible','off','Name','With circle');
 
@@ -201,12 +198,13 @@ for i = 0:nTimes
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),'Color',CurveColor{3},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),'Color',CurveColor{4},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
   %
   j1A = min( [max(CurrPts1A), size(AllLocTime{1},2), size(AllBezierPos{1},2)]);
   j2A = min( [max(CurrPts2A), size(AllLocTime{2},2), size(AllBezierPos{2},2)]);
@@ -269,10 +267,10 @@ for tmp = 1:1
   set(0,"CurrentFigure",f2)
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',ExtraOpts.LineWidth)
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),'Color',CurveColor{3},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),'Color',CurveColor{4},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
   %
 end
 
