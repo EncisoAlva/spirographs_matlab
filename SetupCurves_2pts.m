@@ -33,7 +33,7 @@ function [ DecorativeBez,...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_2pts( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins)
+    CloseTol, MaxSpins, ExtraOpts)
 
 % this evaluation is for background decoration only
 DecorativeBez = AllBezierEval(CtrlPtsArray, MaxDistDelta);
@@ -57,11 +57,14 @@ AllMarkerAngle = {};
     CloseTol, MaxSpins);
 
 % patch
+if ExtraOpts.CloseEnds
 MarkerPos1(:,end+1) = MarkerPos1(:,1);
 MarkerAngle1(end+1) = MarkerAngle1(1);
 
+
 MarkerPos2(:,end+1) = MarkerPos2(:,1);
 MarkerAngle2(end+1) = MarkerAngle2(1);
+end
 
 % Store results in containers
 AllBezierPos{1} = BezierPos1;

@@ -24,9 +24,28 @@ function MakeVideo_2pts( WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  CurveColor, ...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
+%%
+% handle optional arguments
+if ~isfield(ExtraOpts, 'LineWidth')
+  ExtraOpts.LineWidth = 2;
+end
+if ~isfield(ExtraOpts,'Ratio')
+  ExpectedRatio = 1;
+else
+  ExpectedRatio =  ExtraOpts.Ratio;
+end
+if ~isfield(ExtraOpts,'Format') 
+  ExtraOpts.format = 'mp4';
+end
+if ~isfield(ExtraOpts,'Orientation')
+  ExtraOpts.Orientation = 'in';
+end
+
+%%
 % time, parametrized by the arc of the marker or the ar of the wheel center
 switch ExtraOpts.TimerefCurve
   case 'Bezier'
@@ -81,15 +100,7 @@ axis equal
 axis off
 %
 % make sure that everything fits, and the creen ratio is ok
-if ~isfield(ExtraOpts,'Ratio')
-  ExpectedRatio = 1;
-else
-  ExpectedRatio =  ExtraOpts.Ratio;
-end
 % if the curve is outside the path, prepare space beforehand
-if ~isfield(ExtraOpts,'Orientation')
-  ExtraOpts.Orientation = 'in';
-end
 switch ExtraOpts.Orientation
   case 'in'
     ExtraBorder = 0;
@@ -120,34 +131,27 @@ end
 xlim([x0 xF])
 ylim([y0 yF])
 if ExpectedRatio == 16/9
-  set(f1,'PaperPosition',[0 0 [1080 1920]*2],'PaperUnits','points');
+  set(f1,'PaperPosition',[0 0 [1080 1920]*4],'PaperUnits','points');
 end
-%
-%fill(BezierPos(1,:),BezierPos(2,:), .15*[1,1,1], 'EdgeColor', 'none'); 
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
 % video object
-if ~isfield(ExtraOpts,'Format') 
-  ExtraOpts.format = 'mp4';
-else
-  switch ExtraOpts.Format
-    case 'avi'
-      v = VideoWriter(strcat(VidName,".avi"),'Motion JPEG AVI');
-    otherwise
-      v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
-  end
+switch ExtraOpts.Format
+  case 'avi'
+    v = VideoWriter(strcat(VidName,".avi"),'Motion JPEG AVI');
+  otherwise
+    v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
 end
 v.Quality = 100;
 open(v)
 
 % prepare finished figure for sneek peek
 % take specifications from figure 1
-copyobj(f1.Children,f2)
-set(0,"CurrentFigure",f2)
-plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'magenta')
-plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'yellow')
+%copyobj(f1.Children,f2)
+%set(0,"CurrentFigure",f2)
+%plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'Color',CurveColor{2})
+%plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'Color',CurveColor{1})
 
 % main loop
 WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
@@ -168,14 +172,15 @@ for i = 0:nTimes
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
   %
   CurrPts1 = idxx1(TimeFromCurve1<=(i+0.1)/fps);
   CurrPts2 = idxx2(TimeFromCurve2<=(i+0.1)/fps);
   if ~( isempty(CurrPts1) & isempty(CurrPts2) ) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta','LineWidth',2)
-  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow', 'LineWidth',2)
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
   %
   j1 = max(CurrPts1);
   j2 = max(CurrPts2);
@@ -194,8 +199,8 @@ for i = 0:nTimes
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
       'Color',[0,0,0,0.5])
   end
-  scatter(AllMarkerPos{1}(1,j1),AllMarkerPos{1}(2,j1),10,'magenta','filled')
-  scatter(AllMarkerPos{2}(1,j2),AllMarkerPos{2}(2,j2),10,'yellow','filled')
+  scatter(AllMarkerPos{1}(1,j1),AllMarkerPos{1}(2,j1),10,CurveColor{2},'filled')
+  scatter(AllMarkerPos{2}(1,j2),AllMarkerPos{2}(2,j2),10,CurveColor{1},'filled')
   scatter(RefBez(1),RefBez(2),10,'white','filled')
   %
   end
@@ -216,8 +221,8 @@ for i = 1:1
   set(0,"CurrentFigure",f2)
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),'magenta','LineWidth',2)
-  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),'yellow', 'LineWidth',2)
+  plot(AllMarkerPos{1}(1,CurrPts1),AllMarkerPos{1}(2,CurrPts1),CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2),AllMarkerPos{2}(2,CurrPts2),CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
 end
 
 

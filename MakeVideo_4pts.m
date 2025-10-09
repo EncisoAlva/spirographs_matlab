@@ -28,6 +28,24 @@ function MakeVideo_4pts( WheelRadius, ...
   MaxDistDelta, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
+%%
+% handle optional arguments
+if ~isfield(ExtraOpts, 'LineWidth')
+  ExtraOpts.LineWidth = 2;
+end
+if ~isfield(ExtraOpts,'Ratio')
+  ExpectedRatio = 1;
+else
+  ExpectedRatio =  ExtraOpts.Ratio;
+end
+if ~isfield(ExtraOpts,'Format') 
+  ExtraOpts.format = 'mp4';
+end
+if ~isfield(ExtraOpts,'Orientation')
+  ExtraOpts.Orientation = 'in';
+end
+
+%%
 % time is parametrized by the path over the Bezier curve or the path
 % described by the wheel center
 switch ExtraOpts.TimerefCurve
@@ -109,15 +127,7 @@ axis equal
 axis off
 %
 % make sure that everything fits, and the creen ratio is ok
-if ~isfield(ExtraOpts,'Ratio')
-  ExpectedRatio = 1;
-else
-  ExpectedRatio =  ExtraOpts.Ratio;
-end
 % if the curve is outside the path, prepare space beforehand
-if ~isfield(ExtraOpts,'Orientation')
-  ExtraOpts.Orientation = 'in';
-end
 switch ExtraOpts.Orientation
   case 'in'
     ExtraBorder = 0;
@@ -148,24 +158,17 @@ end
 xlim([x0 xF])
 ylim([y0 yF])
 if ExpectedRatio == 16/9
-  set(f1,'PaperPosition',[0 0 [1080 1920]/2],'PaperUnits','points');
+  set(f1,'PaperPosition',[0 0 [1080 1920]*4],'PaperUnits','points');
 end
-%
-%fill(BezierPos(1,:),BezierPos(2,:), 'k', 'EdgeColor', 'none'); 
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
 %
 f2 = figure('Visible','off','Name','With circle');
 
 % video object
-if ~isfield(ExtraOpts,'Format') 
-  ExtraOpts.format = 'mp4';
-else
-  switch ExtraOpts.Format
-    case 'avi'
-      v = VideoWriter(strcat(VidName,".avi"),'Motion JPEG AVI');
-    otherwise
-      v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
-  end
+switch ExtraOpts.Format
+  case 'avi'
+    v = VideoWriter(strcat(VidName,".avi"),'Motion JPEG AVI');
+  otherwise
+    v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
 end
 v.Quality = 100;
 open(v)
@@ -195,12 +198,13 @@ for i = 0:nTimes
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',2)
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',2)
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',2)
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',2)
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),'Color',CurveColor{3},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),'Color',CurveColor{4},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
   %
   j1A = min( [max(CurrPts1A), size(AllLocTime{1},2), size(AllBezierPos{1},2)]);
   j2A = min( [max(CurrPts2A), size(AllLocTime{2},2), size(AllBezierPos{2},2)]);
@@ -263,10 +267,10 @@ for tmp = 1:1
   set(0,"CurrentFigure",f2)
   %
   % add all strokes of the marker up to the current time
-  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),CurveColor{3},'LineWidth',1.7)
-  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),CurveColor{4},'LineWidth',1.7)
-  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),CurveColor{1},'LineWidth',1.7)
-  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),CurveColor{2},'LineWidth',1.7)
+  plot(AllMarkerPos{3}(1,CurrPts1B),AllMarkerPos{3}(2,CurrPts1B),'Color',CurveColor{3},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts1A),AllMarkerPos{1}(2,CurrPts1A),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{4}(1,CurrPts2B),AllMarkerPos{4}(2,CurrPts2B),'Color',CurveColor{4},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{2}(1,CurrPts2A),AllMarkerPos{2}(2,CurrPts2A),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
   %
 end
 
