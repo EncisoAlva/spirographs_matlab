@@ -172,6 +172,7 @@ for i = 0:nTimes
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
+  %
   plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
   %
   CurrPts1 = idxx1(TimeFromCurve1<=(i+0.1)/fps);
