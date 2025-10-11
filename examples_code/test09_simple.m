@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Trefoil'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Astroid4'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -88,7 +88,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 1;
+WheelBezRatio = 4;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -293,6 +293,8 @@ ylim([YL(1) YL(2)])
 
 
 %%
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
 
 % make curves
 [ DecorativeBez,...
@@ -300,13 +302,13 @@ ylim([YL(1) YL(2)])
   AllWhCtrPos1, AllMarkerPos1, AllMarkerAngle1 ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 [ ~,...
   AllBezierPos2, AllLocTime2, ...
   AllWhCtrPos2, AllMarkerPos2, AllMarkerAngle2 ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0+pi/2, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 
 %
 AllBezierPos   = [ AllBezierPos1,   AllBezierPos2 ];
@@ -321,7 +323,7 @@ ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
 ExtraOpts.TimerefCurve = 'Wheel';
-ExtraOpts.LineWidth = 1;
+ExtraOpts.LineWidth = 2;
 
 % video
 MakeVideo_4pts( WheelRadius, ...
@@ -330,11 +332,14 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251007', ExtraOpts )
+  40, 10, 'test_251010_01', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
 %%
+
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
 
 % make curves
 [ DecorativeBez,...
@@ -342,7 +347,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 
 % extra options
 ExtraOpts = {};
@@ -351,7 +356,7 @@ ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
 ExtraOpts.TimerefCurve = 'Wheel';
-ExtraOpts.LineWidth = 1;
+ExtraOpts.LineWidth = 2;
 
 % video
 MakeVideo_2pts( WheelRadius, ...
@@ -360,7 +365,7 @@ MakeVideo_2pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251007_25', ExtraOpts )
+  40, 10, 'test_251010_00', ExtraOpts )
 
 %Wheel
 %Bezier
