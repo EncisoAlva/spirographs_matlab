@@ -64,7 +64,7 @@ end
 
 PlotBezierCtrlPts(CtrlPtsArray)
 
-%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, 15, false );
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -1, false );
 %CtrlPtsArray_back = CtrlPtsArray;
 %CtrlPtsArray = CtrlPtsArray_back;
 
@@ -88,8 +88,8 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 4;
-WheelMarkerRatio = 4/5;
+WheelBezRatio = 3;
+WheelMarkerRatio = 1;
 
 Shift  = 0;
 Halfen = false;

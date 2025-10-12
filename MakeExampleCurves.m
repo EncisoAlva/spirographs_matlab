@@ -949,7 +949,7 @@ N = 3;
 Tol = .0001;
 R  = 1;
 b  = 1;
-dt = pi/4;
+dt = pi/2;
 t = (0:dt:(2*pi));
 
 xy     = [ R*t-pi - b*sin(t); R - b*cos(t) ];
@@ -958,17 +958,18 @@ xy_der = [ R      - b*cos(t);     b*sin(t) ];
 Cycloid_base = cell(1,size(t,2)-1);
 for i = 2:size(t,2)
   del_i = t(i) - t(i-1);
-  if ( norm(xy_der(:,i-1))>Tol ) && ( norm(xy_der(:,i))>Tol )
+  %if ( norm(xy_der(:,i-1))>Tol ) && ( norm(xy_der(:,i))>Tol )
     CurrCurve = zeros(2,4);
     CurrCurve(:,1) = xy(:,i-1);
     CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
     CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
     CurrCurve(:,4) = xy(:,i);
-  else
-    CurrCurve = LineToBezier( xy(:,i-1), xy(:,i) );
-  end
+  %else
+  %  CurrCurve = LineToBezier( xy(:,i-1), xy(:,i) );
+  %end
   Cycloid_base{i-1} = CurrCurve;
 end
+Cycloid_base = FlipBezierAll(Cycloid_base);
 
 % rotate and concatenate cycloids
 Cycloidgon_3 = cell(1,size(Cycloid_base,2)*N);
