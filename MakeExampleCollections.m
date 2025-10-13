@@ -221,4 +221,35 @@ end
 clear b bar curr_side CurrCurve Semicircle_base Semicircle_rotated Circlegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
 
 %%
+% polygon with cycloids as sides
+Hypercycloid = cell(1,7);
+
+% make one single cycloid
+R  = 1;
+r  = 1; 
+Rr = (R+r)/r;
+dt = pi/2;
+t = (0:dt:(2*pi));
+
+xy     = [  (R+r)*cos(t) -    r*cos(Rr*t) ; (R+r)*sin(t) -    r*sin(Rr*t) ];
+xy_der = [ -(R+r)*sin(t) + Rr*r*cos(Rr*t) ; (R+r)*cos(t) - Rr*r*cos(Rr*t) ];
+
+Cycloid_base = cell(1,size(t,2)-1);
+for i = 2:size(t,2)
+  del_i = t(i) - t(i-1);
+  CurrCurve = zeros(2,4);
+  CurrCurve(:,1) = xy(:,i-1);
+  CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
+  CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
+  CurrCurve(:,4) = xy(:,i);
+  Cycloid_base{i-1} = CurrCurve;
+end
+Cycloid_base = FlipBezierAll(Cycloid_base);
+
+Hypercycloid{N} = Cycloidgon_N;
+
+clear xy
+
+
+%%
 save('ExampleCollections.mat')

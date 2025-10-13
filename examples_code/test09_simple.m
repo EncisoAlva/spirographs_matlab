@@ -11,6 +11,15 @@ CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Astroid4'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
+% check available curves in the example file
+who -file ExampleCollections.mat
+
+% load curve
+CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Circlegon'));
+CtrlPtsArray = CtrlPtsArray{1};
+CtrlPtsArray = CtrlPtsArray{4};
+
+%%
 % load from file
 AllCtrlPtsArray = LoadSVG( './curves_svg/coin_line.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
@@ -64,7 +73,7 @@ end
 
 PlotBezierCtrlPts(CtrlPtsArray)
 
-%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -1, false );
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, 6, false );
 %CtrlPtsArray_back = CtrlPtsArray;
 %CtrlPtsArray = CtrlPtsArray_back;
 
@@ -88,10 +97,10 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 3;
-WheelMarkerRatio = 1;
+WheelBezRatio = 2;
+WheelMarkerRatio = 4/5;
 
-Shift  = 0;
+Shift  = 3;
 Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -156,6 +165,7 @@ ColorVector = {'yellow','magenta', 'red', 'red'};
 %CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, -3, false );
 
 %%
+% symmetries of 2
 
 CurveOpts = {};
 CurveOpts.CloseEnds = false;
@@ -188,71 +198,37 @@ plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{4}, 'LineWidth',2)
 set(gca,'color', 'k');
 
 %%
+% symmetries of 3
+
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
+
+% preview result
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 BezNew = AllBezierEval(CtrlPtsArray_new, MaxDistDelta);
 
 figure()
 hold on
 axis equal
-axis off
-grid off
+grid on
+fill(BezNew(1,:),BezNew(2,:), .15*[1,1,1], 'EdgeColor', 'none')
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{1}, 'LineWidth',2)
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{2}, 'LineWidth',2)
 set(gca,'color', 'k');
+scatter(AllMarkerPos{1}(1,1),AllMarkerPos{1}(2,1),'red','filled','o')
+scatter(AllMarkerPos{2}(1,1),AllMarkerPos{2}(2,1),'red','filled','o')
 
 [ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
   SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 +pi/2, ...
     MaxDistDelta, ...
-    CloseTol, MaxSpins);
+    CloseTol, MaxSpins, CurveOpts);
 
 plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),ColorVector{3}, 'LineWidth',2)
 plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),ColorVector{4}, 'LineWidth',2)
 set(gca,'color', 'k');
-
-XL = xlim;
-YL = ylim;
-%
-x_ran = XL(2) - XL(1);
-y_ran = YL(2) - YL(1);
-ref_ran = max(x_ran, y_ran);
-%
-XL(1) = XL(1) - (ref_ran - x_ran)/2;
-XL(2) = XL(2) + (ref_ran - x_ran)/2;
-YL(1) = YL(1) - (ref_ran - y_ran)/2;
-YL(2) = YL(2) + (ref_ran - y_ran)/2;
-%
-xlim([XL(1) XL(2)])
-ylim([YL(1) YL(2)])
-
-%%
-figure()
-hold on
-axis equal
-axis off
-grid off
-
-fill(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:), 'magenta', 'EdgeColor', 'none');
-fill(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:), 'magenta', 'EdgeColor', 'none');
-
-%%
-
-[ ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
-  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0 +pi/2, ...
-    MaxDistDelta, ...
-    CloseTol, MaxSpins);
-
-figure()
-hold on
-axis equal
-axis off
-grid off
-AlternatePos = [AllMarkerPos{1}, AllMarkerPos{2}];
-
-fill(AlternatePos(1,:),AlternatePos(2,:), 'red', 'EdgeColor', 'none');
-
 
 %%
 
@@ -322,7 +298,7 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimerefCurve = 'Wheel';
+ExtraOpts.TimerefCurve = 'Average';
 ExtraOpts.LineWidth = 2;
 
 % video
@@ -332,7 +308,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251010_01', ExtraOpts )
+  40, 10, 'test_251012_17_3', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
@@ -365,8 +341,40 @@ MakeVideo_2pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251010_00', ExtraOpts )
+  40, 10, 'test_251012_19_4', ExtraOpts )
 
 %Wheel
 %Bezier
 %Average
+
+%%
+
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
+
+% make curves
+[ DecorativeBez,...
+  AllBezierPos, ~, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
+  SetupCurves_2pts( CtrlPtsArray_new, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    MaxDistDelta, ...
+    CloseTol, MaxSpins, CurveOpts);
+
+
+% extra options
+ExtraOpts = {};
+ExtraOpts.Plot2Circles = false;
+ExtraOpts.Format = 'mp4';
+ExtraOpts.Orientation = 'in';
+ExtraOpts.Ratio = 16/9;
+ExtraOpts.TimerefCurve = 'Wheel';
+ExtraOpts.LineWidth = 2;
+
+% video
+MakeVideo_1pts( WheelRadius, ...
+  DecorativeBez,...
+  AllBezierPos, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  ColorVector,...
+  MaxDistDelta, ...
+  40, 10, 'test_251012_19_2', ExtraOpts )
