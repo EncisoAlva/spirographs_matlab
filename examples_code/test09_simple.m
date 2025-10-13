@@ -97,7 +97,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 2;
+WheelBezRatio = 4;
 WheelMarkerRatio = 4/5;
 
 Shift  = 3;
@@ -144,6 +144,7 @@ end
 
 % show control points
 PlotBezierCtrlPts(CtrlPtsArray_new)
+CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, 2, true);
 
 % difference from rounding
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
@@ -159,6 +160,8 @@ fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
 ColorVector = {'yellow','magenta', 'red', 'red'};
 
 %ColorVector = {'yellow','white', 'red', 'red'};
+
+%ColorVector = {'yellow','yellow','red', 'red', 'red'};
 
 %ColorVector = {'red','white', 'red'};
 
@@ -308,7 +311,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251012_17_3', ExtraOpts )
+  40, 10, 'test_251012_17_5', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 

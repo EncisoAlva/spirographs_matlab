@@ -222,19 +222,20 @@ clear b bar curr_side CurrCurve Semicircle_base Semicircle_rotated Circlegon_N d
 
 %%
 % polygon with cycloids as sides
-Hypercycloid = cell(1,7);
+Epicycloid = cell(1,7);
 
+for N = 1:8
 % make one single cycloid
 R  = 1;
-r  = 1; 
+r  = 1/N; 
 Rr = (R+r)/r;
-dt = pi/2;
+dt = 2*pi/(N*4);
 t = (0:dt:(2*pi));
 
-xy     = [  (R+r)*cos(t) -    r*cos(Rr*t) ; (R+r)*sin(t) -    r*sin(Rr*t) ];
-xy_der = [ -(R+r)*sin(t) + Rr*r*cos(Rr*t) ; (R+r)*cos(t) - Rr*r*cos(Rr*t) ];
+xy     = [ (R+r)*sin(t) -    r*sin(Rr*t) ; (R+r)*cos(t) -    r*cos(Rr*t) ];
+xy_der = [ (R+r)*cos(t) - Rr*r*cos(Rr*t) ; -(R+r)*sin(t) + Rr*r*sin(Rr*t) ];
 
-Cycloid_base = cell(1,size(t,2)-1);
+CurrCycloid = cell(1,size(t,2)-1);
 for i = 2:size(t,2)
   del_i = t(i) - t(i-1);
   CurrCurve = zeros(2,4);
@@ -242,14 +243,47 @@ for i = 2:size(t,2)
   CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
   CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
   CurrCurve(:,4) = xy(:,i);
-  Cycloid_base{i-1} = CurrCurve;
+  CurrCycloid{i-1} = CurrCurve;
 end
-Cycloid_base = FlipBezierAll(Cycloid_base);
+CurrCycloid = FlipBezierAll(CurrCycloid);
 
-Hypercycloid{N} = Cycloidgon_N;
+Epicycloid{N} = CurrCycloid;
+end
 
-clear xy
+clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
 
+%%
+% polygon with cycloids as sides
+Hypocycloid = cell(1,7);
+
+for N = 2:8
+% make one single cycloid
+R  = 1;
+r  = 1/N; 
+Rr = (R-r)/r;
+dt = 2*pi/(N*4);
+t = (0:dt:(2*pi));
+
+xy     = [ (R-r)*sin(t) -    r*sin(Rr*t) ;  (R-r)*cos(t) +    r*cos(Rr*t) ];
+xy_der = [ (R-r)*cos(t) - Rr*r*cos(Rr*t) ; -(R-r)*sin(t) - Rr*r*sin(Rr*t) ];
+
+CurrCycloid = cell(1,size(t,2)-1);
+for i = 2:size(t,2)
+  del_i = t(i) - t(i-1);
+  CurrCurve = zeros(2,4);
+  CurrCurve(:,1) = xy(:,i-1);
+  CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
+  CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
+  CurrCurve(:,4) = xy(:,i);
+  CurrCycloid{i-1} = CurrCurve;
+end
+CurrCycloid = FlipBezierAll(CurrCycloid);
+CurrCycloid = ShiftBezierAll(CurrCycloid, 2,false);
+
+Hypocycloid{N} = CurrCycloid;
+end
+
+clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
 
 %%
 save('ExampleCollections.mat')
