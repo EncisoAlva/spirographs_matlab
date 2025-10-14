@@ -11,6 +11,15 @@ CtrlPtsArray = struct2cell(load('ExampleCurves.mat','RotatedSquare'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
+% check available curves in the example file
+who -file ExampleCollections.mat
+
+% load curve
+CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Circlegon_in'));
+CtrlPtsArray = CtrlPtsArray{1};
+CtrlPtsArray = CtrlPtsArray{5};
+
+%%
 % load from file
 AllCtrlPtsArray = LoadSVG( './curves_svg/coin_line.svg' );
 CtrlPtsArray = AllCtrlPtsArray{1};
@@ -88,11 +97,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 6+1/16;
+WheelBezRatio = 15+1/16;
 WheelMarkerRatio = 4/5;
 MaxSpins = 4;
 
-Shift  = 1;
+Shift  = 0;
 Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -216,6 +225,7 @@ ExtraOpts.TimerefCurve = 'Average';
 %ExtraOpts.TimerefCurve = 'Bezier';
 %ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 1;
+ExtraOpts.PortionFirstRound = 0.5;
 
 % video
 MakeVideo_4pts( WheelRadius, ...
@@ -224,7 +234,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  70, 10, 'test_251008_24_2', ExtraOpts )
+  60, 10, 'test_251012_01_5', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 

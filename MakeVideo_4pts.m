@@ -102,6 +102,36 @@ TimeFromCurve2A = TimeFromCurve2A*((TotalTime-AfterTime)/TimeFromCurve2A(end));
 TimeFromCurve1B = TimeFromCurve1B*((TotalTime-AfterTime)/TimeFromCurve1B(end));
 TimeFromCurve2B = TimeFromCurve2B*((TotalTime-AfterTime)/TimeFromCurve2B(end));
 
+if isfield(ExtraOpts,'PortionFirstRound')
+  TimeFromCurve1A = TimeFromCurve1A/TimeFromCurve1A(end);
+  [FirstRoundTime,idxFirstRound] = max(TimeFromCurve1A(TimeFromCurve1A<=1/4));
+  TimeFromCurve1A(1:idxFirstRound) = TimeFromCurve1A(1:idxFirstRound) * (ExtraOpts.PortionFirstRound/FirstRoundTime);
+  TimeFromCurve1A(idxFirstRound:end) = ExtraOpts.PortionFirstRound + ...
+    (1-ExtraOpts.PortionFirstRound)*(TimeFromCurve1A(idxFirstRound:end)-FirstRoundTime)/(TimeFromCurve1A(end)-FirstRoundTime) ;
+  TimeFromCurve1A = TimeFromCurve1A*(TotalTime-AfterTime);
+
+  TimeFromCurve2A = TimeFromCurve2A/TimeFromCurve2A(end);
+  [FirstRoundTime,idxFirstRound] = max(TimeFromCurve2A(TimeFromCurve2A<=1/4));
+  TimeFromCurve2A(1:idxFirstRound) = TimeFromCurve2A(1:idxFirstRound) * (ExtraOpts.PortionFirstRound/FirstRoundTime);
+  TimeFromCurve2A(idxFirstRound:end) = ExtraOpts.PortionFirstRound + ...
+    (1-ExtraOpts.PortionFirstRound)*(TimeFromCurve2A(idxFirstRound:end)-FirstRoundTime)/(TimeFromCurve2A(end)-FirstRoundTime) ;
+  TimeFromCurve2A = TimeFromCurve2A*(TotalTime-AfterTime);
+
+  TimeFromCurve1B = TimeFromCurve1B/TimeFromCurve1B(end);
+  [FirstRoundTime,idxFirstRound] = max(TimeFromCurve1B(TimeFromCurve1B<=1/4));
+  TimeFromCurve1B(1:idxFirstRound) = TimeFromCurve1B(1:idxFirstRound) * (ExtraOpts.PortionFirstRound/FirstRoundTime);
+  TimeFromCurve1B(idxFirstRound:end) = ExtraOpts.PortionFirstRound + ...
+    (1-ExtraOpts.PortionFirstRound)*(TimeFromCurve1B(idxFirstRound:end)-FirstRoundTime)/(TimeFromCurve1B(end)-FirstRoundTime) ;
+  TimeFromCurve1B = TimeFromCurve1B*(TotalTime-AfterTime);
+
+  TimeFromCurve2B = TimeFromCurve2B/TimeFromCurve2B(end);
+  [FirstRoundTime,idxFirstRound] = max(TimeFromCurve2B(TimeFromCurve2B<=1/4));
+  TimeFromCurve2B(1:idxFirstRound) = TimeFromCurve2B(1:idxFirstRound) * (ExtraOpts.PortionFirstRound/FirstRoundTime);
+  TimeFromCurve2B(idxFirstRound:end) = ExtraOpts.PortionFirstRound + ...
+    (1-ExtraOpts.PortionFirstRound)*(TimeFromCurve2B(idxFirstRound:end)-FirstRoundTime)/(TimeFromCurve2B(end)-FirstRoundTime) ;
+  TimeFromCurve2B = TimeFromCurve2B*(TotalTime-AfterTime);
+end
+
 % parameters
 fps     = 30;
 MaxTime = ceil(TimeFromCurve1A(end)*fps)/fps;

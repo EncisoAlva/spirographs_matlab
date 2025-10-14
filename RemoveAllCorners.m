@@ -43,7 +43,12 @@ for i = 1:nCurves
   % find the cornering angle
   TangentPre = EvalBezierNormal(CtrlPtsArray_aux{i},  1, WheelRadius );
   TangentPos = EvalBezierNormal(CtrlPtsArray_aux{i_}, 0, WheelRadius );
-  CornerAngles(i) = mod( atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1)), 2*pi);
+  if (norm(TangentPos)>Tol) && (norm(TangentPre)>Tol)
+    CornerAngles(i) = mod( atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1)), 2*pi);
+  else
+    % exception: vanishing first derivative; throw to exception handler
+    CornerAngles(i) = pi;
+  end
   %
   % only act if wheel can't roll freely
   % worst-case scenario found: if the corner angle is -pi
