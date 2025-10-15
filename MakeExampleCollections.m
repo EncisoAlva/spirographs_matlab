@@ -286,4 +286,71 @@ end
 clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
 
 %%
+% circle crowned with lines
+Target = cell(1,8);
+
+for N = 2:8
+% make one single semicircle
+Target_N = cell(1,3*N+1);
+
+for i = 0:(N-1)
+  ang_i  = (i-1)*2*pi/N;
+  ang_i1 =    i *2*pi/N;
+  magn   = 1.5;
+  Target_N{3*i+1} = [...
+    [cos(ang_i ),sin(ang_i )]',...
+    [cos(ang_i ),sin(ang_i )]'+[cos(ang_i +pi/2),sin(ang_i +pi/2)]'*(4/3)*tan(pi/(2*N)),...
+    [cos(ang_i1),sin(ang_i1)]'+[cos(ang_i1-pi/2),sin(ang_i1-pi/2)]'*(4/3)*tan(pi/(2*N)),...
+    [cos(ang_i1),sin(ang_i1)]'...
+    ];
+  Target_N{3*i+2} = LineToBezier([cos(ang_i1),sin(ang_i1)]',     [cos(ang_i1),sin(ang_i1)]'*magn);
+  Target_N{3*i+3} = LineToBezier([cos(ang_i1),sin(ang_i1)]'*magn,[cos(ang_i1),sin(ang_i1)]');
+end
+
+% change starting point
+[c1, c2] = HalfBezierSingle(Target_N{1});
+Target_N{1}   = c2;
+Target_N{end} = c1;
+Target_N = FlipBezierAll(Target_N);
+
+Target{N} = Target_N;
+end
+
+clear ang_i ang_i1 c1 c2 i magn N Target_N
+
+%%
+% circle crowned with lines
+Target_in = cell(1,8);
+
+for N = 2:8
+% make one single semicircle
+Target_N = cell(1,3*N+1);
+
+for i = 0:(N-1)
+  ang_i  = (i-1)*2*pi/N +pi/N +pi/2;
+  ang_i1 =    i *2*pi/N +pi/N +pi/2;
+  %magn   = (1-1/N)/(1+1/pi);
+  magn = 0.5;
+  Target_N{3*i+1} = [...
+    [cos(ang_i ),sin(ang_i )]',...
+    [cos(ang_i ),sin(ang_i )]'+[cos(ang_i +pi/2),sin(ang_i +pi/2)]'*(4/3)*tan(pi/(2*N)),...
+    [cos(ang_i1),sin(ang_i1)]'+[cos(ang_i1-pi/2),sin(ang_i1-pi/2)]'*(4/3)*tan(pi/(2*N)),...
+    [cos(ang_i1),sin(ang_i1)]'...
+    ];
+  Target_N{3*i+2} = LineToBezier([cos(ang_i1),sin(ang_i1)]',     [cos(ang_i1),sin(ang_i1)]'*magn);
+  Target_N{3*i+3} = LineToBezier([cos(ang_i1),sin(ang_i1)]'*magn,[cos(ang_i1),sin(ang_i1)]');
+end
+
+% change starting point
+[c1, c2] = HalfBezierSingle(Target_N{1});
+Target_N{1}   = c2;
+Target_N{end} = c1;
+Target_N = FlipBezierAll(Target_N);
+
+Target_in{N} = Target_N;
+end
+
+clear ang_i ang_i1 c1 c2 i magn N Target_N
+
+%%
 save('ExampleCollections.mat')

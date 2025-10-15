@@ -15,9 +15,9 @@ CtrlPtsArray = CtrlPtsArray{1};
 who -file ExampleCollections.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Circlegon'));
+CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Target'));
 CtrlPtsArray = CtrlPtsArray{1};
-CtrlPtsArray = CtrlPtsArray{4};
+CtrlPtsArray = CtrlPtsArray{2};
 
 %%
 % load from file
@@ -97,10 +97,10 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 4;
+WheelBezRatio = 8;
 WheelMarkerRatio = 4/5;
 
-Shift  = 3;
+Shift  = 0;
 Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -135,16 +135,19 @@ CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, Shift, Halfen );
 
 if false
   CtrlPtsArray_new = CtrlPtsArray;
-  WheelRadius_new = (BezierPerimeter(CtrlPtsArray,0.00001)/(2*pi))/WheelBezRatio
+  WheelRadius_new = (BezierPerimeter(CtrlPtsArray_new,0.00001)/(2*pi))/WheelBezRatio
   WheelRadius  = WheelRadius_new;
   MarkerRadius = WheelRadius*WheelMarkerRatio;
+  CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, Shift, Halfen );
 end
 
 %% 
 
 % show control points
 PlotBezierCtrlPts(CtrlPtsArray_new)
-CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, 2, true);
+
+
+%CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, 2, false);
 
 % difference from rounding
 BezOG  = AllBezierEval(CtrlPtsArray, MaxDistDelta);
@@ -158,10 +161,12 @@ fill(BezNew(1,:),BezNew(2,:), 'y', 'EdgeColor', 'none');
 
 %%
 ColorVector = {'yellow','magenta', 'red', 'red'};
+%ColorVector = {'magenta', 'yellow', 'red', 'red'};
 
 %ColorVector = {'yellow','white', 'red', 'red'};
 
 %ColorVector = {'yellow','yellow','red', 'red', 'red'};
+%ColorVector = {'yellow','red','yellow', 'red', 'red'};
 
 %ColorVector = {'red','white', 'red'};
 
@@ -311,7 +316,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251012_17_5', ExtraOpts )
+  40, 10, 'test_251014_11', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
@@ -334,7 +339,7 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimerefCurve = 'Wheel';
+ExtraOpts.TimerefCurve = 'Average';
 ExtraOpts.LineWidth = 2;
 
 % video
@@ -344,7 +349,7 @@ MakeVideo_2pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251012_19_4', ExtraOpts )
+  40, 10, 'test_251014_23_3', ExtraOpts )
 
 %Wheel
 %Bezier

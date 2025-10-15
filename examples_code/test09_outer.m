@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','RotatedSquare'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Star5'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -73,7 +73,7 @@ end
 
 PlotBezierCtrlPts(CtrlPtsArray)
 
-%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -4, false );
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, 1, false );
 %CtrlPtsArray_back = CtrlPtsArray;
 %CtrlPtsArray = CtrlPtsArray_back;
 
@@ -97,11 +97,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 15+1/16;
+WheelBezRatio = 10+1/16;
 WheelMarkerRatio = 4/5;
 MaxSpins = 4;
 
-Shift  = 0;
+Shift  = -1;
 Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -234,7 +234,7 @@ MakeVideo_4pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  60, 10, 'test_251012_01_5', ExtraOpts )
+  59, 8, 'test_251014_24', ExtraOpts )
 
 %  {'yellow', 'magenta', 'red', 'red'},...
 
