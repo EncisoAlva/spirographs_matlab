@@ -113,7 +113,7 @@ clear b bar curr_side CurrCurve Cycloid_base Cycloid_rotated Cycloidgon_N del_i 
 
 %%
 % polygon with semicircles as sides
-Circlegon = cell(1,7);
+Circlegon = cell(1,8);
 
 % make one single semicircle
 Semicircle_base = {[...
@@ -166,7 +166,7 @@ clear b bar curr_side CurrCurve Semicircle_base Semicircle_rotated Circlegon_N d
 
 %%
 % polygon with semicircles as sides
-Circlegon_in = cell(1,7);
+Circlegon_in = cell(1,8);
 
 % make one single semicircle
 Semicircle_base = {[...
