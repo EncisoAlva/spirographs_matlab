@@ -222,11 +222,7 @@ clear b bar curr_side CurrCurve Semicircle_base Semicircle_rotated Circlegon_N d
 
 %%
 % polygon with cycloids as sides
-<<<<<<< HEAD:MakeExampleCollections_good.m
 Epicycloid = cell(1,7);
-=======
-Hypercycloid = cell(1,8);
->>>>>>> 8e88ee4de595c741a177a7d526649d2156e150e3:MakeExampleCollections.m
 
 for N = 1:8
 % make one single cycloid
@@ -239,11 +235,7 @@ t = (0:dt:(2*pi));
 xy     = [ (R+r)*sin(t) -    r*sin(Rr*t) ; (R+r)*cos(t) -    r*cos(Rr*t) ];
 xy_der = [ (R+r)*cos(t) - Rr*r*cos(Rr*t) ; -(R+r)*sin(t) + Rr*r*sin(Rr*t) ];
 
-<<<<<<< HEAD:MakeExampleCollections_good.m
 CurrCycloid = cell(1,size(t,2)-1);
-=======
-Hypercycloid_N = cell(1,size(t,2)-1);
->>>>>>> 8e88ee4de595c741a177a7d526649d2156e150e3:MakeExampleCollections.m
 for i = 2:size(t,2)
   del_i = t(i) - t(i-1);
   CurrCurve = zeros(2,4);
@@ -251,7 +243,6 @@ for i = 2:size(t,2)
   CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
   CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
   CurrCurve(:,4) = xy(:,i);
-<<<<<<< HEAD:MakeExampleCollections_good.m
   CurrCycloid{i-1} = CurrCurve;
 end
 CurrCycloid = FlipBezierAll(CurrCycloid);
@@ -260,19 +251,9 @@ Epicycloid{N} = CurrCycloid;
 end
 
 clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
-=======
-  Hypercycloid_N{i-1} = CurrCurve;
-end
-Hypercycloid_N = FlipBezierAll(Hypercycloid_N);
-
-Hypercycloid{N} = Hypercycloid_N;
-end
-
-clear CurrCurve del_i dt Hypercycloid_N i N r R Rr t xy xy_der
->>>>>>> 8e88ee4de595c741a177a7d526649d2156e150e3:MakeExampleCollections.m
 
 %%
-% polygon with cycloids as sides
+% hypocycloid, direct from parametric function
 Hypocycloid = cell(1,7);
 
 for N = 2:8
@@ -305,7 +286,7 @@ end
 clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
 
 %%
-% circle crowned with lines
+% circle crowned with lines outside
 Target = cell(1,8);
 
 for N = 2:8
@@ -338,7 +319,7 @@ end
 clear ang_i ang_i1 c1 c2 i magn N Target_N
 
 %%
-% circle crowned with lines
+% circle with lines inside
 Target_in = cell(1,8);
 
 for N = 2:8

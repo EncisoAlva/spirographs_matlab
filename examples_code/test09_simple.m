@@ -15,9 +15,9 @@ CtrlPtsArray = CtrlPtsArray{1};
 who -file ExampleCollections.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Target'));
+CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Target_in'));
 CtrlPtsArray = CtrlPtsArray{1};
-CtrlPtsArray = CtrlPtsArray{2};
+CtrlPtsArray = CtrlPtsArray{6};
 
 %%
 % load from file
@@ -97,7 +97,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 8;
+WheelBezRatio = 6;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
