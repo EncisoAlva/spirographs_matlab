@@ -254,14 +254,14 @@ clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
 
 %%
 % hypocycloid, direct from parametric function
-Hypocycloid = cell(1,7);
+Hypocycloid = cell(1,8);
 
 for N = 2:8
 % make one single cycloid
 R  = 1;
 r  = 1/N; 
 Rr = (R-r)/r;
-dt = 2*pi/(N*4);
+dt = 2*pi/(N*2);
 t = (0:dt:(2*pi));
 
 xy     = [ (R-r)*sin(t) -    r*sin(Rr*t) ;  (R-r)*cos(t) +    r*cos(Rr*t) ];
@@ -278,7 +278,7 @@ for i = 2:size(t,2)
   CurrCycloid{i-1} = CurrCurve;
 end
 CurrCycloid = FlipBezierAll(CurrCycloid);
-CurrCycloid = ShiftBezierAll(CurrCycloid, 2,false);
+CurrCycloid = ShiftBezierAll(CurrCycloid, 1,false);
 
 Hypocycloid{N} = CurrCycloid;
 end

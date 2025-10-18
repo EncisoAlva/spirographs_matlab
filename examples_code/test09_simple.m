@@ -17,7 +17,7 @@ who -file ExampleCollections.mat
 % load curve
 CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Hypocycloid'));
 CtrlPtsArray = CtrlPtsArray{1};
-CtrlPtsArray = CtrlPtsArray{6};
+CtrlPtsArray = CtrlPtsArray{8};
 
 %%
 % load from file
@@ -97,18 +97,18 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9;
+WheelBezRatio = 4;
 WheelMarkerRatio = 4/5;
 
-%Shift  = 5;
-%Halfen = true;
+Shift  = -2;
+Halfen = true;
 %Shift  = 3;
 %Halfen = false;
-Shift  = 0;
-Halfen = false;
+%Shift  = 0;
+%Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
-CornerRoundingRadius = sqrt(0.0001*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
+CornerRoundingRadius = sqrt(0.001*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
 
 %% 
 % remove inner corners
@@ -322,7 +322,7 @@ MakeVideo_2pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251015_20_8', ExtraOpts )
+  40, 10, 'test_251017_24_4', ExtraOpts )
 
 %Wheel
 %Bezier
