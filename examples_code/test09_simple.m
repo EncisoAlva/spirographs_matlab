@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Astroid4'));
+CtrlPtsArray = struct2cell(load('ExampleCurves.mat','Number8'));
 CtrlPtsArray = CtrlPtsArray{1};
 
 %%
@@ -15,9 +15,9 @@ CtrlPtsArray = CtrlPtsArray{1};
 who -file ExampleCollections.mat
 
 % load curve
-CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Hypocycloid'));
+CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Circlegon'));
 CtrlPtsArray = CtrlPtsArray{1};
-CtrlPtsArray = CtrlPtsArray{8};
+CtrlPtsArray = CtrlPtsArray{3};
 
 %%
 % load from file
@@ -73,7 +73,7 @@ end
 
 PlotBezierCtrlPts(CtrlPtsArray)
 
-%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, 6, false );
+%CtrlPtsArray = ShiftBezierAll( CtrlPtsArray, -6, false );
 %CtrlPtsArray_back = CtrlPtsArray;
 %CtrlPtsArray = CtrlPtsArray_back;
 
@@ -97,15 +97,15 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 4;
+WheelBezRatio = 5/2;
 WheelMarkerRatio = 4/5;
 
-Shift  = -2;
-Halfen = true;
+%Shift  = -2;
+%Halfen = true;
 %Shift  = 3;
 %Halfen = false;
-%Shift  = 0;
-%Halfen = false;
+Shift  = 0;
+Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*BezierArea(CtrlPtsArray, MaxDistDelta)/(pi));
