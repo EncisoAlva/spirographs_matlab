@@ -97,7 +97,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5/2;
+WheelBezRatio = 9/4;
 WheelMarkerRatio = 4/5;
 
 %Shift  = -2;
@@ -172,7 +172,7 @@ ColorVector = {'yellow','magenta', 'red', 'red'};
 %ColorVector = {'yellow','yellow','red', 'red', 'red'};
 %ColorVector = {'yellow','red','yellow', 'red', 'red'};
 
-%ColorVector = {'red','white', 'red'};
+%ColorVector = {'white', 'red'};
 
 %CtrlPtsArray_new = ShiftBezierAll( CtrlPtsArray_new, -3, false );
 
@@ -358,7 +358,7 @@ MakeVideo_1pts( WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251012_19_2', ExtraOpts )
+  120, 10, 'test_251019_24_4', ExtraOpts )
 
 
 
@@ -437,4 +437,4 @@ MakeVideo_2pts( WheelRadius, ...
   AllWhCtrPos_use, AllMarkerPos_use, AllMarkerAngle_use,...
   ColorVector,...
   MaxDistDelta, ...
-  40, 10, 'test_251015_23_4', ExtraOpts )
+  40, 10, 'test_251019_24_1', ExtraOpts )

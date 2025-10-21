@@ -94,10 +94,10 @@ switch ExtraOpts.Orientation
     ExtraBorder = 2*WheelRadius;
 end
 %
-x0 = min( [min(AllMarkerPos{1}(1,:)), min(AllMarkerPos{2}(1,:)), (min(AllBezierPos{1}(1,:))-ExtraBorder)] );
-xF = max( [max(AllMarkerPos{1}(1,:)), max(AllMarkerPos{2}(1,:)), (max(AllBezierPos{1}(1,:))+ExtraBorder)] );
-y0 = min( [min(AllMarkerPos{1}(2,:)), min(AllMarkerPos{2}(2,:)), (min(AllBezierPos{1}(2,:))-ExtraBorder)] );
-yF = max( [max(AllMarkerPos{1}(2,:)), max(AllMarkerPos{2}(2,:)), (max(AllBezierPos{1}(2,:))+ExtraBorder)] );
+x0 = min( [min(AllMarkerPos{1}(1,:)), (min(AllBezierPos{1}(1,:))-ExtraBorder)] );
+xF = max( [max(AllMarkerPos{1}(1,:)), (max(AllBezierPos{1}(1,:))+ExtraBorder)] );
+y0 = min( [min(AllMarkerPos{1}(2,:)), (min(AllBezierPos{1}(2,:))-ExtraBorder)] );
+yF = max( [max(AllMarkerPos{1}(2,:)), (max(AllBezierPos{1}(2,:))+ExtraBorder)] );
 %
 x_ran = xF - x0;
 y_ran = yF - y0;
@@ -132,13 +132,6 @@ end
 v.Quality = 100;
 open(v)
 
-% prepare finished figure for sneek peek
-% take specifications from figure 1
-%copyobj(f1.Children,f2)
-%set(0,"CurrentFigure",f2)
-%plot(AllMarkerPos{1}(1,:),AllMarkerPos{1}(2,:),'Color',CurveColor{2})
-%plot(AllMarkerPos{2}(1,:),AllMarkerPos{2}(2,:),'Color',CurveColor{1})
-
 % main loop
 WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
   'Name','Spirograph over Bezier curves by Enciso-Alva (2025)');
@@ -165,7 +158,7 @@ for i = 0:nTimes
   if ~isempty(CurrPts) % if no points will be added. skip drawing loop
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts),AllMarkerPos{1}(2,CurrPts),'Color',CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts),AllMarkerPos{1}(2,CurrPts),'Color',CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
   %
   j = max(CurrPts);
     RefWheelCtr = AllWhCtrPos{1}(:,j);
@@ -177,7 +170,7 @@ for i = 0:nTimes
     plot(RefWheelCtr(1)+[0,cos(aux_angles(w)+RefAngle)*WheelRadius],RefWheelCtr(2)+[0,sin(aux_angles(w)+RefAngle)*WheelRadius],...
       'Color',[0,0,0,0.5])
   end
-  scatter(AllMarkerPos{1}(1,j),AllMarkerPos{1}(2,j),10,CurveColor{2},'filled')
+  scatter(AllMarkerPos{1}(1,j),AllMarkerPos{1}(2,j),10,CurveColor{1},'filled')
   scatter(RefBez(1),RefBez(2),10,'white','filled')
   %
   end
@@ -198,7 +191,7 @@ for i = 1:1
   set(0,"CurrentFigure",f2)
   %
   % add a few strokes of the marker, then copy to figure 2
-  plot(AllMarkerPos{1}(1,CurrPts),AllMarkerPos{1}(2,CurrPts),CurveColor{2},'LineWidth',ExtraOpts.LineWidth)
+  plot(AllMarkerPos{1}(1,CurrPts),AllMarkerPos{1}(2,CurrPts),CurveColor{1},'LineWidth',ExtraOpts.LineWidth)
 end
 
 
@@ -207,6 +200,10 @@ end
 for stopper = 0:(fps*(AfterTime/2))
   writeVideo(v,getframe)
 end
+
+% save as picture, it may be useful
+[~,name_without_extension, ~] = fileparts(VidName);
+saveas(f2, strcat(name_without_extension,'.png'));
 
 if exist('WB','var')
   if getappdata(WB,'canceling')

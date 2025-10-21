@@ -260,6 +260,11 @@ for stopper = 0:(fps*(AfterTime/2))
   writeVideo(v,getframe)
 end
 
+% save as picture, it may be useful
+[~,name_without_extension, ~] = fileparts(Vidname);
+saveas(f2, strcat(name_without_extension,'.png'));
+
+% delete waitbar, if it is still around
 if exist('WB','var')
   if getappdata(WB,'canceling')
     return

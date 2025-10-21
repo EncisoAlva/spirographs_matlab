@@ -233,6 +233,10 @@ for stopper = 0:(fps*(AfterTime/2))
   writeVideo(v,getframe)
 end
 
+% save as picture, it may be useful
+[~,name_without_extension, ~] = fileparts(VidName);
+saveas(f2, strcat(name_without_extension,'.png'));
+
 if exist('WB','var')
   if getappdata(WB,'canceling')
     return
