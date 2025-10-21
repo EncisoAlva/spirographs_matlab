@@ -1,6 +1,7 @@
 *.asv
 *.mp4
 *.avi
+*.png
 /examples
 /explorations
 /webpage_animations
