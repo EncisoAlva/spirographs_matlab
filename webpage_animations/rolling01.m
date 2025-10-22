@@ -1275,6 +1275,44 @@ Circ = struct2cell(load('ExampleCurves.mat','Bone'));
 Circ = Circ{1};
 %PlotBezierCtrlPts(Circ)
 
+nCurves = size(Circ,2);
+
+% shrink the curve to het a redius of approx 2pi
+Perim = BezierPerimeter(Circ,Tol);
+for i = 1:nCurves
+  Circ{i} = Circ{i}*(2*pi/Perim);
+end
+
+% fun with perimeters
+Perim = zeros(1,size(Circ,2));
+for i = 1:size(Circ,2)
+  Perim(i) = BezierPerimeter({Circ{i}},Tol);
+end
+PerimCum = [0,cumsum(Perim)];
+
+Tvals = 0:(Tol):1;
+CumArc = zeros(nCurves,size(Tvals,2));
+for i = 1:nCurves
+  CurrBez = EvalBezier(Circ{i}, Tvals);
+  dists = vecnorm( diff(CurrBez,1,2), 2, 1);
+  CumArc(i,2:end) = cumsum(dists);
+end
+
+% line ticks
+aang = 0:(2*pi/(8*3)):(2*pi);
+tick_x = zeros(1,size(aang,2));
+tick_y = zeros(1,size(aang,2));
+for i = 1:size(aang,2)
+  [m,j]  = max(PerimCum(PerimCum<=aang(i)));
+  j = mod(j-1,nCurves)+1;
+  res = aang(i) - m;
+  [~,j2] = max( CumArc(j, CumArc(j,:) <= res ) );
+  t_approx = ( Tvals(j2)*(CumArc(j,j2+1)-res) + Tvals(j2+1)*(res-CumArc(j,j2)) )/( CumArc(j,j2+1)-CumArc(j,j2) );
+  Ptmp = EvalBezier( Circ{j}, t_approx );
+  tick_x(i) = Ptmp(1);
+  tick_y(i) = Ptmp(2);
+end
+
 % specific to this example
 WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/3;
 MarkerRadius = WheelRadius;
@@ -1292,19 +1330,18 @@ TimeFromCurve = zeros(1,size(BezierPos,2));
 TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
-% line ticks
-aang = 0:(2*pi/(8*3)):(2*pi);
-tick_x = cos(aang);
-tick_y = sin(aang);
-
 % circle, the picture
 aang = 0:(2*pi/50):(2*pi);
 circle_pts = [cos(aang);sin(aang)]*WheelRadius;
 aang = 0:(2*pi/8):(2*pi);
 
+LowBorder = min(DecorativeBezier(2,:));
+TopBorder = max(DecorativeBezier(2,:));
+RRBorder = max(DecorativeBezier(1,:));
+LLBorder = min(DecorativeBezier(1,:));
 
 f1 = figure(Theme="light");
-for t = 0:(1/240):1
+for t = 0:(1/480):1
 
 [~, i] = max(TimeFromCurve(TimeFromCurve<=t));
 
@@ -1332,16 +1369,258 @@ scatter(MarkerPos(1,i), MarkerPos(2,i), 75,'red', 'filled')
 
 text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',16,'HorizontalAlignment','center', 'Interpreter','latex')
 text(WhCtrPos(1,i)+0.15+WheelRadius,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
-text(0,1-.15,0,'$\mathcal{C}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+text(0,TopBorder-.15,0,'$\mathcal{B}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
-text(0,-1-max(WheelRadius+MarkerRadius)-.15,0,'$R_\mathcal{C}/R_\mathcal{W} = 3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+text(0,LowBorder-(WheelRadius+MarkerRadius)-.15,0,'$P_\mathcal{B}/P_\mathcal{W} = 3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
-xlim([-1-max(WheelRadius+MarkerRadius)-.3, 1+max(WheelRadius+MarkerRadius)+.3])
-ylim([-1-max(WheelRadius+MarkerRadius)-.3, 1+max(WheelRadius+MarkerRadius)+.3])
+xlim([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3])
+ylim([LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3])
 
-scatter([-1-(WheelRadius+MarkerRadius)-.3, 1+(WheelRadius+MarkerRadius)+.3],...
-  [-1-(WheelRadius+MarkerRadius)-.3, 1+(WheelRadius+MarkerRadius)+.3],[],[.95,.95,.95])
+scatter([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3],...
+  [LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3],[],[.95,.95,.95])
 
-exportgraphics(f1,"fig02b.gif",Append=true)
+exportgraphics(f1,"fig04a.gif",Append=true)
+
+end
+
+%%
+% figure 4b
+
+% parameters
+Tol = 0.001;
+
+% line to roll on
+Circ = struct2cell(load('ExampleCurves.mat','Bone'));
+Circ = Circ{1};
+%PlotBezierCtrlPts(Circ)
+
+nCurves = size(Circ,2);
+
+% shrink the curve to het a redius of approx 2pi
+Perim = BezierPerimeter(Circ,Tol);
+for i = 1:nCurves
+  Circ{i} = Circ{i}*(2*pi/Perim);
+end
+
+% fun with perimeters
+Perim = zeros(1,size(Circ,2));
+for i = 1:size(Circ,2)
+  Perim(i) = BezierPerimeter({Circ{i}},Tol);
+end
+PerimCum = [0,cumsum(Perim)];
+
+Tvals = 0:(Tol):1;
+CumArc = zeros(nCurves,size(Tvals,2));
+for i = 1:nCurves
+  CurrBez = EvalBezier(Circ{i}, Tvals);
+  dists = vecnorm( diff(CurrBez,1,2), 2, 1);
+  CumArc(i,2:end) = cumsum(dists);
+end
+
+% line ticks
+aang = 0:(2*pi/(8*5)):(2*pi);
+tick_x = zeros(1,size(aang,2));
+tick_y = zeros(1,size(aang,2));
+for i = 1:size(aang,2)
+  [m,j]  = max(PerimCum(PerimCum<=aang(i)));
+  j = mod(j-1,nCurves)+1;
+  res = aang(i) - m;
+  [~,j2] = max( CumArc(j, CumArc(j,:) <= res ) );
+  t_approx = ( Tvals(j2)*(CumArc(j,j2+1)-res) + Tvals(j2+1)*(res-CumArc(j,j2)) )/( CumArc(j,j2+1)-CumArc(j,j2) );
+  Ptmp = EvalBezier( Circ{j}, t_approx );
+  tick_x(i) = Ptmp(1);
+  tick_y(i) = Ptmp(2);
+end
+
+% specific to this example
+WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/2);
+MarkerRadius = WheelRadius;
+
+% Bezier curve
+DecorativeBezier = AllBezierEval(Circ, Tol);
+
+% spirograph curve
+[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+    Tol, Tol, 2);
+
+% make time based on the traveres arc length
+TimeFromCurve = zeros(1,size(BezierPos,2));
+TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
+
+% circle, the picture
+aang = 0:(2*pi/50):(2*pi);
+circle_pts = [cos(aang);sin(aang)]*WheelRadius;
+aang = 0:(2*pi/8):(2*pi);
+
+LowBorder = min(DecorativeBezier(2,:));
+TopBorder = max(DecorativeBezier(2,:));
+RRBorder = max(DecorativeBezier(1,:));
+LLBorder = min(DecorativeBezier(1,:));
+
+f1 = figure(Theme="light");
+for t = 0:(2/480):1
+
+[~, i] = max(TimeFromCurve(TimeFromCurve<=t));
+
+% graph
+clf(f1)
+plot(DecorativeBezier(1,:), DecorativeBezier(2,:), 'LineWidth',2, 'Color','black')
+axis equal
+hold on
+axis off
+plot(MarkerPos(1,:), MarkerPos(2,:), 'LineWidth',2, 'Color','red')
+text(0, 1+max(WheelRadius+MarkerRadius,2*WheelRadius)+.15,'JCEA2025','Color',[.95,.95,.95],'FontSize',16,'HorizontalAlignment','left', 'Interpreter','latex')
+%
+axle_pts = [cos(aang + MarkerAngle(i)); sin(aang + MarkerAngle(i))]*WheelRadius;
+for j = 1:size(axle_pts,2)
+  plot(WhCtrPos(1,i)+[0,axle_pts(1,j)],WhCtrPos(2,i)+[0,axle_pts(2,j)], 'LineWidth',.1, 'Color','blue')
+end
+plot([WhCtrPos(1,i),MarkerPos(1,i)],[WhCtrPos(2,i),MarkerPos(2,i)], 'LineWidth',1.5, 'Color','blue')
+scatter(WhCtrPos(1,i), WhCtrPos(2,i),'blue', 'filled')
+plot(circle_pts(1,:)+WhCtrPos(1,i), circle_pts(2,:)+WhCtrPos(2,i), 'LineWidth',1.5, 'Color','blue')
+%
+scatter(tick_x, tick_y,'k', 'filled')
+%
+scatter(BezierPos(1,i), BezierPos(2,i),'blue', 'filled')
+scatter(MarkerPos(1,i), MarkerPos(2,i), 75,'red', 'filled')
+
+text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',16,'HorizontalAlignment','center', 'Interpreter','latex')
+text(WhCtrPos(1,i)+0.15+WheelRadius,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+text(0,TopBorder-.15,0,'$\mathcal{B}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+
+text(0,LowBorder-(WheelRadius+MarkerRadius)-.15,0,'$P_\mathcal{B}/P_\mathcal{W} = 5/2$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+
+xlim([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3])
+ylim([LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3])
+
+scatter([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3],...
+  [LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3],[],[.95,.95,.95])
+
+exportgraphics(f1,"fig04b.gif",Append=true)
+
+end
+
+%%
+% figure 4c
+
+% parameters
+Tol = 0.001;
+
+% line to roll on
+Circ = struct2cell(load('ExampleCurves.mat','Bone'));
+Circ = Circ{1};
+%PlotBezierCtrlPts(Circ)
+
+nCurves = size(Circ,2);
+
+% shrink the curve to het a redius of approx 2pi
+Perim = BezierPerimeter(Circ,Tol);
+for i = 1:nCurves
+  Circ{i} = Circ{i}*(2*pi/Perim);
+end
+
+% fun with perimeters
+Perim = zeros(1,size(Circ,2));
+for i = 1:size(Circ,2)
+  Perim(i) = BezierPerimeter({Circ{i}},Tol);
+end
+PerimCum = [0,cumsum(Perim)];
+
+Tvals = 0:(Tol):1;
+CumArc = zeros(nCurves,size(Tvals,2));
+for i = 1:nCurves
+  CurrBez = EvalBezier(Circ{i}, Tvals);
+  dists = vecnorm( diff(CurrBez,1,2), 2, 1);
+  CumArc(i,2:end) = cumsum(dists);
+end
+
+% line ticks
+aang = 0:(2*pi/(8*5)):(2*pi);
+tick_x = zeros(1,size(aang,2));
+tick_y = zeros(1,size(aang,2));
+for i = 1:size(aang,2)
+  [m,j]  = max(PerimCum(PerimCum<=aang(i)));
+  j = mod(j-1,nCurves)+1;
+  res = aang(i) - m;
+  [~,j2] = max( CumArc(j, CumArc(j,:) <= res ) );
+  if j2==size(Tvals,2)
+    t_approx = 1;
+  else
+    t_approx = ( Tvals(j2)*(CumArc(j,j2+1)-res) + Tvals(j2+1)*(res-CumArc(j,j2)) )/( CumArc(j,j2+1)-CumArc(j,j2) );
+  end
+  Ptmp = EvalBezier( Circ{j}, t_approx );
+  tick_x(i) = Ptmp(1);
+  tick_y(i) = Ptmp(2);
+end
+
+% specific to this example
+WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/3);
+MarkerRadius = WheelRadius;
+
+% Bezier curve
+DecorativeBezier = AllBezierEval(Circ, Tol);
+
+% spirograph curve
+[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+    Tol, Tol, 3);
+
+% make time based on the traveres arc length
+TimeFromCurve = zeros(1,size(BezierPos,2));
+TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
+
+% circle, the picture
+aang = 0:(2*pi/50):(2*pi);
+circle_pts = [cos(aang);sin(aang)]*WheelRadius;
+aang = 0:(2*pi/8):(2*pi);
+
+LowBorder = min(DecorativeBezier(2,:));
+TopBorder = max(DecorativeBezier(2,:));
+RRBorder = max(DecorativeBezier(1,:));
+LLBorder = min(DecorativeBezier(1,:));
+
+f1 = figure(Theme="light");
+for t = 0:(3/480):1
+
+[~, i] = max(TimeFromCurve(TimeFromCurve<=t));
+
+% graph
+clf(f1)
+plot(DecorativeBezier(1,:), DecorativeBezier(2,:), 'LineWidth',2, 'Color','black')
+axis equal
+hold on
+axis off
+plot(MarkerPos(1,:), MarkerPos(2,:), 'LineWidth',2, 'Color','red')
+text(0, 1+max(WheelRadius+MarkerRadius,2*WheelRadius)+.15,'JCEA2025','Color',[.95,.95,.95],'FontSize',16,'HorizontalAlignment','left', 'Interpreter','latex')
+%
+axle_pts = [cos(aang + MarkerAngle(i)); sin(aang + MarkerAngle(i))]*WheelRadius;
+for j = 1:size(axle_pts,2)
+  plot(WhCtrPos(1,i)+[0,axle_pts(1,j)],WhCtrPos(2,i)+[0,axle_pts(2,j)], 'LineWidth',.1, 'Color','blue')
+end
+plot([WhCtrPos(1,i),MarkerPos(1,i)],[WhCtrPos(2,i),MarkerPos(2,i)], 'LineWidth',1.5, 'Color','blue')
+scatter(WhCtrPos(1,i), WhCtrPos(2,i),'blue', 'filled')
+plot(circle_pts(1,:)+WhCtrPos(1,i), circle_pts(2,:)+WhCtrPos(2,i), 'LineWidth',1.5, 'Color','blue')
+%
+scatter(tick_x, tick_y,'k', 'filled')
+%
+scatter(BezierPos(1,i), BezierPos(2,i),'blue', 'filled')
+scatter(MarkerPos(1,i), MarkerPos(2,i), 75,'red', 'filled')
+
+text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',16,'HorizontalAlignment','center', 'Interpreter','latex')
+text(WhCtrPos(1,i)+0.15+WheelRadius,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+text(0,TopBorder-.15,0,'$\mathcal{B}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+
+text(0,LowBorder-(WheelRadius+MarkerRadius)-.15,0,'$P_\mathcal{B}/P_\mathcal{W} = 5/3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+
+xlim([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3])
+ylim([LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3])
+
+scatter([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3],...
+  [LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3],[],[.95,.95,.95])
+
+exportgraphics(f1,"fig04c.gif",Append=true)
 
 end
