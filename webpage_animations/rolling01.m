@@ -1,3 +1,5 @@
+addpath([pwd,'/webpage_animations'])
+
 %%
 % fig 1: simple cycloid
 
@@ -15,13 +17,15 @@ MarkerRadius = 1;
 DecorativeBezier = [ [0-1,0]',[2*pi+1,0]' ];
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( LineL, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( LineL, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -65,7 +69,11 @@ text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',1
 text(WhCtrPos(1,i)+1.15,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 text(2*pi+0.75,.15,'$\mathcal{L}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
+text(pi,-.3,'Cycloid','Color','black','FontSize',20,'HorizontalAlignment','center', 'FontName','Helvetica')
+scatter([-1,2*pi+1],[-.5,2.5],'white', 'filled')
+
 text(0,max(WheelRadius+MarkerRadius,2*WheelRadius)+.15,'JCEA2025','Color',[.95,.95,.95],'FontSize',16,'HorizontalAlignment','left', 'Interpreter','latex')
+
 
 xlim([-1,2*pi+1])
 ylim([-1.7,3.7])
@@ -91,13 +99,15 @@ MarkerRadius = 0.5;
 DecorativeBezier = [ [0-1,0]',[2*pi+1,0]' ];
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( LineL, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( LineL, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -140,6 +150,9 @@ text([0,2*pi],[0,0]-.15,{'0','$2\pi R_\mathcal{W}$'},'Color','black','FontSize',
 text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',16,'HorizontalAlignment','center', 'Interpreter','latex')
 text(WhCtrPos(1,i)+1.15,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 text(2*pi+0.75,.15,'$\mathcal{L}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+
+text(pi,-.3,'Curtate cycloid','Color','black','FontSize',20,'HorizontalAlignment','center', 'FontName','Helvetica')
+scatter([-1,2*pi+1],[-.5,2.5],'white', 'filled')
 
 text(0,max(WheelRadius+MarkerRadius,2*WheelRadius)+.15,'JCEA2025','Color',[.95,.95,.95],'FontSize',16,'HorizontalAlignment','left', 'Interpreter','latex')
 
@@ -167,13 +180,15 @@ MarkerRadius = 1.5;
 DecorativeBezier = [ [0-1,0]',[2*pi+1,0]' ];
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( LineL, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( LineL, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -218,6 +233,9 @@ text(WhCtrPos(1,i)+1.15,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',
 text(2*pi+0.75,.15,'$\mathcal{L}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
 text(0,max(WheelRadius+MarkerRadius,2*WheelRadius)+.15,'JCEA2025','Color',[.95,.95,.95],'FontSize',16,'HorizontalAlignment','left', 'Interpreter','latex')
+
+text(pi,-.3,'Prolate cycloid','Color','black','FontSize',20,'HorizontalAlignment','center', 'FontName','Helvetica')
+scatter([-1,2*pi+1],[-.5,2.5],'white', 'filled')
 
 xlim([-1,2*pi+1])
 ylim([-1.7,3.7])
@@ -257,20 +275,22 @@ Circ = { [...
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/2;
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/2;
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -358,20 +378,22 @@ Circ = { [...
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/3;
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/3;
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -459,20 +481,22 @@ Circ = { [...
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/5;
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/5;
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -560,20 +584,22 @@ Circ = { [...
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(3/2);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(3/2);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -661,20 +687,22 @@ Circ = { [...
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/2);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(5/2);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -762,24 +790,26 @@ Circ = { [...
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/3);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(7/3);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 3);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
-aang = 0:(2*pi/(8*5)):(2*pi);
+aang = 0:(2*pi/(8*7)):(2*pi);
 tick_x = cos(aang);
 tick_y = sin(aang);
 
@@ -820,7 +850,7 @@ text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',1
 text(WhCtrPos(1,i)+0.15+WheelRadius,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 text(0,1-.15,0,'$\mathcal{C}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
-text(0,-1-max(WheelRadius+MarkerRadius)-.15,0,'$R_\mathcal{C}/R_\mathcal{W} = 5/3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+text(0,-1-max(WheelRadius+MarkerRadius)-.15,0,'$R_\mathcal{C}/R_\mathcal{W} = 7/3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
 xlim([-1-max(WheelRadius+MarkerRadius)-.3, 1+max(WheelRadius+MarkerRadius)+.3])
 ylim([-1-max(WheelRadius+MarkerRadius)-.3, 1+max(WheelRadius+MarkerRadius)+.3])
@@ -860,30 +890,31 @@ Circ = { [...
   [-1, 0]'+[ 0,-1]'*(4/3)*tan(pi/8),...
   [-1, 0]'...
   ] };
-Circ = FlipBezierAll(Circ);
+Circ = FlipPath(Circ);
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(3);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(3);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
-LocTime = flip(LocTime,2);
 BezierPos = flip(BezierPos,2);
 WhCtrPos = flip(WhCtrPos,2);
 MarkerPos = flip(MarkerPos,2);
 MarkerAngle = flip(MarkerAngle,2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -968,30 +999,31 @@ Circ = { [...
   [-1, 0]'+[ 0,-1]'*(4/3)*tan(pi/8),...
   [-1, 0]'...
   ] };
-Circ = FlipBezierAll(Circ);
+Circ = FlipPath(Circ);
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(5);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
-LocTime = flip(LocTime,2);
 BezierPos = flip(BezierPos,2);
 WhCtrPos = flip(WhCtrPos,2);
 MarkerPos = flip(MarkerPos,2);
 MarkerAngle = flip(MarkerAngle,2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -1076,30 +1108,31 @@ Circ = { [...
   [-1, 0]'+[ 0,-1]'*(4/3)*tan(pi/8),...
   [-1, 0]'...
   ] };
-Circ = FlipBezierAll(Circ);
+Circ = FlipPath(Circ);
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/3);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(5/3);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 3);
 
-LocTime = flip(LocTime,2);
 BezierPos = flip(BezierPos,2);
 WhCtrPos = flip(WhCtrPos,2);
 MarkerPos = flip(MarkerPos,2);
 MarkerAngle = flip(MarkerAngle,2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -1184,30 +1217,31 @@ Circ = { [...
   [-1, 0]'+[ 0,-1]'*(4/3)*tan(pi/8),...
   [-1, 0]'...
   ] };
-Circ = FlipBezierAll(Circ);
+Circ = FlipPath(Circ);
 %PlotBezierCtrlPts(Circ)
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(6/5);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(6/5);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 5);
 
-LocTime = flip(LocTime,2);
 BezierPos = flip(BezierPos,2);
 WhCtrPos = flip(WhCtrPos,2);
 MarkerPos = flip(MarkerPos,2);
 MarkerAngle = flip(MarkerAngle,2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % line ticks
@@ -1278,7 +1312,7 @@ Circ = Circ{1};
 nCurves = size(Circ,2);
 
 % shrink the curve to het a redius of approx 2pi
-Perim = BezierPerimeter(Circ,Tol);
+Perim = PathPerimeter(Circ,Tol);
 for i = 1:nCurves
   Circ{i} = Circ{i}*(2*pi/Perim);
 end
@@ -1286,7 +1320,7 @@ end
 % fun with perimeters
 Perim = zeros(1,size(Circ,2));
 for i = 1:size(Circ,2)
-  Perim(i) = BezierPerimeter({Circ{i}},Tol);
+  Perim(i) = PathPerimeter({Circ{i}},Tol);
 end
 PerimCum = [0,cumsum(Perim)];
 
@@ -1314,20 +1348,22 @@ for i = 1:size(aang,2)
 end
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/3;
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/3;
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 1);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % circle, the picture
@@ -1397,7 +1433,7 @@ Circ = Circ{1};
 nCurves = size(Circ,2);
 
 % shrink the curve to het a redius of approx 2pi
-Perim = BezierPerimeter(Circ,Tol);
+Perim = PathPerimeter(Circ,Tol);
 for i = 1:nCurves
   Circ{i} = Circ{i}*(2*pi/Perim);
 end
@@ -1405,7 +1441,7 @@ end
 % fun with perimeters
 Perim = zeros(1,size(Circ,2));
 for i = 1:size(Circ,2)
-  Perim(i) = BezierPerimeter({Circ{i}},Tol);
+  Perim(i) = PathPerimeter({Circ{i}},Tol);
 end
 PerimCum = [0,cumsum(Perim)];
 
@@ -1418,7 +1454,7 @@ for i = 1:nCurves
 end
 
 % line ticks
-aang = 0:(2*pi/(8*5)):(2*pi);
+aang = 0:(2*pi/(8*5/2)):(2*pi);
 tick_x = zeros(1,size(aang,2));
 tick_y = zeros(1,size(aang,2));
 for i = 1:size(aang,2)
@@ -1433,20 +1469,22 @@ for i = 1:size(aang,2)
 end
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/2);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(5/2);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 2);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % circle, the picture
@@ -1516,7 +1554,7 @@ Circ = Circ{1};
 nCurves = size(Circ,2);
 
 % shrink the curve to het a redius of approx 2pi
-Perim = BezierPerimeter(Circ,Tol);
+Perim = PathPerimeter(Circ,Tol);
 for i = 1:nCurves
   Circ{i} = Circ{i}*(2*pi/Perim);
 end
@@ -1524,7 +1562,7 @@ end
 % fun with perimeters
 Perim = zeros(1,size(Circ,2));
 for i = 1:size(Circ,2)
-  Perim(i) = BezierPerimeter({Circ{i}},Tol);
+  Perim(i) = PathPerimeter({Circ{i}},Tol);
 end
 PerimCum = [0,cumsum(Perim)];
 
@@ -1537,7 +1575,7 @@ for i = 1:nCurves
 end
 
 % line ticks
-aang = 0:(2*pi/(8*5)):(2*pi);
+aang = 0:(2*pi/(8*7)):(2*pi);
 tick_x = zeros(1,size(aang,2));
 tick_y = zeros(1,size(aang,2));
 for i = 1:size(aang,2)
@@ -1556,20 +1594,22 @@ for i = 1:size(aang,2)
 end
 
 % specific to this example
-WheelRadius  = (BezierPerimeter(Circ,Tol)/(2*pi))/(5/3);
+WheelRadius  = (PathPerimeter(Circ,Tol)/(2*pi))/(7/3);
 MarkerRadius = WheelRadius;
 
 % Bezier curve
-DecorativeBezier = AllBezierEval(Circ, Tol);
+DecorativeBezier = PathEval(Circ, Tol);
 
 % spirograph curve
-[LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( Circ, WheelRadius, MarkerRadius, pi, ...
+[~, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
+  GenerateGlissette_web( Circ, WheelRadius, MarkerRadius, pi, ...
     Tol, Tol, 3);
 
 % make time based on the traveres arc length
-TimeFromCurve = zeros(1,size(BezierPos,2));
-TimeFromCurve(2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre = zeros(2,size(BezierPos,2));
+TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(BezierPos,1,2), 2, 1 ) );
+TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff(WhCtrPos, 1,2), 2, 1 ) );
+TimeFromCurve = mean(TimeFromCurve_pre,1);
 TimeFromCurve = TimeFromCurve*(1/TimeFromCurve(end));
 
 % circle, the picture
@@ -1613,7 +1653,7 @@ text(MarkerPos(1,i),MarkerPos(2,i)+.15,'$\mathbf{M}$','Color','red','FontSize',1
 text(WhCtrPos(1,i)+0.15+WheelRadius,WhCtrPos(2,i),'$\mathcal{W}$','Color','blue','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 text(0,TopBorder-.15,0,'$\mathcal{B}$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
-text(0,LowBorder-(WheelRadius+MarkerRadius)-.15,0,'$P_\mathcal{B}/P_\mathcal{W} = 5/3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
+text(0,LowBorder-(WheelRadius+MarkerRadius)-.15,0,'$P_\mathcal{B}/P_\mathcal{W} = 7/3$','Color','black','FontSize',18,'HorizontalAlignment','center', 'Interpreter','latex')
 
 xlim([ LLBorder-max(WheelRadius+MarkerRadius)-.3,  RRBorder+max(WheelRadius+MarkerRadius)+.3])
 ylim([LowBorder-max(WheelRadius+MarkerRadius)-.3, TopBorder+max(WheelRadius+MarkerRadius)+.3])
