@@ -1,7 +1,7 @@
 % Create the spirograph for multiple concatenated Bezier curves.
 %
 % ---- INUPUT ------------------------------------------------------------
-%  CtrlPtsArray  Array with control points for each one of the Bezier
+%         BPath  Array with control points for each one of the Bezier
 %                curves that make the curve {?} <- [2,4]'s
 %   WheelRadius  Radius of spirograph wheel, a negative radius indicates
 %                that the wheel rolls inside the curve [1]
@@ -24,16 +24,15 @@
 % control point of the first curve. This is not checked.
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers_web( CtrlPtsArray, WheelRadius, MarkerRadius, MarkerAngle0, ...
+  AllBeziers( BPath, WheelRadius, MarkerRadius, MarkerAngle0, ...
     MaxDistDelta, ...
     CloseTol, MaxSpins)
 
-
 % parameters
-nCurves    = length(CtrlPtsArray);
+nCurves    = length(BPath);
 CurrTime0  = 0;
 
-FirstTangent = EvalBezierNormal(CtrlPtsArray{1},0,1);
+FirstTangent = EvalBezierNormal(BPath{1},0,1);
 CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0;
 
 % containers for results
@@ -49,7 +48,7 @@ ClosedFlag = false;
 while (CurrSpin < MaxSpins) && (~ClosedFlag)
   for j = 1:nCurves
     disp(strcat('Spin: ',num2str(CurrSpin),' , Curve: ',num2str(j)))
-    CurrCtrlPts = CtrlPtsArray{j};
+    CurrCtrlPts = BPath{j};
     %
     % run one single Bezier curve at the time
     [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
@@ -57,6 +56,29 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
         WheelRadius, MarkerRadius, ...
         CurrAngle0, CurrTime0, ...
         MaxDistDelta );
+    %
+    % concatenate results from the current segment to the overall outputs
+    Time        = [Time,        locTime];
+    BezierPos   = [BezierPos,   locBezierPos];
+    WhCtrPos    = [WhCtrPos,    locWhCtrPos];
+    MarkerPos   = [MarkerPos,   locMarkerPos];
+    MarkerAngle = [MarkerAngle, locMarkerAngle];
+    %
+    % update initial values
+    CurrTime0  = Time(end);
+    CurrAngle0 = MarkerAngle(end);
+    %
+    % prepare for a corner
+    if j<nCurves
+      NextCtrlPts = BPath{j+1};
+    else
+      NextCtrlPts = BPath{1};
+    end
+    %
+    % roll over the corner, if needed
+    [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
+      RollCorner( CurrCtrlPts, NextCtrlPts, WheelRadius, MarkerRadius, ...
+      CurrAngle0, CurrTime0, MaxDistDelta );
     %
     % concatenate results from the current segment to the overall outputs
     Time        = [Time,        locTime];

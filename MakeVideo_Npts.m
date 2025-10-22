@@ -25,7 +25,6 @@ function MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   CurveColor, ...
-  MaxDistDelta, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
 nCenters = size(WhoIsCenter,2);
@@ -50,7 +49,7 @@ end
 %%
 % time is parametrized by the path over the Bezier curve or the path
 % described by the wheel center
-TimeFromCurve = ceil(nPts,1);
+TimeFromCurve = cell(nPts,1);
 switch ExtraOpts.TimerefCurve
   case 'Bezier'
     for p = 1:nPts
@@ -98,7 +97,7 @@ for p = 1:nPts
   idxx{p} = 1:size(TimeFromCurve{p},2);
 end
 
-aang = 0:(2*pi/ ceil( 2*pi/(MaxDistDelta/WheelRadius) )):(2*pi);
+aang = 0:(2*pi/ ceil( 2*pi/(ExtraOpts.Tol/WheelRadius) )):(2*pi);
 circ = WheelRadius*[cos(aang); sin(aang)];
 aux_angles = 0:(pi/6):(2*pi);
 

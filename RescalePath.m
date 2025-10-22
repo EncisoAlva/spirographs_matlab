@@ -18,9 +18,9 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [CtrlPtsArray_scaled] = RescaleShape( CtrlPtsArray, MaxRangeX, MaxRangeY)
+function [BPath_scaled] = RescalePath( BPath, MaxRangeX, MaxRangeY)
 
-nCurves = size(CtrlPtsArray,2);
+nCurves = size(BPath,2);
 
 % init
 minX = Inf;
@@ -31,7 +31,7 @@ maxY = -Inf;
 % rudimentary bounding box, designed to be fast
 % doesn't account for the actual curve, only control points
 for i = 1:nCurves
-  currCurve = CtrlPtsArray{i};
+  currCurve = BPath{i};
   % ony first and last control points are part of the curve
   minX = min( [minX, currCurve(1,1), currCurve(1,4)] );
   maxX = max( [maxX, currCurve(1,1), currCurve(1,4)] );
@@ -49,9 +49,9 @@ elseif RangeX * (MaxRangeY / RangeY) <= MaxRangeX
 end
 
 % scaling per se
-CtrlPtsArray_scaled = cell(1, nCurves);
+BPath_scaled = cell(1, nCurves);
 for i = 1:nCurves
-  CtrlPtsArray_scaled{i} = CtrlPtsArray{i} * scaleFactor;
+  BPath_scaled{i} = BPath{i} * scaleFactor;
 end
 
 end

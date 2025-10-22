@@ -1,33 +1,30 @@
-% Approximate the total perimeter of a shape whose sides are cubic Bezier
-% curves. The curves are approximated by a finite number of points, then
-% the distance between neighboring points is computed.
+% Evaluate multiple concatenated cubic Bezier curves given its control 
+% points.
 %
 % ---- INUPUT ------------------------------------------------------------
-%  CtrlPtsArray  Array with control points for each one of the Bezier
+%         BPath  Array with control points for each one of the Bezier
 %                curves that make the curve {?} <- [2,4]'s
 %           Tol  Max distance between points of the discretization [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
-%          Time  Timestamps [1x?]
-%      WhCtrPos  Location of the wheel center at timestamps [2x?]
-%     MarkerPos  Location of marker at timepoints [2x?]
+%    BezierVals  Points in the Bezier curve [2x?]
 %
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [Perimeter] = BezierPerimeter( CtrlPtsArray, Tol)
+function [BezierVals] = PathEval( BPath, Tol)
 
-Perimeter = 0;
-nCurves   = length(CtrlPtsArray);
+nCurves    = length(BPath);
+BezierVals = [];
 
 % loop
 for j = 1:nCurves
-  CurrCtrlPts = CtrlPtsArray{j};
+  CurrCtrlPts = BPath{j};
   LocalTime   = 0:( 1/ceil(1/(Tol/2)) ):1;
   %iter = 0;
   while true
-    BezierVals  = EvalBezier( CurrCtrlPts, LocalTime );
-    DiffCurve   = vecnorm( diff(BezierVals,1,2), 2, 1);
+    LocalBezV = EvalBezier( CurrCtrlPts, LocalTime );
+    DiffCurve = vecnorm( diff(LocalBezV,1,2), 2, 1);
     if max(DiffCurve) < Tol
       break
     end
@@ -41,7 +38,7 @@ for j = 1:nCurves
     LocalTime = unique( [LocalTime, NewTimes], "sorted" );
     %iter = iter +1; % additional penalization
   end
-  Perimeter   = Perimeter + sum(DiffCurve);
+  BezierVals = [BezierVals, LocalBezV];
 end
 
 end
