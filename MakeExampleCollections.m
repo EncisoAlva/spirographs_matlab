@@ -278,7 +278,7 @@ for i = 2:size(t,2)
   CurrCycloid{i-1} = CurrCurve;
 end
 CurrCycloid = FlipPath(CurrCycloid);
-CurrCycloid = ShiftBezierAll(CurrCycloid, 1,false);
+CurrCycloid = ShiftPath(CurrCycloid, 1,false);
 
 Hypocycloid{N} = CurrCycloid;
 end

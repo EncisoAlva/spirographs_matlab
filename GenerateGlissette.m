@@ -9,7 +9,7 @@
 %                larger than the wheel radius, the marker is outside [1]
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
-%  MaxDistDelta  Maximum allowable distance between neighboring points [1]
+%           Tol  Maximum allowable distance between neighboring points [1]
 %      CloseTol  Max distance between first and last point [1]
 %      MaxSpins  Max full rotations of wheel around whole shape [1]
 %
@@ -24,9 +24,8 @@
 % control point of the first curve. This is not checked.
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  AllBeziers( BPath, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    MaxDistDelta, ...
-    CloseTol, MaxSpins)
+  GenerateGlissette( BPath, WheelRadius, MarkerRadius, MarkerAngle0, ...
+    Tol, CloseTol, MaxSpins)
 
 % parameters
 nCurves    = length(BPath);
@@ -55,7 +54,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
       SingleBezierSegment( CurrCtrlPts, ...
         WheelRadius, MarkerRadius, ...
         CurrAngle0, CurrTime0, ...
-        MaxDistDelta );
+        Tol );
     %
     % concatenate results from the current segment to the overall outputs
     Time        = [Time,        locTime];
@@ -78,7 +77,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     % roll over the corner, if needed
     [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
       RollCorner( CurrCtrlPts, NextCtrlPts, WheelRadius, MarkerRadius, ...
-      CurrAngle0, CurrTime0, MaxDistDelta );
+      CurrAngle0, CurrTime0, Tol );
     %
     % concatenate results from the current segment to the overall outputs
     Time        = [Time,        locTime];

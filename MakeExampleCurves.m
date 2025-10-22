@@ -600,7 +600,7 @@ SelfIntersectCircle = {[...
   [0,-1]'+[1, 0]'*(4/3)*tan(pi/8),...
   [0,-1]'
   ]};
-SelfIntersectCircle = FlipBezierAll(SelfIntersectCircle);
+SelfIntersectCircle = FlipPath(SelfIntersectCircle);
 
 %%
 % up V with circle borders

@@ -22,7 +22,7 @@
 % control point of the first curve. This is not checked.
 %
 function [Curve1_short, Curve2_short, Curve_gap] = ...
-  RemoveCorner( CurvePre, CurvePos, WheelRadius, Tol )
+  RemoveSingleCorner( CurvePre, CurvePos, WheelRadius, Tol )
 
 [t1,t2] = FindCollisionTime( CurvePre, CurvePos, WheelRadius, Tol );
 
