@@ -10,7 +10,7 @@
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
 %         Time0  Initial timestamp [1]
-%  MaxDistDelta  Maximum allowable distance between neighboring points [1]
+%           Tol  Maximum allowable distance between neighboring points [1]
 %
 % ---- OUTPUT ------------------------------------------------------------
 %          Time  Timestamps [1x?]
@@ -24,10 +24,10 @@
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
   SingleBezierSegment( CtrlPts, WheelRadius, MarkerRadius, ...
-  MarkerAngle0, Time0, MaxDistDelta )
+  MarkerAngle0, Time0, Tol )
 
 % initial guess for time
-DistDelta = 1/ceil(1/MaxDistDelta);
+DistDelta = 1/ceil(1/Tol);
 LocalTime = 0:DistDelta:1;
 
 while true
@@ -55,15 +55,15 @@ MarkerPos   = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
 
 % check if the marker points are not too far from each other
 DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);
-if max(DiffCurve) < MaxDistDelta
+if max(DiffCurve) < Tol
   break
 end
 
 % if the marker points are too far, add more time points when needed
 NewTimes = [];
 for i = 2:length(LocalTime)
-  if( DiffCurve(i-1) > MaxDistDelta )
-    epsilon = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(MaxDistDelta/2));
+  if( DiffCurve(i-1) > Tol )
+    epsilon = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(Tol/2));
     NewTimes = [ NewTimes, (LocalTime(i-1):epsilon:LocalTime(i)) ];
   end
 end

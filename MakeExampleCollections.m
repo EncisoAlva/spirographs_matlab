@@ -28,7 +28,7 @@ for i = 2:size(t,2)
   CurrCurve(:,4) = xy(:,i);
   Cycloid_base{i-1} = CurrCurve;
 end
-Cycloid_base = FlipBezierAll(Cycloid_base);
+Cycloid_base = FlipPath(Cycloid_base);
 
 nSegments  = size(Cycloid_base,2);
 
@@ -79,7 +79,7 @@ for i = 2:size(t,2)
   CurrCurve(:,4) = xy(:,i);
   Cycloid_base{i-1} = CurrCurve;
 end
-Cycloid_base = FlipBezierAll(Cycloid_base);
+Cycloid_base = FlipPath(Cycloid_base);
 
 for i = 1:size(Cycloid_base,2)
   Cycloid_base{i} = [1,0;0,-1]*Cycloid_base{i};
@@ -245,7 +245,7 @@ for i = 2:size(t,2)
   CurrCurve(:,4) = xy(:,i);
   CurrCycloid{i-1} = CurrCurve;
 end
-CurrCycloid = FlipBezierAll(CurrCycloid);
+CurrCycloid = FlipPath(CurrCycloid);
 
 Epicycloid{N} = CurrCycloid;
 end
@@ -277,8 +277,8 @@ for i = 2:size(t,2)
   CurrCurve(:,4) = xy(:,i);
   CurrCycloid{i-1} = CurrCurve;
 end
-CurrCycloid = FlipBezierAll(CurrCycloid);
-CurrCycloid = ShiftBezierAll(CurrCycloid, 1,false);
+CurrCycloid = FlipPath(CurrCycloid);
+CurrCycloid = ShiftPath(CurrCycloid, 1,false);
 
 Hypocycloid{N} = CurrCycloid;
 end
@@ -311,7 +311,7 @@ end
 [c1, c2] = HalfBezierSingle(Target_N{1});
 Target_N{1}   = c2;
 Target_N{end} = c1;
-Target_N = FlipBezierAll(Target_N);
+Target_N = FlipPath(Target_N);
 
 Target{N} = Target_N;
 end
@@ -345,7 +345,7 @@ end
 [c1, c2] = HalfBezierSingle(Target_N{1});
 Target_N{1}   = c2;
 Target_N{end} = c1;
-Target_N = FlipBezierAll(Target_N);
+Target_N = FlipPath(Target_N);
 
 Target_in{N} = Target_N;
 end

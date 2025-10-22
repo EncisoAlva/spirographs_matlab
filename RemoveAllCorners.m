@@ -18,17 +18,17 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [CtrlPtsArray_rounded] = RemoveAllCorners( CtrlPtsArray, WheelRadius, Tol, ...
+function [BPath_rounded] = RemoveAllCorners( BPath, WheelRadius, Tol, ...
   SkipNegPi)
 
-nCurves = size(CtrlPtsArray,2);
+nCurves = size(BPath,2);
 CornerAngles = zeros(1,nCurves);
 
 % an array that will be changed multiple times
-CtrlPtsArray_aux = CtrlPtsArray;
-CtrlPtsArray_gap = CtrlPtsArray_aux;
+BPath_aux = BPath;
+BPath_gap = BPath_aux;
 for i = 1:nCurves
-  CtrlPtsArray_gap{i} = [];
+  BPath_gap{i} = [];
 end
 
 % check for corners
@@ -41,8 +41,8 @@ for i = 1:nCurves
   end
   %
   % find the cornering angle
-  TangentPre = EvalBezierNormal(CtrlPtsArray_aux{i},  1, WheelRadius );
-  TangentPos = EvalBezierNormal(CtrlPtsArray_aux{i_}, 0, WheelRadius );
+  TangentPre = EvalBezierNormal(BPath_aux{i},  1, WheelRadius );
+  TangentPos = EvalBezierNormal(BPath_aux{i_}, 0, WheelRadius );
   if (norm(TangentPos)>Tol) && (norm(TangentPre)>Tol)
     CornerAngles(i) = mod( atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1)), 2*pi);
   else
@@ -57,27 +57,27 @@ for i = 1:nCurves
       CornerAngles(i) = 0;
       continue
     end
-    CurvePre = CtrlPtsArray_aux{i};
-    CurvePos = CtrlPtsArray_aux{i_};
+    CurvePre = BPath_aux{i};
+    CurvePos = BPath_aux{i_};
     [CurvePre_new, CurvePos_new, Curve_gap] =...
-      RemoveCorner(CurvePre, CurvePos, WheelRadius, Tol);
+      RemoveSingleCorner(CurvePre, CurvePos, WheelRadius, Tol);
     %
-    CtrlPtsArray_aux{i}  = CurvePre_new;
-    CtrlPtsArray_aux{i_} = CurvePos_new;
-    CtrlPtsArray_gap{i}  = Curve_gap;
+    BPath_aux{i}  = CurvePre_new;
+    BPath_aux{i_} = CurvePos_new;
+    BPath_gap{i}  = Curve_gap;
   end
 end
 
 % get auxiliary curves in line
-CtrlPtsArray_rounded = {};
+BPath_rounded = {};
 for i = 1:nCurves
-  CtrlPtsArray_rounded{end+1} = CtrlPtsArray_aux{i};
+  BPath_rounded{end+1} = BPath_aux{i};
   if CornerAngles(i) >= pi
-    CtrlPtsArray_rounded{end+1} = CtrlPtsArray_gap{i};
+    BPath_rounded{end+1} = BPath_gap{i};
   end
 end
 
 % remove curves with all 4 points equal to each other
-CtrlPtsArray_rounded = RemovePointCurves( CtrlPtsArray_rounded, Tol );
+BPath_rounded = RemovePointCurves( BPath_rounded, Tol );
 
 end

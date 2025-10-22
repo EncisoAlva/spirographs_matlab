@@ -17,7 +17,7 @@ who -file ExampleCollections.mat
 % load curve
 CtrlPtsArray = struct2cell(load('ExampleCollections.mat','Circlegon'));
 CtrlPtsArray = CtrlPtsArray{1};
-CtrlPtsArray = CtrlPtsArray{3};
+CtrlPtsArray = CtrlPtsArray{4};
 
 %%
 % load from file

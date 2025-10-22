@@ -1,22 +1,22 @@
 % Change the direction of a Bezier curve.
 %
 % ---- INUPUT ------------------------------------------------------------
-%  CtrlPtsArray  Array with control points for each one of the Bezier
+%         BPath  Array with control points for each one of the Bezier
 %                curves that make the curve {?} <- [2,4]'s
 %
 % ---- OUTPUT ------------------------------------------------------------
-%  CtrlPtsArrayFlipped  Array with control points for each one of the 
+%  BPathFlipped  Array with control points for each one of the 
 %                Bezier IN REVERSE ORDER {?} <- [2,4]'s
 %
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [CtrlPtsArrayFlipped] = FlipBezierAll( CtrlPtsArray)
+function [BPathFlipped] = FlipPath( BPath)
 
-CtrlPtsArrayFlipped = flip( CtrlPtsArray );
+BPathFlipped = flip( BPath );
 
-for i = 1:size(CtrlPtsArray,2)
-  CtrlPtsArrayFlipped{i} = flip( CtrlPtsArrayFlipped{i}, 2 );
+for i = 1:size(BPath,2)
+  BPathFlipped{i} = flip( BPathFlipped{i}, 2 );
 end
 
 end

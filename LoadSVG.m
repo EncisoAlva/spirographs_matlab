@@ -11,9 +11,9 @@
 %         svgname  File name of SVG file [string]
 %
 % ---- OUTPUT ------------------------------------------------------------
-% AllCtrlPtsArray  Array {1x?} <- Array of control points {1x?} <- [2,4]
+%      BPathArray  Array {1x?} <- Array of control points {1x?} <- [2,4]
 %
-function AllCtrlPtsArray = LoadSVG( svgname )
+function BPathArray = LoadSVG( svgname )
 
 % get raw file contents
 svgtext = fileread(svgname);
@@ -247,6 +247,6 @@ for id_line = 1:num_P_cell
 end
 
 % set output
-AllCtrlPtsArray = R;
+BPathArray = R;
 
 end
