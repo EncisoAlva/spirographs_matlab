@@ -109,7 +109,7 @@ BPath_new = ShiftPath( BPath_new, Shift, Halfen );
 
 
 % don't remove outer corners
-BPath_new = ShiftPath( BPath, Shift, Halfen );
+BPath_new = ShiftPath( BPath_new, Shift, Halfen );
 WheelRadius = (PathPerimeter(BPath_new,0.00001)/(2*pi))/WheelBezRatio
 MarkerRadius = WheelRadius*WheelMarkerRatio;
 
@@ -117,7 +117,7 @@ MarkerRadius = WheelRadius*WheelMarkerRatio;
 % adjust start point after rounding
 PlotPath(BPath_new)
 
-BPath_new = ShiftPath( BPath_new, -3, true);
+BPath_new = ShiftPath( BPath_new, 2, true);
 
 %%
 % colors
@@ -181,7 +181,7 @@ nPts = size(MarkerAngle0Array,2);
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
     SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-      100, CurveOpts);
+      MaxSpins, CurveOpts);
 
 % video parameters
 ExtraOpts = {};
@@ -201,4 +201,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_251021_20_4b', ExtraOpts )
+  40, 10, 'test_251021_20_4a', ExtraOpts )

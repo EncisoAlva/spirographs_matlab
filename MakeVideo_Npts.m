@@ -24,10 +24,32 @@ function MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
-  CurveColor, ...
+  CurveColor0, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
+% parameters
 nCenters = size(WhoIsCenter,2);
+
+if size(CurveColor0,2) >= nPts
+  % if enough colors were specified, use them
+  CurveColor = CurveColor0;
+else
+  CurveColor = cell(nPts,1);
+  if size(CurveColor0,2)==1
+    % if only one color is provided, that shall be used for all curves
+    % this will be done in purpose
+    for i = 1:nPts
+      CurveColor{i} = CurveColor0{1};
+    end
+  else
+    % if not enough colors were provided, cycle them
+    % this can be used for fancy effects
+    k = size(CurveColor0,2);
+    for i = 1:nPts
+      CurveColor{i} = CurveColor0{mod(i-1,k)+1};
+    end
+  end
+end
 
 %%
 % handle optional arguments
