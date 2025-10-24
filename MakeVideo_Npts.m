@@ -282,7 +282,7 @@ for stopper = 0:(fps*(AfterTime/2))
 end
 
 % save as picture, it may be useful
-[~,name_without_extension, ~] = fileparts(Vidname);
+[~,name_without_extension, ~] = fileparts(VidName);
 saveas(f2, strcat(name_without_extension,'.png'));
 
 % delete waitbar, if it is still around

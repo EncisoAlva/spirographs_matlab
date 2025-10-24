@@ -353,4 +353,79 @@ end
 clear ang_i ang_i1 c1 c2 i magn N Target_N
 
 %%
+% polygon with squares as sides
+Squaregon = cell(1,8);
+
+% make one single semicircle
+Square_base = {...
+  LineToBezier([1,0]',[ 1,2]'),...
+  LineToBezier([1,2]',[-1,2]'),...
+  LineToBezier([-1,2]',[-1,0]')...
+  };
+
+nSegments  = size(Square_base,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+Squaregon_N = cell(1,nSegments*N);
+
+for curr_side = 0:(N-1)
+  th  = curr_side*2*pi/N;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
+  %
+  Square_rotated = cell(1,nSegments);
+  for i = 1:size(Square_base, 2)
+    Square_rotated{i} = ROT * Square_base{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    Squaregon_N{i+curr_side*nSegments} = Square_rotated{i};
+  end
+end
+
+Squaregon{N} = Squaregon_N;
+end
+
+clear b bar curr_side CurrCurve Square_base Square_rotated Squaregon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
+%%
+% polygon with squares as sides
+Trianglegon = cell(1,8);
+
+% make one single semicircle
+Triangle_base = {...
+  LineToBezier([1,0]',[0,sqrt(3)]'),...
+  LineToBezier([0,sqrt(3)]',[-1,0]')...
+  };
+
+nSegments  = size(Triangle_base,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+Trianglegon_N = cell(1,nSegments*N);
+
+for curr_side = 0:(N-1)
+  th  = curr_side*2*pi/N;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
+  %
+  Triangle_rotated = cell(1,nSegments);
+  for i = 1:size(Triangle_base, 2)
+    Triangle_rotated{i} = ROT * Triangle_base{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    Trianglegon_N{i+curr_side*nSegments} = Triangle_rotated{i};
+  end
+end
+
+Trianglegon{N} = Trianglegon_N;
+end
+
+clear b bar curr_side CurrCurve Triangle_base Triangle_rotated Trianglegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
+%%
 save('ExampleCollections.mat')
+
+clear all

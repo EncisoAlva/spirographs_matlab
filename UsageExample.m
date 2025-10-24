@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Angel6'));
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -18,7 +18,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{4};
+BPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -44,7 +44,10 @@ for i = 1:size(BPath, 2)
 end
 
 % rotate by an angle
-BPath = RotatePath( BPath, -pi/6 );
+BPath = RotatePath( BPath, pi );
+
+% change orientation
+BPath = FlipPath(BPath);
 
 %%
 % show control points
@@ -65,14 +68,14 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 12/5;
+WheelBezRatio = 6/5; %2.5
 WheelMarkerRatio = 4/5;
 
-%Shift  = -2;
+%Shift  = -1;
 %Halfen = true;
 %Shift  = 3;
 %Halfen = false;
-Shift  = 0;
+Shift  = 3;
 Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -109,7 +112,7 @@ BPath_new = ShiftPath( BPath_new, Shift, Halfen );
 
 
 % don't remove outer corners
-BPath_new = ShiftPath( BPath_new, Shift, Halfen );
+BPath_new = ShiftPath( BPath, Shift, Halfen );
 WheelRadius = (PathPerimeter(BPath_new,0.00001)/(2*pi))/WheelBezRatio
 MarkerRadius = WheelRadius*WheelMarkerRatio;
 
@@ -117,7 +120,7 @@ MarkerRadius = WheelRadius*WheelMarkerRatio;
 % adjust start point after rounding
 PlotPath(BPath_new)
 
-BPath_new = ShiftPath( BPath_new, 2, true);
+BPath_new = ShiftPath( BPath_new, 1, true);
 
 %%
 % colors
@@ -189,7 +192,8 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimerefCurve = 'Average';
+%ExtraOpts.TimerefCurve = 'Average';
+ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 
@@ -201,4 +205,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_251021_20_4a', ExtraOpts )
+  40, 10, 'test_251024_02_6', ExtraOpts )
