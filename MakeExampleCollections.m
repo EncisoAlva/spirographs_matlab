@@ -6,6 +6,40 @@
 % are polygon-like shapes.
 
 %%
+% polygon
+Polygon = cell(1,8);
+
+% make one single cycloid
+
+Side_base = {LineToBezier([0,1]',[0,-1]')};
+
+nSegments  = size(Side_base,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+Polygon_N = cell(1,nSegments*N);
+
+for curr_side = 0:(N-1)
+  th  = curr_side*2*pi/N+pi/2;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi); sin(th+pi) ]/tan(pi/N);
+  %
+  Side_rotated = cell(1,nSegments);
+  for i = 1:size(Side_base, 2)
+    Side_rotated{i} = ROT * Side_base{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    Polygon_N{i+curr_side*nSegments} = Side_rotated{i};
+  end
+end
+
+Polygon{N} = Polygon_N;
+end
+
+clear N bar curr_side i nSegments Polygon_N ROT Side_base Side_rotated th
+
+%%
 % polygon with cycloids as sides
 Cycloidgon = cell(1,7);
 
@@ -394,12 +428,12 @@ clear b bar curr_side CurrCurve Square_base Square_rotated Squaregon_N del_i dt 
 Trianglegon = cell(1,8);
 
 % make one single semicircle
-Triangle_base = {...
+Side_base = {...
   LineToBezier([1,0]',[0,sqrt(3)]'),...
   LineToBezier([0,sqrt(3)]',[-1,0]')...
   };
 
-nSegments  = size(Triangle_base,2);
+nSegments  = size(Side_base,2);
 
 for N = 2:8
 % rotate and concatenate cycloids
@@ -411,8 +445,8 @@ for curr_side = 0:(N-1)
   bar = [ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
   %
   Triangle_rotated = cell(1,nSegments);
-  for i = 1:size(Triangle_base, 2)
-    Triangle_rotated{i} = ROT * Triangle_base{i} + bar;
+  for i = 1:size(Side_base, 2)
+    Triangle_rotated{i} = ROT * Side_base{i} + bar;
   end
   % 
   for i = 1:nSegments
@@ -423,7 +457,140 @@ end
 Trianglegon{N} = Trianglegon_N;
 end
 
-clear b bar curr_side CurrCurve Triangle_base Triangle_rotated Trianglegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+clear b bar curr_side CurrCurve Side_base Triangle_rotated Trianglegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
+%%
+% polygon with spikes as sides
+Spikegon = cell(1,8);
+
+% make one single semicircle
+Side_base = {[...
+  [ 1, 0]',...
+  [ 1, 0]'+[-1, 0]'*(4/3)*tan(pi/8),...
+  [ 0, 1]'+[ 0,-1]'*(4/3)*tan(pi/8),...
+  [ 0, 1]'...
+  ],[...
+  [ 0, 1]',...
+  [ 0, 1]'+[ 0,-1]'*(4/3)*tan(pi/8),...
+  [-1, 0]'+[ 1, 0]'*(4/3)*tan(pi/8),...
+  [-1, 0]'...
+  ]};
+
+nSegments  = size(Side_base,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+Spikegon_N = cell(1,nSegments*N);
+
+for curr_side = 0:(N-1)
+  th  = curr_side*2*pi/N;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
+  %
+  Side_rotated = cell(1,nSegments);
+  for i = 1:size(Side_base, 2)
+    Side_rotated{i} = ROT * Side_base{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    Spikegon_N{i+curr_side*nSegments} = Side_rotated{i};
+  end
+end
+
+Spikegon{N} = Spikegon_N;
+end
+
+clear b bar curr_side CurrCurve Side_base Side_rotated Spikegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
+%%
+% polygon with spikes as sides
+Spikegon_in = cell(1,8);
+
+% make one single semicircle
+Side_base = {[...
+  [ 1, 0]',...
+  [ 1, 0]'+[-1, 0]'*(4/3)*tan(pi/8),...
+  [ 0,-1]'+[ 0, 1]'*(4/3)*tan(pi/8),...
+  [ 0,-1]'...
+  ],[...
+  [ 0,-1]',...
+  [ 0,-1]'+[ 0, 1]'*(4/3)*tan(pi/8),...
+  [-1, 0]'+[ 1, 0]'*(4/3)*tan(pi/8),...
+  [-1, 0]'...
+  ]};
+
+nSegments  = size(Side_base,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+Spikegon_N = cell(1,nSegments*N);
+
+for curr_side = 0:(N-1)
+  th  = curr_side*2*pi/N;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
+  %
+  Side_rotated = cell(1,nSegments);
+  for i = 1:size(Side_base, 2)
+    Side_rotated{i} = ROT * Side_base{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    Spikegon_N{i+curr_side*nSegments} = Side_rotated{i};
+  end
+end
+
+Spikegon_in{N} = Spikegon_N;
+end
+
+clear b bar curr_side CurrCurve Side_base Side_rotated Spikegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
+%%
+% polygon with spikes as sides
+Spikegon_in2 = cell(1,8);
+
+% make one single semicircle
+Side_base = {...
+  LineToBezier([2,0]',[1,0]'),...
+  [...
+  [ 1, 0]',...
+  [ 1, 0]'+[-1, 0]'*(4/3)*tan(pi/8),...
+  [ 0,-1]'+[ 0, 1]'*(4/3)*tan(pi/8),...
+  [ 0,-1]'...
+  ],[...
+  [ 0,-1]',...
+  [ 0,-1]'+[ 0, 1]'*(4/3)*tan(pi/8),...
+  [-1, 0]'+[ 1, 0]'*(4/3)*tan(pi/8),...
+  [-1, 0]'...
+  ],...
+  LineToBezier([-1,0]',[-2,0]')...
+  };
+
+nSegments  = size(Side_base,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+Spikegon_N = cell(1,nSegments*N);
+
+for curr_side = 0:(N-1)
+  th  = curr_side*2*pi/N;
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]*2/tan(pi/N);
+  %
+  Side_rotated = cell(1,nSegments);
+  for i = 1:size(Side_base, 2)
+    Side_rotated{i} = ROT * Side_base{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    Spikegon_N{i+curr_side*nSegments} = Side_rotated{i};
+  end
+end
+
+Spikegon_in2{N} = Spikegon_N;
+end
+
+clear b bar curr_side CurrCurve Side_base Side_rotated Spikegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
 
 %%
 % polygon with semicircles as sides
@@ -433,28 +600,28 @@ TruncatedCirclegon = cell(1,8);
 Semicircle_big = {[...
   [ 2, 0]',...
   [ 2, 0]' + [0,1]'*(8/3)*tan(pi/16),...
-  [ 2, 2]'/sqrt(8) + [1,-1]'*(4/3)*tan(pi/16)/sqrt(2),...
-  [ 2, 2]'/sqrt(8)...
+  [ 2, 2]'/sqrt(2) + [1,-1]'*(8/3)*tan(pi/16)/sqrt(2),...
+  [ 2, 2]'/sqrt(2)...
   ],[...
-  [ 2, 2]'/sqrt(8),...
-  [ 2, 2]'/sqrt(8) + [-1,1]'*(4/3)*tan(pi/16)/sqrt(2),...
+  [ 2, 2]'/sqrt(2),...
+  [ 2, 2]'/sqrt(2) + [-1,1]'*(8/3)*tan(pi/16)/sqrt(2),...
   [ 0, 2]' + [ 1,0]'*(8/3)*tan(pi/16),...
   [ 0, 2]'...
   ],[...
   [ 0, 2]',...
-  [ 0, 2]' + [-1,0]'*(4/3)*tan(pi/16),...
-  [-2, 2]'/sqrt(8) + [ 1, 1]'*(4/3)*tan(pi/16)/sqrt(2),...
-  [-2, 2]'/sqrt(8)...
+  [ 0, 2]' + [-1,0]'*(8/3)*tan(pi/16),...
+  [-2, 2]'/sqrt(2) + [ 1, 1]'*(8/3)*tan(pi/16)/sqrt(2),...
+  [-2, 2]'/sqrt(2)...
   ],[...
-  [-2, 2]'/sqrt(8),...
-  [-2, 2]'/sqrt(8) + [-1,-1]'*(4/3)*tan(pi/16)/sqrt(2),...
+  [-2, 2]'/sqrt(2),...
+  [-2, 2]'/sqrt(2) + [-1,-1]'*(8/3)*tan(pi/16)/sqrt(2),...
   [-2, 0]' + [ 0, 1]'*(8/3)*tan(pi/16),...
   [-2, 0]'...
   ]};
 
 Semicircle_small = {[...
   [ 1, 0]',...
-  [ 1, 0]' + [0,1]'*(8/3)*tan(pi/16),...
+  [ 1, 0]' + [0,1]'*(4/3)*tan(pi/16),...
   [ 1, 1]'/sqrt(2) + [1,-1]'*(4/3)*tan(pi/16)/sqrt(2),...
   [ 1, 1]'/sqrt(2)...
   ],[...
@@ -480,12 +647,15 @@ for N = 2:8
 % rotate and concatenate cycloids
 TruncatedCirclegon_N = cell(1,nSegments*2*N);
 
+bar_short_length = ( 2+ 1/sin( pi*(N-2)/(2*N) ) ) / sin(pi/N) - cos(pi*(N-2)/(2*N))/sin(pi*(N-2)/(2*N));
+bar_long_length  = ( 2+ 1/sin( pi*(N-2)/(2*N) ) ) * cos(pi/N) / sin(pi/N);
+
 for curr_side = 0:(N-1)
   %
   % big circle
   th  = (2*curr_side)*2*pi/(2*N);
   ROT = [cos(th), -sin(th); sin(th), cos(th)];
-  bar = [ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]*bar_long_length;
   %
   Semicircle_rotated = cell(1,nSegments);
   for i = 1:size(Semicircle_big, 2)
@@ -499,7 +669,87 @@ for curr_side = 0:(N-1)
   % small circle
   th  = (2*curr_side+1)*2*pi/(2*N);
   ROT = [cos(th), -sin(th); sin(th), cos(th)];
-  bar = 2*[ cos(th+pi/2); sin(th+pi/2) ]/tan(pi/N);
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]*bar_short_length;
+  %
+  Semicircle_rotated = cell(1,nSegments);
+  for i = 1:size(Semicircle_small, 2)
+    Semicircle_rotated{i} = ROT * Semicircle_small{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    TruncatedCirclegon_N{i+(2*curr_side+1)*nSegments} = Semicircle_rotated{i};
+  end
+end
+
+TruncatedCirclegon{N} = ShiftPath(TruncatedCirclegon_N, 2, false);
+end
+
+clear b bar bar_short_length bar_long_length curr_side CurrCurve Semicircle_big Semicircle_small Semicircle_rotated TruncatedCirclegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
+%%
+% polygon with semicircles as sides
+TruncatedCirclegon_alt = cell(1,8);
+
+% make one single semicircle
+Semicircle_big = {[...
+  [ 2, 0]',...
+  [ 2, 0]' + [0,1]'*(8/3)*tan(pi/16),...
+  [ 2, 2]'/sqrt(2) + [1,-1]'*(8/3)*tan(pi/16)/sqrt(2),...
+  [ 2, 2]'/sqrt(2)...
+  ],[...
+  [ 2, 2]'/sqrt(2),...
+  [ 2, 2]'/sqrt(2) + [-1,1]'*(8/3)*tan(pi/16)/sqrt(2),...
+  [ 0, 2]' + [ 1,0]'*(8/3)*tan(pi/16),...
+  [ 0, 2]'...
+  ],[...
+  [ 0, 2]',...
+  [ 0, 2]' + [-1,0]'*(8/3)*tan(pi/16),...
+  [-2, 2]'/sqrt(2) + [ 1, 1]'*(8/3)*tan(pi/16)/sqrt(2),...
+  [-2, 2]'/sqrt(2)...
+  ],[...
+  [-2, 2]'/sqrt(2),...
+  [-2, 2]'/sqrt(2) + [-1,-1]'*(8/3)*tan(pi/16)/sqrt(2),...
+  [-2, 0]' + [ 0, 1]'*(8/3)*tan(pi/16),...
+  [-2, 0]'...
+  ]};
+
+Semicircle_small = {[...
+  [ 1, 0]',...
+  [ 1, 0]' + [0,-1]'*(4/3)*tan(pi/16),...
+  [ 1,-1]'/sqrt(2) + [1,1]'*(4/3)*tan(pi/16)/sqrt(2),...
+  [ 1,-1]'/sqrt(2)...
+  ],[...
+  [ 1,-1]'/sqrt(2),...
+  [ 1,-1]'/sqrt(2) + [-1,-1]'*(4/3)*tan(pi/16)/sqrt(2),...
+  [ 0,-1]' + [ 1,0]'*(4/3)*tan(pi/16),...
+  [ 0,-1]'...
+  ],[...
+  [ 0,-1]',...
+  [ 0,-1]' + [-1,0]'*(4/3)*tan(pi/16),...
+  [-1,-1]'/sqrt(2) + [ 1, -1]'*(4/3)*tan(pi/16)/sqrt(2),...
+  [-1,-1]'/sqrt(2)...
+  ],[...
+  [-1,-1]'/sqrt(2),...
+  [-1,-1]'/sqrt(2) + [-1,1]'*(4/3)*tan(pi/16)/sqrt(2),...
+  [-1,0]' + [ 0, -1]'*(4/3)*tan(pi/16),...
+  [-1, 0]'...
+  ]};
+
+nSegments  = size(Semicircle_big,2);
+
+for N = 2:8
+% rotate and concatenate cycloids
+TruncatedCirclegon_N = cell(1,nSegments*2*N);
+
+bar_short_length = ( 2+ 1/sin( pi*(N-2)/(2*N) ) ) / sin(pi/N) - cos(pi*(N-2)/(2*N))/sin(pi*(N-2)/(2*N));
+bar_long_length  = ( 2+ 1/sin( pi*(N-2)/(2*N) ) ) * cos(pi/N) / sin(pi/N);
+
+for curr_side = 0:(N-1)
+  %
+  % big circle
+  th  = (2*curr_side)*2*pi/(2*N);
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]*bar_long_length;
   %
   Semicircle_rotated = cell(1,nSegments);
   for i = 1:size(Semicircle_big, 2)
@@ -509,12 +759,27 @@ for curr_side = 0:(N-1)
   for i = 1:nSegments
     TruncatedCirclegon_N{i+(2*curr_side)*nSegments} = Semicircle_rotated{i};
   end
+  %
+  % small circle
+  th  = (2*curr_side+1)*2*pi/(2*N);
+  ROT = [cos(th), -sin(th); sin(th), cos(th)];
+  bar = [ cos(th+pi/2); sin(th+pi/2) ]*bar_short_length;
+  %
+  Semicircle_rotated = cell(1,nSegments);
+  for i = 1:size(Semicircle_small, 2)
+    Semicircle_rotated{i} = ROT * Semicircle_small{i} + bar;
+  end
+  % 
+  for i = 1:nSegments
+    TruncatedCirclegon_N{i+(2*curr_side+1)*nSegments} = Semicircle_rotated{i};
+  end
 end
 
-TruncatedCirclegon{N} = TruncatedCirclegon_N;
+TruncatedCirclegon_alt{N} = ShiftPath(TruncatedCirclegon_N, 2, false);
 end
 
-clear b bar curr_side CurrCurve Semicircle_base Semicircle_rotated TruncatedCirclegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+clear b bar bar_short_length bar_long_length curr_side CurrCurve Semicircle_big Semicircle_small Semicircle_rotated TruncatedCirclegon_N del_i dt i nSegments R ROT t th Tol xy xy_der N
+
 
 
 %%
