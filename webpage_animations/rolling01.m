@@ -1623,7 +1623,7 @@ RRBorder = max(DecorativeBezier(1,:));
 LLBorder = min(DecorativeBezier(1,:));
 
 f1 = figure(Theme="light");
-for t = 0:(3/480):1
+for t = 0:(1.5/480):1
 
 [~, i] = max(TimeFromCurve(TimeFromCurve<=t));
 
