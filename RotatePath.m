@@ -11,13 +11,13 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BPathClean] = RotatePath( BPath, th )
+function [BPathRotated] = RotatePath( BPath, th )
 
-BPathClean = BPath;
+BPathRotated = BPath;
 
 ROT = [cos(th), -sin(th); sin(th), cos(th)];
 for i = 1:size(BPath, 2)
-  BPath_Clean{i} = ROT * BPath{i};
+  BPathRotated{i} = ROT * BPath{i};
 end
 
 end
