@@ -16,7 +16,7 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Angel'));
 BPath_pack2 = BPath_pack1{1};
 BPath = BPath_pack2{3};
 
@@ -54,7 +54,7 @@ BPath = FlipPath(BPath);
 
 PlotPath(BPath)
 
-BPath = ShiftPath( BPath, 2, false );
+BPath = ShiftPath( BPath, 1, false );
 
 %%
 % parameters
@@ -68,7 +68,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 13/2; %2.5
+WheelBezRatio = 9/2;
 WheelMarkerRatio = 4/5;
 
 %Shift  = -1;
@@ -192,8 +192,8 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-%ExtraOpts.TimerefCurve = 'Average';
-ExtraOpts.TimerefCurve = 'Wheel';
+ExtraOpts.TimerefCurve = 'Average';
+%ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 
@@ -205,15 +205,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_251024_02_6', ExtraOpts )
-
-%%
-
-ColorVector = {'black'};
-
-MakeVideo_Npts_halloween( nPts, WhoIsCenter, WheelRadius, ...
-  DecorativeBez,...
-  AllBezierPos, AllLocTime, ...
-  AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
-  ColorVector, ...
-  50, 20, 'test_251031_11_1', ExtraOpts )
+  40, 10, 'test_251031_20_5', ExtraOpts )

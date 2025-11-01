@@ -812,6 +812,58 @@ end
 clear Figure_N i N ROT Section1 Section2 th
 
 %%
+% self-intersecting polygon with an unit circle pn each corner
+Angel = cell(1,16);
+
+for N = 2:8
+  Section1 = [...
+    [cos(-pi/N),sin(-pi/N)]'/tan(pi/N),...
+    [cos(-pi/N),sin(-pi/N)]'*(1/tan(pi/N) + (4/3)*tan(pi*(N+2)/(8*N))),...
+    [1,0]'*(1/sin(pi/N) + 1) + [0,-1]'*(4/3)*tan(pi*(N+2)/(8*N)),...
+    [1,0]'*(1/sin(pi/N) + 1)...
+    ];
+  Section2 = [...
+    [1,0]'*(1/sin(pi/N) + 1)...
+    [1,0]'*(1/sin(pi/N) + 1) + [0,1]'*(4/3)*tan(pi*(N+2)/(8*N)),...
+    [cos(pi/N),sin(pi/N)]'*(1/tan(pi/N) + (4/3)*tan(pi*(N+2)/(8*N))),...
+    [cos(pi/N),sin(pi/N)]'/tan(pi/N)...
+    ];
+  Section_in = [...
+    [cos(-pi/N),sin(-pi/N)]'/tan(pi/N),...
+    [cos(-pi/N),sin(-pi/N)]'*(1/tan(pi/N) - (4/3)*tan(pi*(N-2)/(4*N))),...
+    [cos( pi/N),sin( pi/N)]'*(1/tan(pi/N) - (4/3)*tan(pi*(N-2)/(4*N))),...
+    [cos( pi/N),sin( pi/N)]'/tan(pi/N)...
+    ];
+
+  if ceil(N/2)*2 - N > 0
+    topp = 2*N;
+    nCurves = 3*N;
+  else
+    topp = N;
+    nCurves = 3*N/2;
+  end
+
+  Figure_N = cell(1,nCurves);
+  counter = 1;
+  for i = 1:topp
+    th  = (i-1)*2*pi/N + pi/2;
+    ROT = [cos(th), -sin(th); sin(th), cos(th)];
+    if ceil(i/2)*2 - i > 0
+      Figure_N{counter  } = ROT * Section1;
+      Figure_N{counter+1} = ROT * Section2;
+      counter = counter+2;
+    else
+      Figure_N{counter} = ROT * Section_in;
+      counter = counter+1;
+    end
+  end
+
+  Angel{N} = Figure_N;
+end
+
+clear counter Figure_N i N nCurves topp ROT Section1 Section2 Section_in th
+
+%%
 save('ExampleCollections.mat')
 
 clear all
