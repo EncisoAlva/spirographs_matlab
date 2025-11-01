@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Angel6'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC'));
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -44,7 +44,7 @@ for i = 1:size(BPath, 2)
 end
 
 % rotate by an angle
-BPath = RotatePath( BPath, pi );
+BPath = RotatePath( BPath, pi/2 );
 
 % change orientation
 BPath = FlipPath(BPath);
@@ -68,14 +68,14 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 6/5; %2.5
+WheelBezRatio = 13/2; %2.5
 WheelMarkerRatio = 4/5;
 
 %Shift  = -1;
 %Halfen = true;
 %Shift  = 3;
 %Halfen = false;
-Shift  = 3;
+Shift  = 0;
 Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -138,7 +138,7 @@ CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 
-aang = 2*pi*(0:(1/5):1);
+aang = 2*pi*(0:(1/2):1);
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -206,3 +206,14 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
   40, 10, 'test_251024_02_6', ExtraOpts )
+
+%%
+
+ColorVector = {'black'};
+
+MakeVideo_Npts_halloween( nPts, WhoIsCenter, WheelRadius, ...
+  DecorativeBez,...
+  AllBezierPos, AllLocTime, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  ColorVector, ...
+  50, 20, 'test_251031_11_1', ExtraOpts )
