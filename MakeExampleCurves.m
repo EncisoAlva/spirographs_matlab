@@ -807,20 +807,20 @@ clear aang hex_pts CurrCtrl c1 c2 i
 aang = -(0:(2*pi/6):2*pi)+pi/2+pi/6;
 hex_pts = [cos(aang); sin(aang)]*cot(pi/6);
 
-Fidget3 = {};
+Fidget3_bad = {};
 for i = 1:6
   CurrCtrl = zeros(2,4);
   CurrCtrl(:,1) = hex_pts(:,i  );
   CurrCtrl(:,2) = hex_pts(:,i  )*(1 +(4/3)*tan(pi/3)*(-1)^i );
   CurrCtrl(:,3) = hex_pts(:,i+1)*(1 +(4/3)*tan(pi/3)*(-1)^i );
   CurrCtrl(:,4) = hex_pts(:,i+1);
-  Fidget3{end+1} = CurrCtrl;
+  Fidget3_bad{end+1} = CurrCtrl;
 end
 
 % change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Fidget3{1});
-Fidget3{1} = c2;
-Fidget3{end+1} = c1;
+[c1,c2] = HalfBezierSingle(Fidget3_bad{1});
+Fidget3_bad{1} = c2;
+Fidget3_bad{end+1} = c1;
 
 clear aang hex_pts CurrCtrl c1 c2 i
 
@@ -903,6 +903,39 @@ Bone{1} = c2;
 Bone{end+1} = c1;
 
 clear c1 c2 th ROT
+
+%%
+% roses
+Rhodonea = cell(9,9);
+
+t = [(-.25:0.05:0.25),flip(.25:0.05:0.75)]*2*pi;
+x = cos(t)./(1+(sin(t)).^2);
+y = sin(t).*cos(t)./(1+(sin(t)).^2);
+plot(x,y)
+
+% make one single cycloid
+dt = 2*pi/(N*2);
+t = (0:dt:(2*pi));
+
+xy     = [ (R-r)*sin(t) -    r*sin(Rr*t) ;  (R-r)*cos(t) +    r*cos(Rr*t) ];
+xy_der = [ (R-r)*cos(t) - Rr*r*cos(Rr*t) ; -(R-r)*sin(t) - Rr*r*sin(Rr*t) ];
+
+CurrCycloid = cell(1,size(t,2)-1);
+for i = 2:size(t,2)
+  del_i = t(i) - t(i-1);
+  CurrCurve = zeros(2,4);
+  CurrCurve(:,1) = xy(:,i-1);
+  CurrCurve(:,2) = xy(:,i-1) + (1/3)*xy_der(:,i-1)*del_i;
+  CurrCurve(:,3) = xy(:,i)   - (1/3)*xy_der(:,i)  *del_i;
+  CurrCurve(:,4) = xy(:,i);
+  CurrCycloid{i-1} = CurrCurve;
+end
+CurrCycloid = FlipPath(CurrCycloid);
+CurrCycloid = ShiftPath(CurrCycloid, 1,false);
+
+Hypocycloid{N} = CurrCycloid;
+
+clear CurrCurve CurrCycloid del_i dt i N r R Rr t y xy xy_der
 
 %%
 save('ExampleCurves.mat')

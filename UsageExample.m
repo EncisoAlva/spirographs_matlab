@@ -18,7 +18,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Angel'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{3};
+BPath = BPath_pack2{8};
 
 clear BPath_pack1 BPath_pack2
 
@@ -68,13 +68,9 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9/2;
+WheelBezRatio = 16/3;
 WheelMarkerRatio = 4/5;
 
-%Shift  = -1;
-%Halfen = true;
-%Shift  = 3;
-%Halfen = false;
 Shift  = 0;
 Halfen = false;
 
@@ -138,7 +134,7 @@ CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 
-aang = 2*pi*(0:(1/2):1);
+aang = 2*pi*(0:(1/3):1);
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -205,4 +201,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_251031_20_5', ExtraOpts )
+  40, 10, 'test_251101_13_3', ExtraOpts )
