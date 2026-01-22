@@ -68,10 +68,10 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 15/2;
+WheelBezRatio = 33/5;
 WheelMarkerRatio = 4/5;
 
-Shift  = 0;
+Shift  = 25;
 Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
@@ -134,7 +134,7 @@ CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 
-aang = 2*pi*(0:(1/2):1);
+aang = 2*pi*(0:1/5:1);
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -201,4 +201,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_251115_01_7', ExtraOpts )
+  40, 10, 'test_251121_08_4', ExtraOpts )
