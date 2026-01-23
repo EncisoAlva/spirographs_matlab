@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Balls6'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -68,11 +68,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5;
-WheelMarkerRatio = 4/5;
+WheelBezRatio = 2;
+%WheelMarkerRatio = 4/5;
 
 Shift  = 0;
-Halfen = true;
+Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -102,7 +102,7 @@ while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
 end
 %BPath = BPath_new;
 WheelRadius  = WheelRadius_new;
-MarkerRadius = WheelRadius*WheelMarkerRatio;
+%MarkerRadius = WheelRadius*WheelMarkerRatio;
 BPath_new = ShiftPath( BPath_new, Shift, Halfen );
 
 
@@ -130,6 +130,9 @@ ColorVector = {'yellow','magenta','blue','red','green'};
 %%
 % preview curve
 
+% design parameters
+nSteps = 6;
+
 % setup parameters
 CurveOpts = {};
 CurveOpts.CloseEnds = false;
@@ -144,7 +147,8 @@ k = size(ColorVector,2);
 
 % compute curves
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
-    SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
+    SetupCurves_Npts_Nsteps( nPts, nSteps, ...
+    BPath_new, WheelRadius, WheelRadius, MarkerAngle0Array, ...
       1, CurveOpts);
 
 % plotting per se
@@ -154,19 +158,16 @@ axis equal
 grid on
 fill(DecorativeBez(1,:),DecorativeBez(2,:), .15*[1,1,1], 'EdgeColor', 'none')
 set(gca,'color', 'k');
-for i = 1:nPts
+for i = 1:(nPts*nSteps)
   plot(AllMarkerPos{i}(1,:),AllMarkerPos{i}(2,:),'Color',ColorVector{mod(i-1,k)+1}, 'LineWidth',2)
-end
-for i = 1:nPts
-  scatter(AllMarkerPos{i}(1,1),AllMarkerPos{i}(2,1),'red','filled','o')
 end
 
 %%
 % video
 
 % this is a collection of hand-picked colors
-%NiceColors = {[255, 59, 209]/255,[165, 36, 61]/255, [208, 241, 191]/255, [240, 45, 58]/255};
-%ColorVector = { NiceColors{randi(size(NiceColors,2))} };
+NiceColors = {[255, 59, 209]/255,[165, 36, 61]/255, [208, 241, 191]/255, [240, 45, 58]/255};
+ColorVector = { NiceColors{randi(size(NiceColors,2))} };
 
 % curve parameters
 CurveOpts = {};
@@ -177,11 +178,13 @@ CurveOpts.CloseTol = CloseTol;
 MarkerAngle0Array = 0;
 nPts = size(MarkerAngle0Array,2);
 
+nSteps = 6;
+
 % compute curves
 [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-    SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
+    SetupCurves_Npts_Nsteps( nPts, nSteps, BPath_new, WheelRadius, WheelRadius, MarkerAngle0Array, ...
       MaxSpins, CurveOpts);
 
 % video parameters
@@ -198,9 +201,9 @@ ExtraOpts.Tol = Tol;
 WhoIsCenter = 1;
 
 % video
-MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_260121_11_1', ExtraOpts )
+  40, 10, 'test_260122_21_5', ExtraOpts )

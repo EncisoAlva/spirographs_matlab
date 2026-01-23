@@ -866,6 +866,37 @@ end
 clear Figure_N i N ROT Section1 Section2 th
 
 %%
+% polygon with an unit circle pn each corner
+Ballgon_in = cell(1,8);
+
+for N = 2:8
+  Section1 = [...
+    [ cos(-pi/N),sin(-pi/N)]'/tan(pi/N),...
+    [-cos(-pi/N),sin(-pi/N)]'*(1/tan(pi/N) + (4/3)*tan(pi*(N+2)/(8*N))),...
+    [-1,0]'*(1/sin(pi/N) + 1) + [0,-1]'*(4/3)*tan(pi*(N+2)/(8*N)),...
+    [-1,0]'*(1/sin(pi/N) + 1)...
+    ];
+  Section2 = [...
+    [-1,0]'*(1/sin(pi/N) + 1)...
+    [-1,0]'*(1/sin(pi/N) + 1) + [0,1]'*(4/3)*tan(pi*(N+2)/(8*N)),...
+    [-cos(pi/N),sin(pi/N)]'*(1/tan(pi/N) + (4/3)*tan(pi*(N+2)/(8*N))),...
+    [ cos(pi/N),sin(pi/N)]'/tan(pi/N)...
+    ];
+
+  Figure_N = cell(1,N*2);
+  for i = 1:N
+    th  = (i-1)*2*pi/N + pi/2;
+    ROT = [cos(th), -sin(th); sin(th), cos(th)];
+    Figure_N{2*i-1} = ROT * Section1;
+    Figure_N{2*i  } = ROT * Section2;
+  end
+
+  Ballgon_in{N} = Figure_N;
+end
+
+clear Figure_N i N ROT Section1 Section2 th
+
+%%
 % self-intersecting polygon with an unit circle pn each corner
 Angel = cell(1,16);
 
