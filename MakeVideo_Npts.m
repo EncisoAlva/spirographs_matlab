@@ -141,10 +141,10 @@ switch ExtraOpts.Orientation
     ExtraBorder = 2*WheelRadius;
 end
 %
-x0 =  Inf;
-xF = -Inf;
-y0 =  Inf;
-yF = -Inf;
+x0 = min(DecorativeBez(1,:));
+xF = max(DecorativeBez(1,:));
+y0 = min(DecorativeBez(2,:));
+yF = max(DecorativeBez(2,:));
 for p = 1:nPts
   x0 = min( x0, min(AllMarkerPos{p}(1,:)) );
   xF = max( xF, max(AllMarkerPos{p}(1,:)) );
