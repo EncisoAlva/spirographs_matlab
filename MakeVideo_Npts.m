@@ -141,16 +141,20 @@ switch ExtraOpts.Orientation
     ExtraBorder = 2*WheelRadius;
 end
 %
-x0 = min( AllBezierPos{1}(1,:)) -ExtraBorder;
-xF = max( AllBezierPos{1}(1,:)) +ExtraBorder;
-y0 = min( AllBezierPos{1}(2,:)) -ExtraBorder;
-yF = max( AllBezierPos{1}(2,:)) +ExtraBorder;
+x0 =  Inf;
+xF = -Inf;
+y0 =  Inf;
+yF = -Inf;
 for p = 1:nPts
   x0 = min( x0, min(AllMarkerPos{p}(1,:)) );
   xF = max( xF, max(AllMarkerPos{p}(1,:)) );
   y0 = min( y0, min(AllMarkerPos{p}(2,:)) );
   yF = max( yF, max(AllMarkerPos{p}(2,:)) );
 end
+x0 = x0 -ExtraBorder;
+xF = xF +ExtraBorder;
+y0 = y0 -ExtraBorder;
+yF = yF +ExtraBorder;
 %
 x_ran = xF - x0;
 y_ran = yF - y0;
@@ -161,7 +165,7 @@ if y_ran/x_ran < ExpectedRatio
   yF = yF + (y_ran_new - y_ran)/2;
 else 
   if y_ran/x_ran > ExpectedRatio
-    x_ran_new = x_ran/ExpectedRatio;
+    x_ran_new = y_ran/ExpectedRatio;
     x0 = x0 - (x_ran_new - x_ran)/2;
     xF = xF + (x_ran_new - x_ran)/2;
   end

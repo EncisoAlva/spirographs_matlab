@@ -49,7 +49,7 @@ AllMarkerPos   = cell(1,nPts*nSteps);
 AllMarkerAngle = cell(1,nPts*nSteps);
 
 % vector of marker radii
-MarkerRadius = linspace(0,MarkerRadius0, nSteps+1);
+MarkerRadius = linspace(0,MarkerRadius0, nSteps);
 %MarkerRadius(1) = [];
 
 % loop to create multiple curves

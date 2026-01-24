@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','LetterV'));
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -16,9 +16,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon_in'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Spikegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{5};
+BPath = BPath_pack2{4};
 
 clear BPath_pack1 BPath_pack2
 
@@ -54,7 +54,7 @@ BPath = FlipPath(BPath);
 
 PlotPath(BPath)
 
-BPath = ShiftPath( BPath, 2, false );
+BPath = ShiftPath( BPath, 1, false );
 
 %%
 % parameters
@@ -68,11 +68,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 2;
+WheelBezRatio = 4;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
-Halfen = false;
+Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -123,7 +123,7 @@ BPath_new = ShiftPath( BPath_new, 1, true);
 
 ColorVector = {'yellow','magenta','blue','red','green'};
 
-%ColorVector = {'red','white', 'red'};
+%ColorVector = {'red','white', 'yellow'};
 
 %ColorVector = {'white', 'red'};
 
@@ -131,7 +131,7 @@ ColorVector = {'yellow','magenta','blue','red','green'};
 % preview curve
 
 % design parameters
-nSteps = 6;
+nSteps = 5;
 
 % setup parameters
 CurveOpts = {};
@@ -206,4 +206,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_260122_21_5', ExtraOpts )
+  30, 5, 'test_260123_20_7', ExtraOpts )
