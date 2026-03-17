@@ -7,8 +7,9 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterV'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Guinivere'));
 BPath = BPath_pack{1};
+
 clear BPath_pack
 
 %%
@@ -16,15 +17,15 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Spikegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{4};
+BPath = BPath_pack2{2};
 
 clear BPath_pack1 BPath_pack2
 
 %%
 % load from file
-BPath_pack = LoadSVG( './curves_svg/octopi1.svg' );
+BPath_pack = LoadSVG( './curves_svg/Yscavenge.svg' );
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -68,11 +69,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 4;
+WheelBezRatio = 3/2;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
-Halfen = true;
+Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -110,7 +111,7 @@ BPath_new = ShiftPath( BPath_new, Shift, Halfen );
 % don't remove outer corners
 BPath_new = ShiftPath( BPath, Shift, Halfen );
 WheelRadius = (PathPerimeter(BPath_new,0.00001)/(2*pi))/WheelBezRatio
-MarkerRadius = WheelRadius*WheelMarkerRatio;
+%MarkerRadius = WheelRadius*WheelMarkerRatio;
 
 %% 
 % adjust start point after rounding
@@ -121,11 +122,23 @@ BPath_new = ShiftPath( BPath_new, 1, true);
 %%
 % colors
 
-ColorVector = {'yellow','magenta','blue','red','green'};
+%ColorVector = {'yellow','magenta','blue','red','green'};
 
 %ColorVector = {'red','white', 'yellow'};
 
-%ColorVector = {'white', 'red'};
+ColorVector = {'white', 'red'};
+
+%ColorVector = {'white'};
+
+%ColorVector = {'red'};
+
+%ColorVector = {'yellow'};
+
+%ColorVector = {'magenta'};
+
+%ColorVector = {'magenta','yellow'};
+
+%ColorVector = {'yellow', 'magenta', 'magenta'};
 
 %%
 % preview curve
@@ -138,9 +151,11 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
+CurveOpts.MaxSpins = 10;
 
-aang = 2*pi*(0:1/2:1);
+aang = 2*pi*(0:1/1:1);
 aang(end) = [];
+%aang(1) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
 k = size(ColorVector,2);
@@ -148,8 +163,8 @@ k = size(ColorVector,2);
 % compute curves
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
     SetupCurves_Npts_Nsteps( nPts, nSteps, ...
-    BPath_new, WheelRadius, WheelRadius, MarkerAngle0Array, ...
-      1, CurveOpts);
+    BPath_new, WheelRadius, WheelRadius*0, WheelRadius*1, MarkerAngle0Array, ...
+      CurveOpts);
 
 % plotting per se
 figure()
@@ -167,25 +182,26 @@ end
 
 % this is a collection of hand-picked colors
 NiceColors = {[255, 59, 209]/255,[165, 36, 61]/255, [208, 241, 191]/255, [240, 45, 58]/255};
-ColorVector = { NiceColors{randi(size(NiceColors,2))} };
+%ColorVector = { NiceColors{randi(size(NiceColors,2))} };
+ColorVector = { NiceColors{randi(size(NiceColors,2))}, NiceColors{randi(size(NiceColors,2))} };
 
 % curve parameters
 CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
+CurveOpts.MaxSpins = 10;
 
-MarkerAngle0Array = 0;
-nPts = size(MarkerAngle0Array,2);
+CurveOpts.MinSpins = 2;
 
-nSteps = 6;
+nSteps = 5;
 
 % compute curves
 [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-    SetupCurves_Npts_Nsteps( nPts, nSteps, BPath_new, WheelRadius, WheelRadius, MarkerAngle0Array, ...
-      MaxSpins, CurveOpts);
+    SetupCurves_Npts_Nsteps( nPts, nSteps, BPath_new, WheelRadius, WheelRadius*0, WheelRadius*1, MarkerAngle0Array, ...
+      CurveOpts);
 
 % video parameters
 ExtraOpts = {};
@@ -198,7 +214,7 @@ ExtraOpts.TimerefCurve = 'Average';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 
-WhoIsCenter = 1;
+WhoIsCenter = 3;
 
 % video
 MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
@@ -206,4 +222,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 5, 'test_260123_20_7', ExtraOpts )
+  30, 7.5, 'test_260316_23_1', ExtraOpts )

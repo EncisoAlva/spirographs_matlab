@@ -35,11 +35,23 @@ function [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_Npts_Nsteps( nPts, nSteps,...
-  BPath, WheelRadius, MarkerRadius0, MarkerAngle0Array, ...
-    MaxSpins, ExtraOpts)
+  BPath, WheelRadius, MarkerRadius0, MarkerRadiusF, MarkerAngle0Array, ...
+    ExtraOpts)
 
 % this evaluation is for background decoration only
 DecorativeBez = PathEval(BPath, ExtraOpts.Tol);
+
+% when multiple spirographs are to be drawn, this is necessary
+if isfield(ExtraOpts,'MinSpins')
+  MinSpins = ExtraOpts.MinSpins;
+else
+  MinSpins = 0;
+end
+if isfield(ExtraOpts,'MaxSpins')
+  MaxSpins = ExtraOpts.MaxSpins;
+else
+  MaxSpins = 100;
+end
 
 % containers
 AllBezierPos   = cell(1,nPts*nSteps);
@@ -49,15 +61,22 @@ AllMarkerPos   = cell(1,nPts*nSteps);
 AllMarkerAngle = cell(1,nPts*nSteps);
 
 % vector of marker radii
-MarkerRadius = linspace(0,MarkerRadius0, nSteps);
+MarkerRadius = linspace(MarkerRadiusF,MarkerRadius0, nSteps);
 %MarkerRadius(1) = [];
+
+% easier to mantain
+GlissetteOpts = [];
+GlissetteOpts.Tol = ExtraOpts.Tol;
+GlissetteOpts.CloseTol = ExtraOpts.CloseTol;
+GlissetteOpts.MaxSpins = MaxSpins;
+GlissetteOpts.MinSpins = MinSpins;
 
 % loop to create multiple curves
 for i = 1:nPts
 for j = 1:nSteps
   [LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
     GenerateGlissette( BPath, WheelRadius, MarkerRadius(j), MarkerAngle0Array(i), ...
-    ExtraOpts.Tol, ExtraOpts.CloseTol, MaxSpins);
+    GlissetteOpts);
 
   % patch
   if ExtraOpts.CloseEnds

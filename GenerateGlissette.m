@@ -25,7 +25,41 @@
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
   GenerateGlissette( BPath, WheelRadius, MarkerRadius, MarkerAngle0, ...
-    Tol, CloseTol, MaxSpins)
+    ExtraOpts)
+
+% reading aditional parameters
+if isfield(ExtraOpts,'MinSpins')
+  MinSpins = ExtraOpts.MinSpins;
+else
+  MinSpins = 0;
+end
+if isfield(ExtraOpts,'MaxSpins')
+  MaxSpins = ExtraOpts.MaxSpins;
+else
+  MaxSpins = 100;
+end
+if isfield(ExtraOpts,'Tol')
+  Tol = ExtraOpts.Tol;
+else
+  maxX = -Inf;
+  minX =  Inf;
+  maxY = -Inf;
+  minY =  Inf;
+  for p = 1:length(BPath)
+    minX = min( minX, min(BPath{p}(1,:)) );
+    maxX = max( maxX, max(BPath{p}(1,:)) );
+    minY = min( minY, min(BPath{p}(2,:)) );
+    maxY = max( maxY, max(BPath{p}(2,:)) );
+  end
+  %
+  Tol = norm( [ maxX-minX; maxY-minY ] )*(1e-3);
+end
+if isfield(ExtraOpts,'CloseTol')
+  CloseTol = ExtraOpts.CloseTol;
+else
+  CloseTol = Tol*(1e-2);
+end
+
 
 % parameters
 nCurves    = length(BPath);
@@ -44,6 +78,7 @@ MarkerAngle = [];
 % loop
 CurrSpin = 0; % index start at 0
 ClosedFlag = false;
+SufficientSpins = false;
 while (CurrSpin < MaxSpins) && (~ClosedFlag)
   for j = 1:nCurves
     disp(strcat('Spin: ',num2str(CurrSpin),' , Curve: ',num2str(j)))
@@ -91,17 +126,22 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     CurrAngle0 = MarkerAngle(end);
   end
   %
+  % update number of spins
+  CurrSpin = CurrSpin + 1;
+  if CurrSpin >= MinSpins
+    SufficientSpins = true;
+  end
+  %
   % check if spirograph is closed
-  if CurrSpin == 0
+  if CurrSpin == 1
     FirstPt = MarkerPos(:,1);
   end
   LastPt = MarkerPos(:,end);
   if norm( FirstPt - LastPt ) < CloseTol
-    ClosedFlag = true;
+    if SufficientSpins
+      ClosedFlag = true;
+    end
   end
-  %
-  % update number of spins
-  CurrSpin = CurrSpin + 1;
 end
 
 end

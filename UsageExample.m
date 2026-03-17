@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Balls6'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC'));
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -68,7 +68,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5;
+WheelBezRatio = 1;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -135,6 +135,8 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
+CurveOpts.MaxSpins = 1;
+CurveOpts.MinSpins = 0;
 
 aang = 2*pi*(0:1/2:1);
 aang(end) = [];
@@ -145,7 +147,7 @@ k = size(ColorVector,2);
 % compute curves
 [ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
     SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-      1, CurveOpts);
+      CurveOpts);
 
 % plotting per se
 figure()
@@ -173,6 +175,8 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
+CurveOpts.MaxSpins = 1;
+CurveOpts.MinSpins = 0;
 
 MarkerAngle0Array = 0;
 nPts = size(MarkerAngle0Array,2);
@@ -182,7 +186,7 @@ nPts = size(MarkerAngle0Array,2);
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
     SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-      MaxSpins, CurveOpts);
+      CurveOpts);
 
 % video parameters
 ExtraOpts = {};

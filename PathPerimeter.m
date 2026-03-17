@@ -35,6 +35,9 @@ for j = 1:nCurves
     for i = 2:length(LocalTime)
       if( DiffCurve(i-1) > Tol )
         epsilon  = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(Tol/2));
+        %if epsilon < Tol
+        %  break
+        %end
         NewTimes = [ NewTimes, (LocalTime(i-1):epsilon:LocalTime(i)) ];
       end
     end

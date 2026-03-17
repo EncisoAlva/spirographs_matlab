@@ -33,7 +33,19 @@ function [ DecorativeBez,...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_Npts( nPts,...
   BPath, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-    MaxSpins, ExtraOpts)
+    ExtraOpts)
+
+% when multiple spirographs are to be drawn, this is necessary
+if isfield(ExtraOpts,'MinSpins')
+  MinSpins = ExtraOpts.MinSpins;
+else
+  MinSpins = 0;
+end
+if isfield(ExtraOpts,'MaxSpins')
+  MaxSpins = ExtraOpts.MaxSpins;
+else
+  MaxSpins = 100;
+end
 
 % this evaluation is for background decoration only
 DecorativeBez = PathEval(BPath, ExtraOpts.Tol);
@@ -45,11 +57,18 @@ AllWhCtrPos    = cell(1,nPts);
 AllMarkerPos   = cell(1,nPts);
 AllMarkerAngle = cell(1,nPts);
 
+% easier to mantain
+GlissetteOpts = [];
+GlissetteOpts.Tol = ExtraOpts.Tol;
+GlissetteOpts.CloseTol = ExtraOpts.CloseTol;
+GlissetteOpts.MaxSpins = MaxSpins;
+GlissetteOpts.MinSpins = MinSpins;
+
 % loop to create multiple curves
 for i = 1:nPts
   [LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
     GenerateGlissette( BPath, WheelRadius, MarkerRadius, MarkerAngle0Array(i), ...
-    ExtraOpts.Tol, ExtraOpts.CloseTol, MaxSpins);
+    GlissetteOpts);
 
   % patch
   if ExtraOpts.CloseEnds
