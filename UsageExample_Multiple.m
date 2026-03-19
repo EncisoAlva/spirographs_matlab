@@ -17,9 +17,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Polygon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{2};
+BPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -73,7 +73,7 @@ WheelBezRatio = 3/2;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
-Halfen = false;
+Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -153,7 +153,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-aang = 2*pi*(0:1/1:1);
+aang = 2*pi*(0:1/1:1)+pi;
 aang(end) = [];
 %aang(1) = [];
 MarkerAngle0Array = aang;
@@ -183,6 +183,7 @@ end
 % this is a collection of hand-picked colors
 NiceColors = {[255, 59, 209]/255,[165, 36, 61]/255, [208, 241, 191]/255, [240, 45, 58]/255};
 %ColorVector = { NiceColors{randi(size(NiceColors,2))} };
+%ColorVector = { NiceColors{3} };
 ColorVector = { NiceColors{randi(size(NiceColors,2))}, NiceColors{randi(size(NiceColors,2))} };
 
 % curve parameters
@@ -192,7 +193,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-CurveOpts.MinSpins = 2;
+CurveOpts.MinSpins = 1;
 
 nSteps = 5;
 
@@ -222,4 +223,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260316_23_1', ExtraOpts )
+  30, 7.5, 'test_260319_03_1', ExtraOpts )
