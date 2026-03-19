@@ -69,7 +69,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 3/2;
+WheelBezRatio = 3;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -153,7 +153,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-aang = 2*pi*(0:1/1:1)+pi;
+aang = 2*pi*(0:1/1:1);
 aang(end) = [];
 %aang(1) = [];
 MarkerAngle0Array = aang;
@@ -193,7 +193,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-CurveOpts.MinSpins = 1;
+CurveOpts.MinSpins = 2;
 
 nSteps = 5;
 
@@ -223,4 +223,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260319_03_1', ExtraOpts )
+  30, 7.5, 'test_260319_03_4', ExtraOpts )
