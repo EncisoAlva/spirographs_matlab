@@ -135,10 +135,10 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 1;
+CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-aang = 2*pi*(0:1/2:1);
+aang = 2*pi*(0:1/1:1)+pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -207,4 +207,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  40, 10, 'test_260121_11_1', ExtraOpts )
+  30, 7.5, 'test_260324_03_3', ExtraOpts )

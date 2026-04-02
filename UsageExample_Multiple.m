@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Guinivere'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Star5'));
 BPath = BPath_pack{1};
 
 clear BPath_pack
@@ -17,7 +17,7 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Polygon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
 BPath = BPath_pack2{3};
 
@@ -69,11 +69,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 3;
+WheelBezRatio = 9/4;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
-Halfen = true;
+Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -136,6 +136,8 @@ ColorVector = {'white', 'red'};
 
 %ColorVector = {'magenta'};
 
+%ColorVector = {'green'};
+
 %ColorVector = {'magenta','yellow'};
 
 %ColorVector = {'yellow', 'magenta', 'magenta'};
@@ -144,7 +146,9 @@ ColorVector = {'white', 'red'};
 % preview curve
 
 % design parameters
-nSteps = 5;
+nSteps = 4;
+%nSteps = 2;
+%nSteps = 1;
 
 % setup parameters
 CurveOpts = {};
@@ -153,7 +157,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-aang = 2*pi*(0:1/1:1);
+aang = 2*pi*(0:1/1:1)+pi*1;
 aang(end) = [];
 %aang(1) = [];
 MarkerAngle0Array = aang;
@@ -193,9 +197,9 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-CurveOpts.MinSpins = 2;
+CurveOpts.MinSpins = 4;
 
-nSteps = 5;
+nSteps = 6;
 
 % compute curves
 [ DecorativeBez,...
@@ -215,7 +219,7 @@ ExtraOpts.TimerefCurve = 'Average';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 
-WhoIsCenter = 3;
+WhoIsCenter = 1;
 
 % video
 MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
@@ -223,4 +227,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260319_03_4', ExtraOpts )
+  30, 7.5, 'test_260331_10_6', ExtraOpts )
