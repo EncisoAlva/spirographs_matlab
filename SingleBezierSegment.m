@@ -29,7 +29,7 @@
 % multile times the same parameters.
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  SingleBezierSegment( CtrlPts, WheelRadius, MarkerAngle0, Time0, ...
+  SingleBezierSegment( CtrlPts, WheelRadius, MarkerAngle0, Time0, RollDist0, ...
   ExtraOpts )
 
 % dealing with optional arguments
@@ -81,9 +81,23 @@ end
 MarkerAngle = cumsum([MarkerAngle0, -DiffAngle+BezNormAngleDiff]);
 switch ExtraOpts.Method
   case 'Default'
-    MarkerPos   = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
+    % add a point in a circle with given center and radius
+    MarkerPos = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
+  case 'Hole'
+    % distance that the wheel has rolled so far
+    RollAngle = mod( cumsum([RollDist0, DiffAngle ]), 2*pi);
+    % 1. interpolate where the marker is in the hole
+    HolePos = zeros(size(WhCtrPos));
+    HolePos(1,:) = interp1(AngBase, BezBase(1,:), mod(RollAngle,2*pi));
+    HolePos(2,:) = interp1(AngBase, BezBase(2,:), mod(RollAngle,2*pi));
+    % 2. rotate the interpolated point and add around the wheel center
+    for j = 1:size(WhCtrPos,2)
+      th = MarkerAngle(j);
+      MarkerPos(j) = WhCtrPos(:,j) + ...
+        WheelRadius * [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,j);
+    end
   otherwise
-    MarkerPos   = WhCtrPos;
+    MarkerPos = WhCtrPos;
 end
 
 % check if the marker points are not too far from each other
