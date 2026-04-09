@@ -11,15 +11,22 @@
 % WheelMarkerRatio Center of wheel to marker / Radius of wheel [1]
 %    MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                  the wheelcenter-marker line [1]
+%     ExtraOpts  More arguments, including optional [structs]
+% -------------
 %             Tol  Maxi allowable distance between neighboring points [1]
 %        CloseTol  Max distance between first and last point [1]
 %        MaxSpins  Max full rotations of wheel around whole shape [1]
+%        MinSpins  Max full rotations of wheel around whole shape [1]
+%          Method  What is inside the rolling circle
+%  ----->  Method = Default : one single point
+%    MarkerRadius  Distance from the center of wheel to the marker; if it is
+%                  larger than the wheel radius, the marker is outside [1]
+%  ----->  Method = Hole
+%  ----->  Method = Ring
 %
 % ---- OUTPUT ------------------------------------------------------------
 %   WheelRadius  Radius of spirograph wheel, a negative radius indicates
 %                that the wheel rolls inside the curve [1]
-%  MarkerRadius  Distance from the center of wheel to the marker; if it is
-%                larger than the wheel radius, the marker is outside [1]
 %   WhCtrPos1/2  Location of the wheel center at timestamps [2x?]
 %  MarkerPos1/2  Location of marker at timepoints [2x?]
 %MarkerAngle1/2  Angle of marker, at each timepoint, with respect to the
@@ -32,7 +39,7 @@ function [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
   SetupCurves_Npts( nPts,...
-  BPath, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
+    BPath, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
     ExtraOpts)
 
 % when multiple spirographs are to be drawn, this is necessary
@@ -63,11 +70,14 @@ GlissetteOpts.Tol = ExtraOpts.Tol;
 GlissetteOpts.CloseTol = ExtraOpts.CloseTol;
 GlissetteOpts.MaxSpins = MaxSpins;
 GlissetteOpts.MinSpins = MinSpins;
+%
+GlissetteOpts.Method = 'Default';
+GlissetteOpts.MarkerRadius = MarkerRadius;
 
 % loop to create multiple curves
 for i = 1:nPts
   [LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-    GenerateGlissette( BPath, WheelRadius, MarkerRadius, MarkerAngle0Array(i), ...
+    GenerateGlissette( BPath, WheelRadius, MarkerAngle0Array(i), ...
     GlissetteOpts);
 
   % patch

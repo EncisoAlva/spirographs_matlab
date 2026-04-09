@@ -5,12 +5,18 @@
 %       CtrlPts  Control points for Bezier curve, [2x4]
 %   WheelRadius  Radius of spirograph wheel, a negative radius indicates
 %                that the wheel rolls inside the curve [1]
-%  MarkerRadius  Distance from the center of wheel to the marker; if it is
-%                larger than the wheel radius, the marker is outside [1]
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
 %         Time0  Initial timestamp [1]
+%     ExtraOpts  More arguments, including optional [structs]
+% -------------
 %           Tol  Maximum allowable distance between neighboring points [1]
+%        Method  What is inside the rolling circle
+%  --->  Method = Default : one single point
+%  MarkerRadius  Distance from the center of wheel to the marker; if it is
+%                larger than the wheel radius, the marker is outside [1]
+%  --->  Method = Hole
+%  --->  Method = Ring
 %
 % ---- OUTPUT ------------------------------------------------------------
 %          Time  Timestamps [1x?]
@@ -23,8 +29,26 @@
 % multile times the same parameters.
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  SingleBezierSegment( CtrlPts, WheelRadius, MarkerRadius, ...
-  MarkerAngle0, Time0, Tol )
+  SingleBezierSegment( CtrlPts, WheelRadius, MarkerAngle0, Time0, ...
+  ExtraOpts )
+
+% dealing with optional arguments
+if ~isfield(ExtraOpts, 'Tol')
+  Tol = 1e-3; 
+else
+  Tol = ExtraOpts.Tol;
+end
+if ~isfield(ExtraOpts, 'Method')
+  ExtraOpts.Method = 'Default';
+end
+switch ExtraOpts.Method
+  case 'Default'
+    if ~isfield(ExtraOpts, 'MarkerRadius')
+      MarkerRadius = 0;
+    else
+      MarkerRadius = ExtraOpts.MarkerRadius;
+    end
+end
 
 % initial guess for time
 PerUpBound = ...
@@ -55,7 +79,12 @@ end
 
 % position and angle for the marker
 MarkerAngle = cumsum([MarkerAngle0, -DiffAngle+BezNormAngleDiff]);
-MarkerPos   = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
+switch ExtraOpts.Method
+  case 'Default'
+    MarkerPos   = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
+  otherwise
+    MarkerPos   = WhCtrPos;
+end
 
 % check if the marker points are not too far from each other
 DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);

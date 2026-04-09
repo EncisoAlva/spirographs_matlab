@@ -28,7 +28,7 @@
 % multile times the same parameters.
 %
 function [Time, BezierPos, WhCtrPosi, MarkerPos, MarkerAngle] = ...
-  RollCorner( CtrlPtsPre, CtrlPtsPos, WheelRadius, MarkerRadius, ...
+  RollCorner( CtrlPtsPre, CtrlPtsPos, WheelRadius, MarkerPos0, ...
   MarkerAngle0, Time0, MaxDistDelta )
 
 % compute arc angle that the wheel center will describe
@@ -45,7 +45,7 @@ if norm( (CtrlPtsPos(:,1) + WhNormalPos)-(CtrlPtsPre(:,end) + WhNormalPre) ) < M
   return
 end
 
-WhCtrPre = CtrlPtsPre(:,end) + WhNormalPre;
+%WhCtrPre = CtrlPtsPre(:,end) + WhNormalPre;
 CornerAngle = atan2(WhNormalPos(2),WhNormalPos(1)) - atan2(WhNormalPre(2),WhNormalPre(1));
 %disp(['initial angle: ', num2str(CornerAngle)])
 if CornerAngle > 0
@@ -54,7 +54,7 @@ end
 %disp(['adjusted angle: ', num2str(CornerAngle)])
 
 % compute the length that the marker will describe
-MarkerPos0 = WhCtrPre + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius;
+%MarkerPos0 = WhCtrPre + [cos(MarkerAngle0); sin(MarkerAngle0)]*MarkerRadius;
 MarkerArcLength = abs(CornerAngle) * norm( MarkerPos0 - CtrlPtsPos(:,1) );
 
 % adjust the rotation, time is set in terms of the marker

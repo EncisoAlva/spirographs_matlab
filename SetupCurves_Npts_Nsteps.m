@@ -70,12 +70,15 @@ GlissetteOpts.Tol = ExtraOpts.Tol;
 GlissetteOpts.CloseTol = ExtraOpts.CloseTol;
 GlissetteOpts.MaxSpins = MaxSpins;
 GlissetteOpts.MinSpins = MinSpins;
+%
+GlissetteOpts.Method = 'Default';
 
 % loop to create multiple curves
 for i = 1:nPts
 for j = 1:nSteps
+  GlissetteOpts.MarkerRadius = MarkerRadius(j);
   [LocTime, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-    GenerateGlissette( BPath, WheelRadius, MarkerRadius(j), MarkerAngle0Array(i), ...
+    GenerateGlissette( BPath, WheelRadius, MarkerAngle0Array(i), ...
     GlissetteOpts);
 
   % patch

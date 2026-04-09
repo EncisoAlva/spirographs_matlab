@@ -16,9 +16,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon_in'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{5};
+BPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -68,7 +68,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 6;
+WheelBezRatio = 9/5;
 WheelMarkerRatio = 0.95;
 
 Shift  = 0;
@@ -146,7 +146,7 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-aang = 2*pi*(0:1/2:1)+pi;
+aang = 2*pi*(0:1/1:1)+0*pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -215,7 +215,7 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260409_04_3', ExtraOpts )
+  30, 7.5, 'test_260409_14_1', ExtraOpts )
 
 % %%
 % % for batman animation

@@ -9,9 +9,17 @@
 %                larger than the wheel radius, the marker is outside [1]
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
-%           Tol  Maximum allowable distance between neighboring points [1]
 %      CloseTol  Max distance between first and last point [1]
 %      MaxSpins  Max full rotations of wheel around whole shape [1]
+%     ExtraOpts  More arguments, including optional [structs]
+% -------------
+%           Tol  Maximum allowable distance between neighboring points [1]
+%        Method  What is inside the rolling circle
+%  --->  Method = Default : one single point
+%  MarkerRadius  Distance from the center of wheel to the marker; if it is
+%                larger than the wheel radius, the marker is outside [1]
+%  --->  Method = Hole
+%  --->  Method = Ring
 %
 % ---- OUTPUT ------------------------------------------------------------
 %          Time  Timestamps [1x?]
@@ -24,10 +32,22 @@
 % control point of the first curve. This is not checked.
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  GenerateGlissette( BPath, WheelRadius, MarkerRadius, MarkerAngle0, ...
+  GenerateGlissette( BPath, WheelRadius, MarkerAngle0, ...
     ExtraOpts)
 
 % reading aditional parameters
+if ~isfield(ExtraOpts, 'Method')
+  ExtraOpts.Method = 'Default';
+end
+switch ExtraOpts.Method
+  case 'Default'
+    if ~isfield(ExtraOpts, 'MarkerRadius')
+      MarkerRadius = 0;
+    else
+      MarkerRadius = ExtraOpts.MarkerRadius;
+    end
+end
+%
 if isfield(ExtraOpts,'MinSpins')
   MinSpins = ExtraOpts.MinSpins;
 else
@@ -84,12 +104,18 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     disp(strcat('Spin: ',num2str(CurrSpin),' , Curve: ',num2str(j)))
     CurrCtrlPts = BPath{j};
     %
+    % prepare to parsing arguments
+    SegmentOpts = [];
+    SegmentOpts.Tol = Tol;
+    SegmentOpts.Method = ExtraOpts.Method;
+    switch ExtraOpts.Method
+      case 'Default'
+        SegmentOpts.MarkerRadius = MarkerRadius;
+    end
     % run one single Bezier curve at the time
     [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
-      SingleBezierSegment( CurrCtrlPts, ...
-        WheelRadius, MarkerRadius, ...
-        CurrAngle0, CurrTime0, ...
-        Tol );
+      SingleBezierSegment( CurrCtrlPts, WheelRadius, CurrAngle0, CurrTime0, ...
+        SegmentOpts );
     %
     % concatenate results from the current segment to the overall outputs
     Time        = [Time,        locTime];
@@ -111,7 +137,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     %
     % roll over the corner, if needed
     [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
-      RollCorner( CurrCtrlPts, NextCtrlPts, WheelRadius, MarkerRadius, ...
+      RollCorner( CurrCtrlPts, NextCtrlPts, WheelRadius, MarkerPos(:,end), ...
       CurrAngle0, CurrTime0, Tol );
     %
     % concatenate results from the current segment to the overall outputs
