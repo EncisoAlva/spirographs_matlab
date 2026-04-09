@@ -57,7 +57,7 @@ end
 if isfield(ExtraOpts,'CloseTol')
   CloseTol = ExtraOpts.CloseTol;
 else
-  CloseTol = Tol*(1e-2);
+  CloseTol = Tol*(1e-1);
 end
 
 
@@ -66,7 +66,7 @@ nCurves    = length(BPath);
 CurrTime0  = 0;
 
 FirstTangent = EvalBezierNormal(BPath{1},0,1);
-CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0;
+CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0 + pi; % point to the curve
 
 % containers for results
 Time        = [];

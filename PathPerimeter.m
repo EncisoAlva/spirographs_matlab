@@ -23,7 +23,11 @@ nCurves   = length(BPath);
 % loop
 for j = 1:nCurves
   CurrCtrlPts = BPath{j};
-  LocalTime   = 0:( 1/ceil(1/(Tol/2)) ):1;
+  PerUpBound  = ...
+    norm(CurrCtrlPts(:,1)-CurrCtrlPts(:,2)) + ...
+    norm(CurrCtrlPts(:,2)-CurrCtrlPts(:,3)) + ...
+    norm(CurrCtrlPts(:,3)-CurrCtrlPts(:,4));
+  LocalTime   = 0:( 1/ceil(PerUpBound/(Tol/2)) ):1;
   %iter = 0;
   while true
     BezierVals  = EvalBezier( CurrCtrlPts, LocalTime );
