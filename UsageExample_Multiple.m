@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Star5'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Cylinder1_2'));
 BPath = BPath_pack{1};
 
 clear BPath_pack
@@ -17,7 +17,7 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Angel'));
 BPath_pack2 = BPath_pack1{1};
 BPath = BPath_pack2{3};
 
@@ -69,7 +69,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9/4;
+WheelBezRatio = 9/5;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -142,6 +142,8 @@ ColorVector = {'white', 'red'};
 
 %ColorVector = {'yellow', 'magenta', 'magenta'};
 
+%ColorVector = {[152,136,41]/255};
+
 %%
 % preview curve
 
@@ -157,7 +159,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-aang = 2*pi*(0:1/1:1)+pi*1;
+aang = 2*pi*(0:1/2:1)+pi*1;
 aang(end) = [];
 %aang(1) = [];
 MarkerAngle0Array = aang;
@@ -197,7 +199,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-CurveOpts.MinSpins = 4;
+CurveOpts.MinSpins = 3;
 
 nSteps = 6;
 
@@ -227,4 +229,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260331_10_6', ExtraOpts )
+  30, 7.5, 'test_260407_03_3', ExtraOpts )

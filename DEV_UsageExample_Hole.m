@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','VertEye'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Heart'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -260,7 +260,7 @@ while max(abs(TH_vector - TH_vector_old)) > 0.01
   dists = vecnorm(H_vector-[cos(TH_vector);sin(TH_vector)], 2, 1);
   N = ( dTH_vector.*dists/2 ).^0.5;
   TH_vector = (TH_vector + cumsum(N) * 2*pi/sum(N) )/2;
-%end
+end
 
 % check fit
 figure()
@@ -272,7 +272,7 @@ for jj = 1:size(H_vector,2)
   plot([H_vector(1,jj), cos(TH_vector(jj))], [H_vector(2,jj), sin(TH_vector(jj))],'blue')
 end
 
-end
+%end
 
 
 % AngleTol = 0.0001;
@@ -405,7 +405,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 10/9;
+WheelBezRatio = 6/5;
 
 Shift  = 0;
 Halfen = false;

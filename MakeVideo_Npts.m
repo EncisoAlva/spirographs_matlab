@@ -67,6 +67,19 @@ end
 if ~isfield(ExtraOpts,'Orientation')
   ExtraOpts.Orientation = 'in';
 end
+if ~isfield(ExtraOpts, 'BackgroundColor')
+  ExtraOpts.BackgroundColor = 'black';
+end
+if ~isfield(ExtraOpts, 'FillBezierColor')
+  ExtraOpts.FillBezier      = false;
+  ExtraOpts.FillBezierColor = 'black';
+else
+  ExtraOpts.FillBezier      = true;
+end
+if ~isfield(ExtraOpts, 'FillMarkerCurve')
+  ExtraOpts.FillMarkerCurve = false;
+end
+
 
 %%
 % time is parametrized by the path over the Bezier curve or the path
@@ -125,7 +138,7 @@ aux_angles = 0:(pi/6):(2*pi);
 
 % original figure
 close all
-set(0, 'DefaultFigureColor', 'k');
+set(0, 'DefaultFigureColor', ExtraOpts.BackgroundColor);
 
 f1 = figure('Visible','off','Name','Just the curve');
 hold on
@@ -213,7 +226,11 @@ for i = 0:nTimes
   clf(f2)
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
-  plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
+  if ExtraOpts.FillBezier
+    fill(DecorativeBez(1,:),DecorativeBez(2,:), ExtraOpts.FillBezierColor, 'EdgeColor', 'none')
+  else 
+    plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
+  end
   %
   % add all strokes of the marker up to the current time
   for p = 1:nPts
@@ -261,7 +278,7 @@ end
 
 %%
 % stop for some time after everything is finished, WITH the wheel on
-for stopper = 0:(fps*(AfterTime/2))
+for stopper = 0:(fps*(AfterTime/4))
   writeVideo(v,getframe)
 end
 
@@ -272,16 +289,24 @@ for tmp = 1:1
   copyobj(f1.Children,f2)
   set(0,"CurrentFigure",f2)
   %
+  % add bezier path ONLY if requested
+  if ExtraOpts.FillBezier
+    fill(DecorativeBez(1,:),DecorativeBez(2,:), ExtraOpts.FillBezierColor, 'EdgeColor', 'none')
+  end
   % add all strokes of the marker up to the current time
   for p = 1:nPts
-    plot(AllMarkerPos{p}(1,CurrPts{p}),AllMarkerPos{p}(2,CurrPts{p}),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
+    if ExtraOpts.FillMarkerCurve
+      fill(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),CurveColor{p}, 'EdgeColor', 'none')
+    else
+      plot(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
+    end
   end
   %
 end
 
 %%
 % stop for some time after everything is finished
-for stopper = 0:(fps*(AfterTime/2))
+for stopper = 0:(fps*(3*AfterTime/4))
   writeVideo(v,getframe)
 end
 

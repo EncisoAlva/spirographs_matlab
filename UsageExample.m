@@ -68,11 +68,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 1;
-WheelMarkerRatio = 4/5;
+WheelBezRatio = 6;
+WheelMarkerRatio = 0.95;
 
 Shift  = 0;
-Halfen = true;
+Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -127,8 +127,16 @@ ColorVector = {'yellow','magenta','blue','red','green'};
 
 %ColorVector = {'white', 'red'};
 
+%ColorVector = {[225, 21, 132]/255, [253, 164, 186]/255};
+
+%ColorVector = {[246, 153, 205]/255, [254, 197, 229]/255};
+
+%ColorVector = {[225, 21, 132]/255, [254, 197, 229]/255};
+
 %%
 % preview curve
+
+% MarkerRadius = WheelRadius;
 
 % setup parameters
 CurveOpts = {};
@@ -138,7 +146,7 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-aang = 2*pi*(0:1/1:1)+pi;
+aang = 2*pi*(0:1/2:1)+pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -175,8 +183,8 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 1;
-CurveOpts.MinSpins = 0;
+CurveOpts.MaxSpins = 100;
+CurveOpts.MinSpins = 3;
 
 MarkerAngle0Array = 0;
 nPts = size(MarkerAngle0Array,2);
@@ -207,4 +215,19 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260324_03_3', ExtraOpts )
+  30, 7.5, 'test_260409_04_3', ExtraOpts )
+
+% %%
+% % for batman animation
+% ExtraOpts.FillBezierColor = [152,136,41]/255;
+% ExtraOpts.BackgroundColor = [40,46,60]/255;
+% 
+% ColorVector = {[36,36,36]/255};
+% ExtraOpts.FillMarkerCurve = true;
+% 
+% MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+%   DecorativeBez,...
+%   AllBezierPos, AllLocTime, ...
+%   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+%   ColorVector, ...
+%   30, 14, 'test_260408_17_3', ExtraOpts )
