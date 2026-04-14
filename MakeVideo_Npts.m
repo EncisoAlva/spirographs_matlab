@@ -27,6 +27,11 @@ function MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   CurveColor0, ...
   TotalTime, AfterTime, VidName, ExtraOpts )
 
+% additional parameters
+if ~isfield(ExtraOpts, 'Method')
+  ExtraOpts.Method = 'Default';
+end
+
 % parameters
 nCenters = size(WhoIsCenter,2);
 

@@ -29,6 +29,8 @@ allTvals  = cell(1,nSegments);
 allBez    = cell(1,nSegments);
 allAng    = cell(1,nSegments);
 allDis    = cell(1,nSegments);
+allNor    = cell(1,nSegments);
+allTan    = cell(1,nSegments);
 
 currAng = 0;
 for ii = 1:nSegments
@@ -41,6 +43,8 @@ for ii = 1:nSegments
   %
   % compute positions B(t_i) and distances |B(t_i)-B(t_i+1)|
   Bez = EvalBezier(currSegment, Tvals);
+  Nor = EvalBezierNormal(currSegment, Tvals, 1);
+  Tan = EvalBezierTangent(currSegment, Tvals, 1);
   Dis = vecnorm( diff(Bez, 1, 2), 2, 1);
   %
   % cumulative angle
@@ -52,8 +56,10 @@ for ii = 1:nSegments
   allBez{ii}   = Bez;
   allAng{ii}   = Ang;
   allDis{ii}   = Dis;
+  allNor{ii}   = Nor;
+  allTan{ii}   = Tan;
 end
-% patch: ignore rounding errorsfrom adding angles
+% patch: ignore rounding errors from adding angles
 for ii = 1:nSegments
   allAng{ii} = allAng{ii} * 2*pi/currAng;
 end
@@ -62,10 +68,14 @@ end
 Bezz = [];
 Angg = [];
 Diss = [];
+Norr = [];
+Tann = [];
 for ii = 1:nSegments
   Bezz = [Bezz, allBez{ii}];
   Angg = [Angg, allAng{ii}];
   Diss = [Diss, allDis{ii}];
+  Norr = [Norr, allNor{ii}];
+  Tann = [Tann, allTan{ii}];
 end
 
 % remove duplicates
@@ -75,18 +85,55 @@ idxDupes  = find(not(ismember(1:numel(Angg),i)));
 Angg(   idxDupes) = [];
 Bezz( :,idxDupes) = [];
 Diss(   idxDupes) = [];
+Norr( :,idxDupes) = [];
+Tann( :,idxDupes) = [];
 
 % iterative correction: angle increment PROPORTIONAL to area covered
 Angg_old = Inf(size(Angg));
 while max(abs(Angg - Angg_old)) > 0.01
+  %disp(max(abs(Angg - Angg_old)))
   Angg_old = Angg;
   %
   % QUANT ~ area of B(t_i)-C(t_i)-C(t_i+1)-B(t_i+1) 
   DiffAngg     = [0, diff(Angg)];
   DistBezzCirc = vecnorm( Bezz - [cos(Angg);sin(Angg)], 2, 1);
-  QUANT = ( DiffAngg.*DistBezzCirc/2 ).^0.5;
-  Angg  = (Angg + cumsum(QUANT) * 2*pi/sum(QUANT) )/2;
+  Discrepancy = zeros(1, size(Bezz,2));
+  for jj = 1:size(Bezz,2)
+    vecN = (Bezz(:,jj) - [cos(Angg(jj));sin(Angg(jj))]) / norm((Bezz(:,jj) - [cos(Angg(jj));sin(Angg(jj))]));
+    Discrepancy(jj) = abs( vecN' * (-Norr(:,jj)) );
+  end
+  Pull = zeros(1, size(Bezz,2));
+  for jj = 1:size(Bezz,2)
+    Pull(jj) = abs( [-sin(Angg(jj));cos(Angg(jj))]' * (Tann(:,jj)) );
+  end
+  %
+  %QUANT1 = ( DiffAngg.*DistBezzCirc/2 ).^0.25;
+  medianDist = median(DistBezzCirc);
+  %QUANT1 = ( DistBezzCirc/medianDist ).^2;
+  %QUANT2 = 1-Discrepancy;
+  QUANT1 = Pull;
+  %QUANT = (((Discrepancy)+0)/1).* DistBezzCirc;
+  %Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) + (cumsum(QUANT2) ) * 2*pi/sum(QUANT2) )/3;
+  Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) )/2;
 end
+
+% PATCH
+nAng = size(Angg,2);
+Angg(2:nAng) = Angg(1:(nAng-1));
+Angg(1) = 0;
+Angg = Angg * 2*pi/Angg(end);
+
+
+% % PATCH
+% Angg = [0, Angg, 2*pi];
+% Angg = Angg * 2*pi/Angg(end);
+% Bezz = [EvalBezier(currSegment, 0), Bezz, EvalBezier(currSegment, 1)];
+% %
+% [~, i, ~] = unique(Angg,'first');
+% idxDupes  = find(not(ismember(1:numel(Angg),i)));
+% %
+% Angg(   idxDupes) = [];
+% Bezz( :,idxDupes) = [];
 
 % report results
 BezBase = Bezz;

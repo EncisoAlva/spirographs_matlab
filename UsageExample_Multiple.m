@@ -17,9 +17,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Angel'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{3};
+BPath = BPath_pack2{2};
 
 clear BPath_pack1 BPath_pack2
 
@@ -69,7 +69,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 12/5;
+WheelBezRatio = 4/3;
 %WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -144,6 +144,8 @@ ColorVector = {'white', 'red'};
 
 %ColorVector = {[152,136,41]/255};
 
+%ColorVector = {[100,151,177]/255};
+
 %%
 % preview curve
 
@@ -151,6 +153,7 @@ ColorVector = {'white', 'red'};
 nSteps = 4;
 %nSteps = 2;
 %nSteps = 1;
+%nSteps = 5;
 
 % setup parameters
 CurveOpts = {};
@@ -159,7 +162,7 @@ CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 10;
 
-aang = 2*pi*(0:1/2:1)+pi*1;
+aang = 2*pi*(0:1/2:1)+pi*0;
 aang(end) = [];
 %aang(1) = [];
 MarkerAngle0Array = aang;
@@ -229,4 +232,4 @@ MakeVideo_Npts( nPts*nSteps, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260407_03_3', ExtraOpts )
+  30, 10, 'test_260412_07_3', ExtraOpts )

@@ -39,13 +39,19 @@ function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
 if ~isfield(ExtraOpts, 'Method')
   ExtraOpts.Method = 'Default';
 end
+SegmentOpts = [];
+SegmentOpts.Tol = ExtraOpts.Tol;
+SegmentOpts.Method = ExtraOpts.Method;
 switch ExtraOpts.Method
   case 'Default'
     if ~isfield(ExtraOpts, 'MarkerRadius')
-      MarkerRadius = 0;
+      SegmentOpts.MarkerRadius = 0;
     else
-      MarkerRadius = ExtraOpts.MarkerRadius;
+      SegmentOpts.MarkerRadius = ExtraOpts.MarkerRadius;
     end
+  case 'Hole'
+    SegmentOpts.BezBase = ExtraOpts.BezBase;
+    SegmentOpts.AngBase = ExtraOpts.AngBase;
 end
 %
 if isfield(ExtraOpts,'MinSpins')
@@ -80,13 +86,8 @@ else
   CloseTol = Tol*(1e-1);
 end
 
-
 % parameters
 nCurves    = length(BPath);
-CurrTime0  = 0;
-
-FirstTangent = EvalBezierNormal(BPath{1},0,1);
-CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0 + pi; % point to the curve
 
 % containers for results
 Time        = [];
@@ -95,22 +96,28 @@ WhCtrPos    = [];
 MarkerPos   = [];
 MarkerAngle = [];
 
+% initialize
+FirstTangent = EvalBezierNormal(BPath{1},0,1);
+CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0 + pi; % point to the curve
+CurrTime0    = 0;
+
 % loop
 CurrSpin = 0; % index start at 0
 ClosedFlag = false;
 SufficientSpins = false;
+CurrRollDist0 = 0;
 while (CurrSpin < MaxSpins) && (~ClosedFlag)
+  %CurrRollDist0 = 0;
   for j = 1:nCurves
     disp(strcat('Spin: ',num2str(CurrSpin),' , Curve: ',num2str(j)))
     CurrCtrlPts = BPath{j};
     %
-    % prepare to parsing arguments
-    SegmentOpts = [];
-    SegmentOpts.Tol = Tol;
-    SegmentOpts.Method = ExtraOpts.Method;
+    % parsing arguments
     switch ExtraOpts.Method
       case 'Default'
-        SegmentOpts.MarkerRadius = MarkerRadius;
+        % nothing
+      case 'Hole'
+        SegmentOpts.RollDist0 = CurrRollDist0;
     end
     % run one single Bezier curve at the time
     [locTime, locBezierPos, locWhCtrPos, locMarkerPos, locMarkerAngle] = ...
@@ -127,6 +134,7 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     % update initial values
     CurrTime0  = Time(end);
     CurrAngle0 = MarkerAngle(end);
+    CurrRollDist0 = CurrRollDist0 + PathPerimeter(CurrCtrlPts, Tol)/WheelRadius;
     %
     % prepare for a corner
     if j<nCurves

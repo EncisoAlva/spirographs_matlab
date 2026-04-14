@@ -29,7 +29,7 @@
 % multile times the same parameters.
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
-  SingleBezierSegment( CtrlPts, WheelRadius, MarkerAngle0, Time0, RollDist0, ...
+  SingleBezierSegment( CtrlPts, WheelRadius, MarkerAngle0, Time0, ...
   ExtraOpts )
 
 % dealing with optional arguments
@@ -48,6 +48,14 @@ switch ExtraOpts.Method
     else
       MarkerRadius = ExtraOpts.MarkerRadius;
     end
+  case 'Hole'
+    if ~isfield(ExtraOpts, 'RollDist0')
+      RollDist0 = 0; 
+    else
+      RollDist0 = ExtraOpts.RollDist0; 
+    end
+    BezBase = ExtraOpts.BezBase;
+    AngBase = ExtraOpts.AngBase;
 end
 
 % initial guess for time
@@ -93,7 +101,7 @@ switch ExtraOpts.Method
     % 2. rotate the interpolated point and add around the wheel center
     for j = 1:size(WhCtrPos,2)
       th = MarkerAngle(j);
-      MarkerPos(j) = WhCtrPos(:,j) + ...
+      MarkerPos(:,j) = WhCtrPos(:,j) + ...
         WheelRadius * [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,j);
     end
   otherwise

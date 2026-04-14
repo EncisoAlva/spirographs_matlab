@@ -15,10 +15,18 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [Perimeter] = PathPerimeter( BPath, Tol)
+function [Perimeter] = PathPerimeter( BPath0, Tol)
 
 Perimeter = 0;
-nCurves   = length(BPath);
+if size(BPath0)== [2,4]
+  % just a segment, not a path
+  nCurves = 1;
+  BPath = cell(1,1);
+  BPath{1} = BPath0;
+else
+  nCurves   = length(BPath0);
+  BPath = BPath0;
+end
 
 % loop
 for j = 1:nCurves

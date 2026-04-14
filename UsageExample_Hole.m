@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Heart'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','RotatedSquare'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -125,7 +125,7 @@ HPath = ShiftPath( HPath, -1, false );
 
 %%
 % prepare for interpolation
-SetupHole(HPath, 0.001, true)
+[BezBase, AngBase, ~] = SetupHole(HPath, 0.01, true);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,9 +224,34 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 1;
 
+aang = 2*pi*(0:1/1:1)+0*pi;
+aang(end) = [];
+MarkerAngle0Array = aang;
+nPts = size(MarkerAngle0Array,2);
+k = size(ColorVector,2);
+
+% compute curves
+[ DecorativeBez, DecorativeHole, ~, ~, ~, AllMarkerPos, ~ ] = ...
+    SetupCurves_HoleBasic(nPts, BPath_new, HPath, BezBase, AngBase, WheelRadius, MarkerAngle0Array, CurveOpts);
+
+% plotting per se
+figure()
+hold on
+axis equal
+grid on
+fill(DecorativeBez(1,:),DecorativeBez(2,:), .15*[1,1,1], 'EdgeColor', 'none')
+set(gca,'color', 'k');
+for i = 1:nPts
+  plot(AllMarkerPos{i}(1,:),AllMarkerPos{i}(2,:),'Color',ColorVector{mod(i-1,k)+1}, 'LineWidth',2)
+end
+for i = 1:nPts
+  scatter(AllMarkerPos{i}(1,1),AllMarkerPos{i}(2,1),'red','filled','o')
+end
+
+%%
+
 aang = 2*pi*(0:1/1:1)+pi*1;
 aang(end) = [];
-%aang(1) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
 k = size(ColorVector,2);
