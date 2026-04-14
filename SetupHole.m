@@ -28,7 +28,6 @@ nSegments = size(HPath,2);
 allTvals  = cell(1,nSegments);
 allBez    = cell(1,nSegments);
 allAng    = cell(1,nSegments);
-allDis    = cell(1,nSegments);
 allNor    = cell(1,nSegments);
 allTan    = cell(1,nSegments);
 
@@ -55,7 +54,6 @@ for ii = 1:nSegments
   allTvals{ii} = Tvals;
   allBez{ii}   = Bez;
   allAng{ii}   = Ang;
-  allDis{ii}   = Dis;
   allNor{ii}   = Nor;
   allTan{ii}   = Tan;
 end
@@ -67,13 +65,11 @@ end
 % move from cell array to vector
 Bezz = [];
 Angg = [];
-Diss = [];
 Norr = [];
 Tann = [];
 for ii = 1:nSegments
   Bezz = [Bezz, allBez{ii}];
   Angg = [Angg, allAng{ii}];
-  Diss = [Diss, allDis{ii}];
   Norr = [Norr, allNor{ii}];
   Tann = [Tann, allTan{ii}];
 end
@@ -84,7 +80,6 @@ idxDupes  = find(not(ismember(1:numel(Angg),i)));
 %
 Angg(   idxDupes) = [];
 Bezz( :,idxDupes) = [];
-Diss(   idxDupes) = [];
 Norr( :,idxDupes) = [];
 Tann( :,idxDupes) = [];
 
@@ -123,17 +118,8 @@ Angg(2:nAng) = Angg(1:(nAng-1));
 Angg(1) = 0;
 Angg = Angg * 2*pi/Angg(end);
 
-
-% % PATCH
-% Angg = [0, Angg, 2*pi];
-% Angg = Angg * 2*pi/Angg(end);
-% Bezz = [EvalBezier(currSegment, 0), Bezz, EvalBezier(currSegment, 1)];
-% %
-% [~, i, ~] = unique(Angg,'first');
-% idxDupes  = find(not(ismember(1:numel(Angg),i)));
-% %
-% Angg(   idxDupes) = [];
-% Bezz( :,idxDupes) = [];
+% another patch
+Diss = [0, cumsum(vecnorm( diff(Bezz, 1, 2), 2, 1) )];
 
 % report results
 BezBase = Bezz;

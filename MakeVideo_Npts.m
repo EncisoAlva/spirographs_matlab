@@ -75,11 +75,11 @@ end
 if ~isfield(ExtraOpts, 'BackgroundColor')
   ExtraOpts.BackgroundColor = 'black';
 end
-if ~isfield(ExtraOpts, 'FillBezierColor')
+if ~isfield(ExtraOpts, 'FillBezier')
   ExtraOpts.FillBezier      = false;
-  ExtraOpts.FillBezierColor = 'black';
-else
-  ExtraOpts.FillBezier      = true;
+end
+if ~isfield(ExtraOpts, 'FillBezierColor')
+  ExtraOpts.FillBezierColor = 'black'; % non-empty color
 end
 if ~isfield(ExtraOpts, 'FillMarkerCurve')
   ExtraOpts.FillMarkerCurve = false;
@@ -137,9 +137,15 @@ for p = 1:nPts
   idxx{p} = 1:size(TimeFromCurve{p},2);
 end
 
+% rolling wheel, as a polygon
 aang = 0:(2*pi/ ceil( 2*pi/(ExtraOpts.Tol/WheelRadius) )):(2*pi);
-circ = WheelRadius*[cos(aang); sin(aang)];
 aux_angles = 0:(pi/6):(2*pi);
+switch ExtraOpts.Method
+  case 'Default'
+    circ = WheelRadius*[cos(aang); sin(aang)];
+  case 'Hole'
+    circ = [ WheelRadius*[cos(aang); sin(aang)], ExtraOpts.DecorativeHole ];
+end
 
 % original figure
 close all
@@ -265,7 +271,17 @@ for i = 0:nTimes
   end
   %
   for q = 1:nCenters
-    fill(RefWheelCtr(1,q)+circ(1,:),RefWheelCtr(2,q)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+    switch ExtraOpts.Method
+      case 'Default'
+        fill(RefWheelCtr(1,q)+circ(1,:),RefWheelCtr(2,q)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+      case 'Hole'
+        th = RefAngle(q);
+        rolled_circ = [cos(th), -sin(th); sin(th), cos(th)] * circ;
+        fill(RefWheelCtr(1,q)+rolled_circ(1,:),RefWheelCtr(2,q)+rolled_circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+        %
+        rolled_hole = [cos(th), -sin(th); sin(th), cos(th)] * ExtraOpts.DecorativeHole;
+        plot(RefWheelCtr(1,q)+rolled_hole(1,:), RefWheelCtr(2,q)+rolled_hole(2,:), 'Color',[0,0,0,0.5])
+    end
     for w = 1:size(aux_angles,2)
       plot(RefWheelCtr(1,q)+[0,cos(aux_angles(w)+RefAngle(q))*WheelRadius],...
            RefWheelCtr(2,q)+[0,sin(aux_angles(w)+RefAngle(q))*WheelRadius],...
@@ -273,7 +289,7 @@ for i = 0:nTimes
     end
   end
   for p = 1:nPts
-    scatter(AllMarkerPos{p}(1,jj(p)),AllMarkerPos{p}(2,jj(p)),10,CurveColor{p},'filled')
+    scatter(AllMarkerPos{p}(1,jj(p)),AllMarkerPos{p}(2,jj(p)),20,CurveColor{p},'filled')
   end
   scatter(RefBez(1),RefBez(2),10,'white','filled')
   %

@@ -125,7 +125,7 @@ HPath = ShiftPath( HPath, -1, false );
 
 %%
 % prepare for interpolation
-[BezBase, AngBase, ~] = SetupHole(HPath, 0.01, true);
+[BezBase, AngBase] = SetupHole(HPath, 0.01, true);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +141,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 6/5;
+WheelBezRatio = 8/7;
 
 Shift  = 0;
 Halfen = false;
@@ -213,6 +213,8 @@ ColorVector = {'white', 'red'};
 
 %ColorVector = {'yellow', 'magenta', 'magenta'};
 
+% ColorVector = {[46, 111, 64]/255};
+
 %%
 % preview curve
 
@@ -231,7 +233,7 @@ nPts = size(MarkerAngle0Array,2);
 k = size(ColorVector,2);
 
 % compute curves
-[ DecorativeBez, DecorativeHole, ~, ~, ~, AllMarkerPos, ~ ] = ...
+[ DecorativeBez, ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
     SetupCurves_HoleBasic(nPts, BPath_new, HPath, BezBase, AngBase, WheelRadius, MarkerAngle0Array, CurveOpts);
 
 % plotting per se
@@ -249,105 +251,26 @@ for i = 1:nPts
 end
 
 %%
-
-aang = 2*pi*(0:1/1:1)+pi*1;
-aang(end) = [];
-MarkerAngle0Array = aang;
-nPts = size(MarkerAngle0Array,2);
-k = size(ColorVector,2);
-
-% compute curves
-[ DecorativeBez, AllBezierPos, ~, AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-    SetupCurves_Npts( 1, BPath_new, WheelRadius, WheelRadius, MarkerAngle0Array, ...
-      CurveOpts);
-
-% now computing the marker sliding through the hole
-for i = 1:nPts
-  cumDist  = cumsum([0,vecnorm(diff(AllBezierPos{i},1,2),2,1)]);
-  locAngle = mod( cumDist * PathPerimeter(BPath,Tol) / ( WheelRadius * 2*pi ), 2*pi );
-  %
-  MarkerPos_tmp = zeros(size(AllWhCtrPos{i}));
-  MarkerPos_tmp(1,:) = WheelRadius*interp1(TH_vector, H_vector(1,:), mod(locAngle,2*pi));
-  MarkerPos_tmp(2,:) = WheelRadius*interp1(TH_vector, H_vector(2,:), mod(locAngle,2*pi));
-  %
-  for j = 1:size(AllWhCtrPos{i},2)
-    th = AllMarkerAngle{i}(j) ;
-    %
-    AllMarkerPos{i}(:,j) = AllWhCtrPos{i}(:,j) +[cos(th) -sin(th); sin(th) cos(th)]* MarkerPos_tmp(:,j);
-  end
-end
-
-figure()
-plot(locAngle)
-figure()
-plot(AllMarkerAngle{i})
-
-% plotting per se
-figure()
-hold on
-axis equal
-grid on
-fill(DecorativeBez(1,:),DecorativeBez(2,:), .15*[1,1,1], 'EdgeColor', 'none')
-set(gca,'color', 'k');
-for i = 1:nPts
-  plot(AllMarkerPos{i}(1,:),AllMarkerPos{i}(2,:),'Color',ColorVector{mod(i-1,k)+1}, 'LineWidth',2)
-end
-for i = 1:nPts
-  scatter(AllMarkerPos{i}(1,1),AllMarkerPos{i}(2,1),'red','filled','o')
-end
-
-%%
-% fancy plot, for ads
-
-%ColorVector = {'white'};
-
-%ColorVector = {'red'};
-
-%ColorVector = {'yellow'};
-
-%ColorVector = {'magenta'};
-
-%ColorVector = {'green'};
-
-%ColorVector = {'cyan'};
-
-f1 = figure('Name','Just the curve');
-hold on
-axis equal
-axis off
-set(gcf,'Color','k')
-set(gca,'Color','k')
-
-plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
-
-for p = 1:nPts
-  plot(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),'Color',ColorVector{p},'LineWidth',2)
-end
-
-%%
 % video
-
-% this is a collection of hand-picked colors
-%NiceColors = {[255, 59, 209]/255,[165, 36, 61]/255, [208, 241, 191]/255, [240, 45, 58]/255};
-%ColorVector = { NiceColors{randi(size(NiceColors,2))} };
 
 % curve parameters
 CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 1;
-CurveOpts.MinSpins = 0;
+CurveOpts.MaxSpins = 100;
+CurveOpts.Method = 'Hole';
 
-MarkerAngle0Array = 0;
-nPts = size(MarkerAngle0Array,2);
+CurveOpts.MinSpins = 5;
+
 
 % compute curves
-[ DecorativeBez,...
+[ DecorativeBez, DecorativeHole,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-    SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-      CurveOpts);
+  SetupCurves_HoleBasic( nPts, ...
+    BPath_new, HPath, BezBase, AngBase, WheelRadius, MarkerAngle0Array, ...
+    CurveOpts);
 
 % video parameters
 ExtraOpts = {};
@@ -359,6 +282,11 @@ ExtraOpts.TimerefCurve = 'Average';
 %ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
+%
+ExtraOpts.Method  = 'Hole';
+ExtraOpts.BezBase = BezBase;
+ExtraOpts.AngBase = AngBase;
+ExtraOpts.DecorativeHole = DecorativeHole;
 
 WhoIsCenter = 1;
 
@@ -368,4 +296,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260324_03_3', ExtraOpts )
+  30, 10, 'test_2600414_13_3', ExtraOpts )

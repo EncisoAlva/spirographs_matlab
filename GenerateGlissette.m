@@ -107,7 +107,6 @@ ClosedFlag = false;
 SufficientSpins = false;
 CurrRollDist0 = 0;
 while (CurrSpin < MaxSpins) && (~ClosedFlag)
-  %CurrRollDist0 = 0;
   for j = 1:nCurves
     disp(strcat('Spin: ',num2str(CurrSpin),' , Curve: ',num2str(j)))
     CurrCtrlPts = BPath{j};
