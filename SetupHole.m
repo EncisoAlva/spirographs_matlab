@@ -104,12 +104,12 @@ while max(abs(Angg - Angg_old)) > 0.01
   %
   %QUANT1 = ( DiffAngg.*DistBezzCirc/2 ).^0.25;
   medianDist = median(DistBezzCirc);
-  %QUANT1 = ( DistBezzCirc/medianDist ).^2;
-  %QUANT2 = 1-Discrepancy;
+  %QUANT2 = ( DistBezzCirc/medianDist ).^0.5;
+  %QUANT1 = Discrepancy;
   QUANT1 = Pull;
-  %QUANT = (((Discrepancy)+0)/1).* DistBezzCirc;
-  %Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) + (cumsum(QUANT2) ) * 2*pi/sum(QUANT2) )/3;
-  Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) )/2;
+  QUANT2 = (((Discrepancy)/1).* DistBezzCirc).^1;
+  Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) + (cumsum(QUANT2) ) * 2*pi/sum(QUANT2) )/3;
+  %Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) )/2;
 end
 
 % PATCH
