@@ -52,6 +52,11 @@ switch ExtraOpts.Method
   case 'Hole'
     SegmentOpts.BezBase = ExtraOpts.BezBase;
     SegmentOpts.AngBase = ExtraOpts.AngBase;
+  case 'Ring2'
+    SegmentOpts.CtrHoleDist   = ExtraOpts.CtrHoleDist;
+    SegmentOpts.HoleRadius    = ExtraOpts.HoleRadius;
+    SegmentOpts.Wheel2Radius  = ExtraOpts.Wheel2Radius;
+    SegmentOpts.Marker2Radius = ExtraOpts.Marker2Radius;
 end
 %
 if isfield(ExtraOpts,'MinSpins')
@@ -116,6 +121,8 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
       case 'Default'
         % nothing
       case 'Hole'
+        SegmentOpts.RollDist0 = CurrRollDist0;
+      case 'Ring2'
         SegmentOpts.RollDist0 = CurrRollDist0;
     end
     % run one single Bezier curve at the time

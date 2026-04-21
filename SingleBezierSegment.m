@@ -56,6 +56,16 @@ switch ExtraOpts.Method
     end
     BezBase = ExtraOpts.BezBase;
     AngBase = ExtraOpts.AngBase;
+  case 'Ring2'
+    if ~isfield(ExtraOpts, 'RollDist0')
+      RollDist0 = 0; 
+    else
+      RollDist0 = ExtraOpts.RollDist0; 
+    end
+    CtrHoleDist   = ExtraOpts.CtrHoleDist;
+    HoleRadius    = ExtraOpts.HoleRadius;
+    Wheel2Radius  = ExtraOpts.Wheel2Radius;
+    Marker2Radius = ExtraOpts.Marker2Radius;
 end
 
 % initial guess for time
@@ -99,10 +109,32 @@ switch ExtraOpts.Method
     HolePos(1,:) = interp1(AngBase, BezBase(1,:), mod(RollAngle,2*pi));
     HolePos(2,:) = interp1(AngBase, BezBase(2,:), mod(RollAngle,2*pi));
     % 2. rotate the interpolated point and add around the wheel center
+    MarkerPos = zeros(size(WhCtrPos));
     for j = 1:size(WhCtrPos,2)
       th = MarkerAngle(j);
       MarkerPos(:,j) = WhCtrPos(:,j) + ...
         WheelRadius * [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,j);
+    end
+  case 'Ring2'
+    % distance that the wheel has rolled so far
+    RollAngle = mod( cumsum([RollDist0, DiffAngle ]), 2*pi);
+    % compute the angle rolled by the smallest gear
+    CircProject = [cos(RollAngle); sin(RollAngle)] - [CtrHoleDist;0];
+    LocRollAngle = atan2(CircProject(2,:),CircProject(1,:));
+    % position of ring center IF the wheel was static
+    LocHoleCtrPos = WhCtrPos + CtrHoleDist * [cos(MarkerAngle); sin(MarkerAngle)];
+    % position of marker IF ring was static
+    LocMarkerPos = [...
+      (Wheel2Radius-HoleRadius)*cos(LocRollAngle) + Marker2Radius*cos(LocRollAngle*((Wheel2Radius-HoleRadius)/HoleRadius)),...
+      (Wheel2Radius-HoleRadius)*sin(LocRollAngle) + Marker2Radius*sin(LocRollAngle*((Wheel2Radius-HoleRadius)/HoleRadius))...
+      ];
+    % rotate the interpolated point and add around the wheel center
+    disp('')
+    MarkerPos = zeros(size(WhCtrPos));
+    for j = 1:size(WhCtrPos,2)
+      th = MarkerAngle(j);
+      MarkerPos(:,j) = LocHoleCtrPos(:,j) + ...
+        WheelRadius * [cos(th) -sin(th); sin(th) cos(th)] * LocMarkerPos(:,j);
     end
   otherwise
     MarkerPos = WhCtrPos;

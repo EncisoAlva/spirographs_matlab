@@ -1,0 +1,246 @@
+% One circle rolling on the outside, marking 2 points. Optional is to round
+% the corners.
+%
+
+%%
+% check available curves in the example file
+who -file ExampleCurves.mat
+
+% load curve
+BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC'));
+BPath = BPath_pack{1};
+clear BPath_pack
+
+%%
+% check available curves in the example file
+who -file ExampleCollections.mat
+
+% load curve
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack2 = BPath_pack1{1};
+BPath = BPath_pack2{2};
+
+clear BPath_pack1 BPath_pack2
+
+%%
+% load from file
+BPath_pack = LoadSVG( './curves_svg/octopi1.svg' );
+BPath = BPath_pack{1};
+clear BPath_pack
+
+%%
+% pre-processing
+BPath = RemovePointCurves( BPath, 0.0001 );
+
+% this one is because I'm using absolute tolerance instead of relative
+BPath = RescalePath( BPath, 2, 2 );
+
+% line with bad encoding, the normal vector will be wrong
+BPath = ForceCubicLines( BPath );
+
+% rotate half a spin
+for i = 1:size(BPath, 2)
+  BPath{i} = [1,0; 0,-1] * BPath{i};
+end
+
+% rotate by an angle
+BPath = RotatePath( BPath, pi/2 );
+
+% change orientation
+BPath = FlipPath(BPath);
+
+%%
+% show control points
+
+PlotPath(BPath)
+
+BPath = ShiftPath( BPath, 2, false );
+
+%%
+% parameters
+
+% technical stuff
+Tol = 0.005;
+CloseTol = 0.01;
+MaxSpins = 100;
+WheelRadiusTol = 0.000001;
+
+% designer stuff
+MarkerAngle0 = 0;
+
+WheelBezRatio  = 2;
+HoleBezRatio   = 3;
+Wheel2BezRatio = 4;
+Wheel2Marker2Ratio = 1;
+
+Shift  = 0;
+Halfen = false;
+
+% willing to loose 1% of total area due to each corner rounding
+CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
+
+%% 
+% remove inner corners
+[BPath_rounded_flipped] = ...
+  RemoveAllCorners( FlipPath(BPath), CornerRoundingRadius, Tol, false );
+BPath_tmp = FlipPath(BPath_rounded_flipped);
+
+PlotPath(BPath_tmp)
+
+% try different rounding radius before proceeding
+BPath = BPath_tmp;
+
+%% 
+
+% remove outer corners
+WheelRadius_old = Inf;
+WheelRadius_new = (PathPerimeter(BPath,0.00001)/(2*pi))/WheelBezRatio
+while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
+  [BPath_new] = ...
+    RemoveAllCorners( BPath, WheelRadius_new, Tol, true );
+  %
+  WheelRadius_old = WheelRadius_new;
+  WheelRadius_new = (PathPerimeter(BPath_new,0.00001)/(2*pi))/WheelBezRatio
+end
+%BPath = BPath_new;
+Perimeter = (PathPerimeter(BPath_new,0.00001)/(2*pi));
+WheelRadius  = WheelRadius_new;
+Wheel2Radius = Perimeter/Wheel2BezRatio;
+HoleRadius   = Perimeter/HoleBezRatio;
+Marker2Radius = Wheel2Radius*Wheel2Marker2Ratio;
+BPath_new = ShiftPath( BPath_new, Shift, Halfen );
+
+
+
+% don't remove outer corners
+BPath_new = ShiftPath( BPath, Shift, Halfen );
+Perimeter = (PathPerimeter(BPath_new,0.00001)/(2*pi));
+WheelRadius  = Perimeter/WheelBezRatio
+HoleRadius   = Perimeter/HoleBezRatio
+Wheel2Radius = Perimeter/Wheel2BezRatio
+Marker2Radius = Wheel2Radius*Wheel2Marker2Ratio
+
+
+%% 
+% adjust start point after rounding
+PlotPath(BPath_new)
+
+BPath_new = ShiftPath( BPath_new, 1, true);
+
+%%
+% colors
+
+ColorVector = {'yellow','magenta','blue','red','green'};
+
+%ColorVector = {'red','white', 'red'};
+
+%ColorVector = {'white', 'red'};
+
+%ColorVector = {[225, 21, 132]/255, [253, 164, 186]/255};
+
+%ColorVector = {[246, 153, 205]/255, [254, 197, 229]/255};
+
+%ColorVector = {[225, 21, 132]/255, [254, 197, 229]/255};
+
+%%
+% preview curve
+
+% MarkerRadius = WheelRadius;
+
+% setup parameters
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
+CurveOpts.Tol = Tol;
+CurveOpts.CloseTol = CloseTol;
+CurveOpts.MaxSpins = 100;
+CurveOpts.MinSpins = 0;
+
+aang = 2*pi*(0:1/1:1)+0*pi;
+aang(end) = [];
+MarkerAngle0Array = aang;
+nPts = size(MarkerAngle0Array,2);
+k = size(ColorVector,2);
+
+% compute curves
+[ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
+    SetupCurves_Ring2( BPath_new, WheelRadius, ...
+    Wheel2Radius, Marker2Radius, HoleRadius, WheelRadius-HoleRadius, ...
+    MarkerAngle0Array, ...
+      CurveOpts);
+
+% plotting per se
+figure()
+hold on
+axis equal
+grid on
+fill(DecorativeBez(1,:),DecorativeBez(2,:), .15*[1,1,1], 'EdgeColor', 'none')
+set(gca,'color', 'k');
+for i = 1:nPts
+  plot(AllMarkerPos{i}(1,:),AllMarkerPos{i}(2,:),'Color',ColorVector{mod(i-1,k)+1}, 'LineWidth',2)
+end
+for i = 1:nPts
+  scatter(AllMarkerPos{i}(1,1),AllMarkerPos{i}(2,1),'red','filled','o')
+end
+
+%%
+% video
+
+% this is a collection of hand-picked colors
+%NiceColors = {[255, 59, 209]/255,[165, 36, 61]/255, [208, 241, 191]/255, [240, 45, 58]/255};
+%ColorVector = { NiceColors{randi(size(NiceColors,2))} };
+
+% curve parameters
+CurveOpts = {};
+CurveOpts.CloseEnds = false;
+CurveOpts.Tol = Tol;
+CurveOpts.CloseTol = CloseTol;
+CurveOpts.MaxSpins = 100;
+CurveOpts.MinSpins = 3;
+
+MarkerAngle0Array = 0;
+nPts = size(MarkerAngle0Array,2);
+
+% compute curves
+[ DecorativeBez,...
+  AllBezierPos, AllLocTime, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
+  SetupCurves_Ring2( BPath_new, WheelRadius, ...
+    Wheel2Radius, Marker2Radius, HoleRadius, CtrHoleDist, ...
+    MarkerAngle0Array, ...
+      CurveOpts);
+
+% video parameters
+ExtraOpts = {};
+ExtraOpts.Plot2Circles = false;
+ExtraOpts.Format = 'mp4';
+ExtraOpts.Orientation = 'in';
+ExtraOpts.Ratio = 16/9;
+ExtraOpts.TimerefCurve = 'Average';
+%ExtraOpts.TimerefCurve = 'Wheel';
+ExtraOpts.LineWidth = 2;
+ExtraOpts.Tol = Tol;
+
+WhoIsCenter = 1;
+
+% video
+MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+  DecorativeBez,...
+  AllBezierPos, AllLocTime, ...
+  AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+  ColorVector, ...
+  30, 7.5, 'test_260409_14_1', ExtraOpts )
+
+% %%
+% % for batman animation
+% ExtraOpts.FillBezierColor = [152,136,41]/255;
+% ExtraOpts.BackgroundColor = [40,46,60]/255;
+% 
+% ColorVector = {[36,36,36]/255};
+% ExtraOpts.FillMarkerCurve = true;
+% 
+% MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+%   DecorativeBez,...
+%   AllBezierPos, AllLocTime, ...
+%   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
+%   ColorVector, ...
+%   30, 14, 'test_260408_17_3', ExtraOpts )
