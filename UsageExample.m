@@ -68,8 +68,8 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9/5;
-WheelMarkerRatio = 0.95;
+WheelBezRatio = 9/4;
+WheelMarkerRatio = 4/5;
 
 Shift  = 0;
 Halfen = false;
@@ -215,7 +215,7 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260409_14_1', ExtraOpts )
+  30, 7.5, 'test_260418_09_1', ExtraOpts )
 
 % %%
 % % for batman animation

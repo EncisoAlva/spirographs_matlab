@@ -10,7 +10,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','TwoCircles'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
 BPath = BPath_pack{1};
 
 clear BPath_pack
@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','RotatedSquare'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -141,7 +141,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 8/7;
+WheelBezRatio = 5/4;
 
 Shift  = 0;
 Halfen = false;
@@ -209,11 +209,15 @@ ColorVector = {'white', 'red'};
 
 %ColorVector = {'green'};
 
+%ColorVector = {'cyan'};
+
 %ColorVector = {'magenta','yellow'};
 
 %ColorVector = {'yellow', 'magenta', 'magenta'};
 
 % ColorVector = {[46, 111, 64]/255};
+
+% ColorVector = {[48, 92, 222]/255};
 
 %%
 % preview curve
@@ -261,7 +265,7 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.Method = 'Hole';
 
-CurveOpts.MinSpins = 5;
+CurveOpts.MinSpins = 1;
 
 
 % compute curves
@@ -296,4 +300,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600414_13_3', ExtraOpts )
+  30, 10, 'test_2600418_12_2', ExtraOpts )

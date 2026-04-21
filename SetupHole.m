@@ -86,7 +86,7 @@ Tann( :,idxDupes) = [];
 % iterative correction: angle increment PROPORTIONAL to area covered
 Angg_old = Inf(size(Angg));
 while max(abs(Angg - Angg_old)) > 0.01
-  %disp(max(abs(Angg - Angg_old)))
+  disp(max(abs(Angg - Angg_old)))
   Angg_old = Angg;
   %
   % QUANT ~ area of B(t_i)-C(t_i)-C(t_i+1)-B(t_i+1) 
@@ -102,15 +102,35 @@ while max(abs(Angg - Angg_old)) > 0.01
     Pull(jj) = abs( [-sin(Angg(jj));cos(Angg(jj))]' * (Tann(:,jj)) );
   end
   %
+  TheoryDist = 1 - vecnorm( Bezz, 2, 1 );
+  DistDiff = TheoryDist - DistBezzCirc;
+  %
   %QUANT1 = ( DiffAngg.*DistBezzCirc/2 ).^0.25;
   medianDist = median(DistBezzCirc);
   %QUANT2 = ( DistBezzCirc/medianDist ).^0.5;
-  %QUANT1 = Discrepancy;
-  QUANT1 = Pull;
-  QUANT2 = (((Discrepancy)/1).* DistBezzCirc).^1;
-  Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) + (cumsum(QUANT2) ) * 2*pi/sum(QUANT2) )/3;
-  %Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) )/2;
+  QUANT1 = Discrepancy+0.25;
+  %QUANT1 = Pull;
+  %QUANT2 = (((Discrepancy)/1).* DistBezzCirc).^1;
+  %QUANT1 = DistDiff + 2;
+  %
+  %Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) + (cumsum(QUANT2) ) * 2*pi/sum(QUANT2) )/3;
+  Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) )/2;
 end
+
+% % iterative correction: angle increment PROPORTIONAL to area covered
+% Angg_old = Inf(size(Angg));
+% while max(abs(Angg - Angg_old)) > 0.01
+%   disp(max(abs(Angg - Angg_old)))
+%   Angg_old = Angg;
+%   %
+%   for jj = 2:(size(Bezz,2)-1)
+%     ang_tmp = linspace(Angg_old(jj-1),Angg_old(jj+1),20);
+%     DistBezzCirc = vecnorm( Bezz(:,jj) - [cos(ang_tmp);sin(ang_tmp)], 2, 1);
+%     [~,ix] = min(DistBezzCirc);
+%     ix = min(max(ix,2),19);
+%     Angg(jj) = ang_tmp(ix);
+%   end
+% end
 
 % PATCH
 nAng = size(Angg,2);
