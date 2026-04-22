@@ -68,9 +68,9 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio  = 2;
+WheelBezRatio  = 3/2;
 HoleBezRatio   = 3;
-Wheel2BezRatio = 4;
+Wheel2BezRatio = 7/2;
 Wheel2Marker2Ratio = 1;
 
 Shift  = 0;

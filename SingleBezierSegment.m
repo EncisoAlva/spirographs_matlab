@@ -76,7 +76,9 @@ PerUpBound = ...
 DistDelta = 1/ceil(PerUpBound/Tol);
 LocalTime = 0:DistDelta:1;
 
-while true
+iter = 0;
+while iter<10
+  iter = iter+1; % max iterations
 
 % compute the points on the Bezier curve and the wheel that rolls over it
 BezierPos  = EvalBezier( CtrlPts, LocalTime );
@@ -117,24 +119,23 @@ switch ExtraOpts.Method
     end
   case 'Ring2'
     % distance that the wheel has rolled so far
-    RollAngle = mod( cumsum([RollDist0, DiffAngle ]), 2*pi);
+    RollAngle = cumsum([RollDist0, DiffAngle ]);
     % compute the angle rolled by the smallest gear
     CircProject = [cos(RollAngle); sin(RollAngle)] - [CtrHoleDist;0];
-    LocRollAngle = atan2(CircProject(2,:),CircProject(1,:));
-    % position of ring center IF the wheel was static
+    LocRollAngle = -atan2(CircProject(2,:),CircProject(1,:));
+    % position of ring center
     LocHoleCtrPos = WhCtrPos + CtrHoleDist * [cos(MarkerAngle); sin(MarkerAngle)];
     % position of marker IF ring was static
     LocMarkerPos = [...
-      (Wheel2Radius-HoleRadius)*cos(LocRollAngle) + Marker2Radius*cos(LocRollAngle*((Wheel2Radius-HoleRadius)/HoleRadius)),...
-      (Wheel2Radius-HoleRadius)*sin(LocRollAngle) + Marker2Radius*sin(LocRollAngle*((Wheel2Radius-HoleRadius)/HoleRadius))...
+      (HoleRadius-Wheel2Radius)*cos(LocRollAngle) + Marker2Radius*cos(LocRollAngle*((HoleRadius-Wheel2Radius)/Wheel2Radius));...
+      (HoleRadius-Wheel2Radius)*sin(LocRollAngle) - Marker2Radius*sin(LocRollAngle*((HoleRadius-Wheel2Radius)/Wheel2Radius))...
       ];
     % rotate the interpolated point and add around the wheel center
-    disp('')
     MarkerPos = zeros(size(WhCtrPos));
     for j = 1:size(WhCtrPos,2)
       th = MarkerAngle(j);
-      MarkerPos(:,j) = LocHoleCtrPos(:,j) + ...
-        WheelRadius * [cos(th) -sin(th); sin(th) cos(th)] * LocMarkerPos(:,j);
+      MarkerPos(:,j) = WhCtrPos(:,j) + ...
+        [cos(th) -sin(th); sin(th) cos(th)] * ( LocMarkerPos(:,j) + [CtrHoleDist;0] );
     end
   otherwise
     MarkerPos = WhCtrPos;

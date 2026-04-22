@@ -20,9 +20,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Polygon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{2};
+BPath = BPath_pack2{6};
 
 clear BPath_pack1 BPath_pack2
 
@@ -79,9 +79,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Polygon'));
 BPath_pack2 = BPath_pack1{1};
-HPath = BPath_pack2{2};
+HPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -141,7 +141,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 5/4;
+WheelBezRatio = 9/5;
 
 Shift  = 0;
 Halfen = false;
@@ -218,6 +218,9 @@ ColorVector = {'white', 'red'};
 % ColorVector = {[46, 111, 64]/255};
 
 % ColorVector = {[48, 92, 222]/255};
+
+% marigold
+% ColorVector = {[234, 162, 33]/255};
 
 %%
 % preview curve
@@ -300,4 +303,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600418_12_2', ExtraOpts )
+  30, 10, 'test_2600422_02_3', ExtraOpts )
