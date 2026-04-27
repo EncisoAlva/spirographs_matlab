@@ -141,7 +141,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9/5;
+WheelBezRatio = 9/4;
 
 Shift  = 0;
 Halfen = false;

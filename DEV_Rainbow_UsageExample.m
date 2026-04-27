@@ -172,6 +172,9 @@ for i = 1:nPts
 end
 
 %%
+% preview curve
+;
+%%
 % video
 
 % this is a collection of hand-picked colors
