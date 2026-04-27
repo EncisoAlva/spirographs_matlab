@@ -35,6 +35,8 @@ end
 % parameters
 nCenters = size(WhoIsCenter,2);
 
+% I want to be able to declare either (1) one single color for all curves,
+% (2) a few colors to be alternated, or (3) one color for each curve
 if size(CurveColor0,2) >= nPts
   % if enough colors were specified, use them
   CurveColor = CurveColor0;
@@ -85,6 +87,36 @@ if ~isfield(ExtraOpts, 'FillMarkerCurve')
   ExtraOpts.FillMarkerCurve = false;
 end
 
+% handle multiple colors
+if ~isfield(ExtraOpts, 'ColorCycles')
+  ExtraOpts.ColorCycles = 1;
+end
+if ~isfield(ExtraOpts, 'ColorRefCurve')
+  ExtraOpts.ColorRefCurve = 'CumDist';
+end
+%
+ColorFunc  = cell(1,nPts);
+Multicolor = false(1,nPts);
+for p = 1:nPts
+  % only populate if more than one color is detected
+  if size(CurveColor{p},2) == 2
+    Multicolor(p) = true;
+    %
+    color0 = CurveColor{p}(1);
+    colorF = CurveColor{p}(2);
+    switch ExtraOpts.ColorRefCurve
+      case 'CumDist'
+        CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{i}, 1,2), 2,1 )]);
+      case 'Bezier'
+        CumDist = cumsum([0, vecnorm( diff( AllBezierPos{i}, 1,2), 2,1 )]);
+      case 'Wheel'
+        CumDist = cumsum([0, vecnorm( diff( AllWhCtrPos{i}, 1,2), 2,1 )]);
+    end
+    CumDist = CumDist/CumDist(end);
+    ColorNum = cos( ExtraOpts.ColorCycles* CumDist * 2*pi );
+    ColorFunc{i} = color0' + (colorF'-color0')*ColorNum;
+  end
+end
 
 %%
 % time is parametrized by the path over the Bezier curve or the path
@@ -245,7 +277,15 @@ for i = 0:nTimes
   %
   % add all strokes of the marker up to the current time
   for p = 1:nPts
-    plot(AllMarkerPos{p}(1,CurrPts{p}),AllMarkerPos{p}(2,CurrPts{p}),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
+    if Multicolor(p)
+      % add NaN so that Matlab understands that it is not a closed curve
+      drawPts = [ AllMarkerPos{p}(1,CurrPts{p}), NaN(2,1)];
+      drawCol = [ ColorFunc{p}(:,CurrPts{p})'; NaN(1,3)];
+      fill(drawPts(1,:),drawPts(2,:),[0,0,0],...
+        'FaceVertexCData',drawCol,'EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
+    else
+      plot(AllMarkerPos{p}(1,CurrPts{p}),AllMarkerPos{p}(2,CurrPts{p}),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
+    end
   end
   %
   jj = zeros(nPts,1);
@@ -289,7 +329,11 @@ for i = 0:nTimes
     end
   end
   for p = 1:nPts
-    scatter(AllMarkerPos{p}(1,jj(p)),AllMarkerPos{p}(2,jj(p)),20,CurveColor{p},'filled')
+    if Multicolor(p)
+      scatter(AllMarkerPos{p}(1,jj(p)),AllMarkerPos{p}(2,jj(p)),20,ColorFunc{p}(:,jj(p))','filled')
+    else 
+      scatter(AllMarkerPos{p}(1,jj(p)),AllMarkerPos{p}(2,jj(p)),20,CurveColor{p},'filled')
+    end
   end
   scatter(RefBez(1),RefBez(2),10,'white','filled')
   %
