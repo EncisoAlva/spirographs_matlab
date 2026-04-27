@@ -102,19 +102,19 @@ for p = 1:nPts
   if size(CurveColor{p},2) == 2
     Multicolor(p) = true;
     %
-    color0 = CurveColor{p}(1);
-    colorF = CurveColor{p}(2);
+    color0 = CurveColor{p}{1};
+    colorF = CurveColor{p}{2};
     switch ExtraOpts.ColorRefCurve
       case 'CumDist'
-        CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{i}, 1,2), 2,1 )]);
+        CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{p}, 1,2), 2,1 )]);
       case 'Bezier'
-        CumDist = cumsum([0, vecnorm( diff( AllBezierPos{i}, 1,2), 2,1 )]);
+        CumDist = cumsum([0, vecnorm( diff( AllBezierPos{p}, 1,2), 2,1 )]);
       case 'Wheel'
-        CumDist = cumsum([0, vecnorm( diff( AllWhCtrPos{i}, 1,2), 2,1 )]);
+        CumDist = cumsum([0, vecnorm( diff( AllWhCtrPos{p}, 1,2), 2,1 )]);
     end
     CumDist = CumDist/CumDist(end);
     ColorNum = cos( ExtraOpts.ColorCycles* CumDist * 2*pi );
-    ColorFunc{i} = color0' + (colorF'-color0')*ColorNum;
+    ColorFunc{p} = color0' + (colorF'-color0')*ColorNum;
   end
 end
 
@@ -279,10 +279,10 @@ for i = 0:nTimes
   for p = 1:nPts
     if Multicolor(p)
       % add NaN so that Matlab understands that it is not a closed curve
-      drawPts = [ AllMarkerPos{p}(1,CurrPts{p}), NaN(2,1)];
+      drawPts = [ AllMarkerPos{p}(:,CurrPts{p}), NaN(2,1)];
       drawCol = [ ColorFunc{p}(:,CurrPts{p})'; NaN(1,3)];
-      fill(drawPts(1,:),drawPts(2,:),[0,0,0],...
-        'FaceVertexCData',drawCol,'EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
+      fill(drawPts(1,:),drawPts(2,:),[0,0,0]',...
+        'FaceVertexCData',drawCol','EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
     else
       plot(AllMarkerPos{p}(1,CurrPts{p}),AllMarkerPos{p}(2,CurrPts{p}),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
     end
@@ -363,7 +363,15 @@ for tmp = 1:1
     if ExtraOpts.FillMarkerCurve
       fill(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),CurveColor{p}, 'EdgeColor', 'none')
     else
-      plot(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
+      if Multicolor(p)
+        % add NaN so that Matlab understands that it is not a closed curve
+        drawPts = [ AllMarkerPos{p}, NaN(2,1)];
+        drawCol = [ ColorFunc{p}'; NaN(1,3)];
+        fill(drawPts(1,:),drawPts(2,:),[0,0,0]',...
+          'FaceVertexCData',drawCol','EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
+      else
+        plot(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),'Color',CurveColor{p}','LineWidth',ExtraOpts.LineWidth)
+      end
     end
   end
   %

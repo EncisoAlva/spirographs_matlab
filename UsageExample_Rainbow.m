@@ -157,7 +157,7 @@ nPts = size(MarkerAngle0Array,2);
 k = size(ColorVector,2);
 
 %
-ColorVector = {[234, 162,  33]/255, [255, 255, 255]/255};
+ColorVector = {{[234, 162,  33]/255, [255, 255, 255]/255}};
 
 % compute curves
 [ DecorativeBez, AllBezierPos, ~, ~, AllMarkerPos, ~ ] = ...
@@ -165,8 +165,8 @@ ColorVector = {[234, 162,  33]/255, [255, 255, 255]/255};
       CurveOpts);
 
 %
-color0 = ColorVector{1};
-colorF = ColorVector{2};
+color0 = ColorVector{1}{1};
+colorF = ColorVector{1}{2};
 
 ColorFunc = cell(1,nPts);
 for i = 1:nPts
