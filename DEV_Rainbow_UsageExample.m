@@ -172,8 +172,35 @@ for i = 1:nPts
 end
 
 %%
-% preview curve
-;
+
+color0 = [234, 162,  33]/255;
+colorF = [255, 255, 255]/255;
+
+ColorFunc = cell(1,nPts);
+for i = 1:nPts
+  CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{i}, 1,2), 2,1 )]);
+  CumDist = CumDist/CumDist(end);
+  ColorNum = cos( 9* CumDist * 2*pi );
+  ColorFunc{i} = color0' + (colorF'-color0')*ColorNum;
+end
+
+figure();
+hold on
+axis equal
+axis off
+set(gcf,'Color','k')
+set(gca,'Color','k')
+
+plot(DecorativeBez(1,:),DecorativeBez(2,:),'Color',[.4 .4 .4],'LineWidth',2)
+
+maxN = 500;
+
+for p = 1:nPts
+  drawPts = [ AllMarkerPos{p}(:,1:maxN), NaN(2,1)];
+  drawCol = [ ColorFunc{p}(:,1:maxN)'; NaN(1,3)];
+  fill(drawPts(1,:),drawPts(2,:),[0,0,0],'FaceVertexCData',drawCol,'EdgeColor','interp','LineWidth',2)
+end
+
 %%
 % video
 
