@@ -113,7 +113,7 @@ for p = 1:nPts
         CumDist = cumsum([0, vecnorm( diff( AllWhCtrPos{p}, 1,2), 2,1 )]);
     end
     CumDist = CumDist/CumDist(end);
-    ColorNum = cos( ExtraOpts.ColorCycles* CumDist * 2*pi );
+    ColorNum = 0.5 + 0.5*cos( ExtraOpts.ColorCycles* CumDist * 2*pi );
     ColorFunc{p} = color0' + (colorF'-color0')*ColorNum;
   end
 end
@@ -122,7 +122,7 @@ end
 % time is parametrized by the path over the Bezier curve or the path
 % described by the wheel center
 TimeFromCurve = cell(nPts,1);
-switch ExtraOpts.TimerefCurve
+switch ExtraOpts.TimeRefCurve
   case 'Bezier'
     for p = 1:nPts
       TimeFromCurve{p} = zeros(1,size(AllBezierPos{p},2));
@@ -281,8 +281,8 @@ for i = 0:nTimes
       % add NaN so that Matlab understands that it is not a closed curve
       drawPts = [ AllMarkerPos{p}(:,CurrPts{p}), NaN(2,1)];
       drawCol = [ ColorFunc{p}(:,CurrPts{p})'; NaN(1,3)];
-      fill(drawPts(1,:),drawPts(2,:),[0,0,0]',...
-        'FaceVertexCData',drawCol','EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
+      fill(drawPts(1,:),drawPts(2,:), 'k',...
+        'FaceVertexCData',drawCol,'EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
     else
       plot(AllMarkerPos{p}(1,CurrPts{p}),AllMarkerPos{p}(2,CurrPts{p}),'Color',CurveColor{p},'LineWidth',ExtraOpts.LineWidth)
     end
@@ -367,8 +367,8 @@ for tmp = 1:1
         % add NaN so that Matlab understands that it is not a closed curve
         drawPts = [ AllMarkerPos{p}, NaN(2,1)];
         drawCol = [ ColorFunc{p}'; NaN(1,3)];
-        fill(drawPts(1,:),drawPts(2,:),[0,0,0]',...
-          'FaceVertexCData',drawCol','EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
+        fill(drawPts(1,:),drawPts(2,:), 'k',...
+          'FaceVertexCData',drawCol,'EdgeColor','interp','LineWidth',ExtraOpts.LineWidth)
       else
         plot(AllMarkerPos{p}(1,:),AllMarkerPos{p}(2,:),'Color',CurveColor{p}','LineWidth',ExtraOpts.LineWidth)
       end
