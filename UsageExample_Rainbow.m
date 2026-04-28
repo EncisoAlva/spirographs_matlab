@@ -18,7 +18,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{3};
+BPath = BPath_pack2{4};
 
 clear BPath_pack1 BPath_pack2
 
@@ -68,7 +68,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9/5;
+WheelBezRatio = 12/5;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -119,24 +119,17 @@ PlotPath(BPath_new)
 BPath_new = ShiftPath( BPath_new, 1, true);
 
 %%
-% colors
 
-ColorVector = {'yellow','magenta','blue','red','green'};
+% declaring common colors
+Cmarigold  = [234, 162,  33]/255;
+Cwhite     = [255, 255, 255]/255;
+Cdkmagenta = [139,   0, 139]/255;
 
-%ColorVector = {'red','white', 'red'};
-
-%ColorVector = {'white', 'red'};
-
-%ColorVector = {[225, 21, 132]/255, [253, 164, 186]/255};
-
-%ColorVector = {[246, 153, 205]/255, [254, 197, 229]/255};
-
-%ColorVector = {[225, 21, 132]/255, [254, 197, 229]/255};
+% specific choice
+ColorVector = {{Cdkmagenta, Cwhite}, {Cmarigold, Cwhite}};
 
 %%
 % preview curve
-
-% MarkerRadius = WheelRadius;
 
 % setup parameters
 CurveOpts = {};
@@ -146,18 +139,15 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-CurveOpts.ColorCycles   = 9;
-%CurveOpts.ColorRefCurve = 'CumDist';
-CurveOpts.ColorRefCurve = 'Bezier';
+ColorCycles   = 12;
+%ColorRefCurve = 'CumDist';
+ColorRefCurve = 'Bezier';
 
 aang = 2*pi*(0:1/1:1)+1*pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
 k = size(ColorVector,2);
-
-%
-ColorVector = {{[234, 162,  33]/255, [255, 255, 255]/255}};
 
 % compute curves
 [ DecorativeBez, AllBezierPos, ~, ~, AllMarkerPos, ~ ] = ...
@@ -169,16 +159,16 @@ color0 = ColorVector{1}{1};
 colorF = ColorVector{1}{2};
 
 ColorFunc = cell(1,nPts);
-for i = 1:nPts
-  switch CurveOpts.ColorRefCurve
+for p = 1:nPts
+  switch ColorRefCurve
     case 'CumDist'
-      CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{i}, 1,2), 2,1 )]);
+      ColorVal = cumsum([0, vecnorm( diff( AllMarkerPos{p}, 1,2), 2,1 )]);
     case 'Bezier'
-      CumDist = cumsum([0, vecnorm( diff( AllBezierPos{i}, 1,2), 2,1 )]);
+      ColorVal = cumsum([0, vecnorm( diff( AllBezierPos{p}, 1,2), 2,1 )]);
   end
-  CumDist = CumDist/CumDist(end);
-  ColorNum = cos( CurveOpts.ColorCycles* CumDist * 2*pi );
-  ColorFunc{i} = color0' + (colorF'-color0')*ColorNum;
+  ColorVal = ColorVal/ColorVal(end);
+  ColorNum = 0.5 + 0.5*cos( ColorCycles* ColorVal * 2*pi );
+  ColorFunc{p} = color0' + (colorF'-color0')*ColorNum;
 end
 
 % plotting per se
@@ -198,15 +188,15 @@ for p = 1:nPts
 end
 
 for p = 1:nPts
-  switch CurveOpts.ColorRefCurve
+  switch ColorRefCurve
     case 'CumDist'
-      CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{i}, 1,2), 2,1 )]);
+      ColorVal = cumsum([0, vecnorm( diff( AllMarkerPos{p}, 1,2), 2,1 )]);
     case 'Bezier'
-      CumDist = cumsum([0, vecnorm( diff( AllBezierPos{i}, 1,2), 2,1 )]);
+      ColorVal = cumsum([0, vecnorm( diff( AllBezierPos{p}, 1,2), 2,1 )]);
   end
-  CumDist = CumDist/CumDist(end);
-  for rref = 0:(0.5/CurveOpts.ColorCycles):1
-    [~,iidx] = max(CumDist(CumDist<=rref));
+  ColorVal = ColorVal/ColorVal(end);
+  for rref = 0:(0.5/ColorCycles):1
+    [~,iidx] = max(ColorVal(ColorVal<=rref));
     scatter(AllMarkerPos{p}(1,iidx),AllMarkerPos{p}(2,iidx),'red','filled','o')
   end
 end
@@ -242,14 +232,14 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimerefCurve = 'Average';
+ExtraOpts.TimeRefCurve = 'Average';
 %ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 
-ExtraOpts.ColorCycles   = 9;
-%ExtraOpts.ColorRefCurve = 'CumDist';
-ExtraOpts.ColorRefCurve = 'Bezier';
+ExtraOpts.ColorCycles   = 12;
+ExtraOpts.ColorRefCurve = 'CumDist';
+%ExtraOpts.ColorRefCurve = 'Bezier';
 
 WhoIsCenter = 1;
 
@@ -259,4 +249,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260428_11_1', ExtraOpts )
+  30, 7.5, 'test_260428_21_1', ExtraOpts )
