@@ -99,22 +99,31 @@ ColorFunc  = cell(1,nPts);
 Multicolor = false(1,nPts);
 for p = 1:nPts
   % only populate if more than one color is detected
-  if size(CurveColor{p},2) == 2
+  if iscell(CurveColor{p})
     Multicolor(p) = true;
+    nColors = size(CurveColor{p},2);
     %
-    color0 = CurveColor{p}{1};
-    colorF = CurveColor{p}{2};
+    colorTable = zeros(nColors, 3+1);
+    for q = 1:nColors
+      colorTable(q,2:end) = CurveColor{p}{q};
+    end
+    colorTable(:,1) = linspace(0,1, nColors);
+    %
     switch ExtraOpts.ColorRefCurve
       case 'CumDist'
-        CumDist = cumsum([0, vecnorm( diff( AllMarkerPos{p}, 1,2), 2,1 )]);
+        ColorRoll = cumsum([0, vecnorm( diff( AllMarkerPos{p}, 1,2), 2,1 )]);
       case 'Bezier'
-        CumDist = cumsum([0, vecnorm( diff( AllBezierPos{p}, 1,2), 2,1 )]);
+        ColorRoll = cumsum([0, vecnorm( diff( AllBezierPos{p}, 1,2), 2,1 )]);
       case 'Wheel'
-        CumDist = cumsum([0, vecnorm( diff( AllWhCtrPos{p}, 1,2), 2,1 )]);
+        ColorRoll = cumsum([0, vecnorm( diff( AllWhCtrPos{p}, 1,2), 2,1 )]);
     end
-    CumDist = CumDist/CumDist(end);
-    ColorNum = 0.5 + 0.5*cos( ExtraOpts.ColorCycles* CumDist * 2*pi );
-    ColorFunc{p} = color0' + (colorF'-color0')*ColorNum;
+    ColorRoll = ColorRoll/ColorRoll(end);
+    ColorNum  = 0.5 - 0.5*cos( ExtraOpts.ColorCycles* ColorRoll * 2*pi );
+    %
+    ColorFunc{p} = zeros(3, size(ColorNum,2));
+    ColorFunc{p}(1,:) = interp1(colorTable(:,1),colorTable(:,2), ColorNum);
+    ColorFunc{p}(2,:) = interp1(colorTable(:,1),colorTable(:,3), ColorNum);
+    ColorFunc{p}(3,:) = interp1(colorTable(:,1),colorTable(:,4), ColorNum);
   end
 end
 

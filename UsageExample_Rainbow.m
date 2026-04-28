@@ -124,9 +124,13 @@ BPath_new = ShiftPath( BPath_new, 1, true);
 Cmarigold  = [234, 162,  33]/255;
 Cwhite     = [255, 255, 255]/255;
 Cdkmagenta = [139,   0, 139]/255;
+Cscarlet   = [255,  36,   0]/255;
+Cblack     = [  0,   0,   0];
 
 % specific choice
-ColorVector = {{Cdkmagenta, Cwhite}, {Cmarigold, Cwhite}};
+%ColorVector = {{Cwhite, Cmarigold, Cmarigold}, {Cscarlet, Cwhite}};
+
+ColorVector = {{Cwhite, Cmarigold, Cmarigold}, {Cscarlet, Cwhite}};
 
 %%
 % preview curve
@@ -140,8 +144,8 @@ CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
 ColorCycles   = 12;
-%ColorRefCurve = 'CumDist';
-ColorRefCurve = 'Bezier';
+ColorRefCurve = 'CumDist';
+%ColorRefCurve = 'Bezier';
 
 aang = 2*pi*(0:1/1:1)+1*pi;
 aang(end) = [];
@@ -154,10 +158,6 @@ k = size(ColorVector,2);
     SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
       CurveOpts);
 
-%
-color0 = ColorVector{1}{1};
-colorF = ColorVector{1}{2};
-
 ColorFunc = cell(1,nPts);
 for p = 1:nPts
   switch ColorRefCurve
@@ -167,8 +167,18 @@ for p = 1:nPts
       ColorVal = cumsum([0, vecnorm( diff( AllBezierPos{p}, 1,2), 2,1 )]);
   end
   ColorVal = ColorVal/ColorVal(end);
-  ColorNum = 0.5 + 0.5*cos( ColorCycles* ColorVal * 2*pi );
-  ColorFunc{p} = color0' + (colorF'-color0')*ColorNum;
+  ColorNum = 0.5 - 0.5*cos( ColorCycles* ColorVal * 2*pi );
+  %
+  colorTable = zeros(size(ColorVector{p},2), 3+1);
+  for q = 1:size(ColorVector{1},2)
+    colorTable(q,2:end) = ColorVector{p}{q};
+  end
+  colorTable(:,1) = linspace(0,1, size(ColorVector{p},2));
+  %
+  ColorFunc{p} = zeros(3, size(ColorNum,2));
+  ColorFunc{p}(1,:) = interp1(colorTable(:,1),colorTable(:,2), ColorNum);
+  ColorFunc{p}(2,:) = interp1(colorTable(:,1),colorTable(:,3), ColorNum);
+  ColorFunc{p}(3,:) = interp1(colorTable(:,1),colorTable(:,4), ColorNum);
 end
 
 % plotting per se
