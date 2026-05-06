@@ -141,7 +141,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 8/7;
+WheelBezRatio = 10/7;
 
 Shift  = 0;
 Halfen = false;
@@ -303,4 +303,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600506_11_1', ExtraOpts )
+  30, 10, 'test_2600506_11_4', ExtraOpts )
