@@ -20,59 +20,82 @@
 %
 function [BezBase, AngBase, DisBase] = SetupHole(HPath, Tol, CheckFit)
 
-% ratio between perimeters
-PerimRatio = 2*pi/ PathPerimeter(HPath, 0.01);
-
 % find values of t with a prescribed max dist between them
 nSegments = size(HPath,2);
-allTvals  = cell(1,nSegments);
-allBez    = cell(1,nSegments);
-allAng    = cell(1,nSegments);
-allNor    = cell(1,nSegments);
-allTan    = cell(1,nSegments);
+allBez    = cell(1,nSegments*2);
+allAng    = cell(1,nSegments*2);
 
-currAng = 0;
-for ii = 1:nSegments
-  % finding values of t
-  currSegment = HPath{ii};
-  nn = ceil( sum( vecnorm( diff(currSegment,1,2), 2, 1 ) )/Tol );
-  Tvals  = linspace(0,1, nn);
+for s = 1:nSegments
+  currSegment = HPath{s};
+  % initial guess for tvals
+  Tvals = linspace(0,1, ceil(PathPerimeter({currSegment},Tol)/Tol)+1);
   %
-  % error correction to be added
+  tol_flag = false;
+  while ~tol_flag
+    Bez = EvalBezier(currSegment, Tvals);
+    Nor = -EvalBezierNormal(currSegment, Tvals, 1);
+    %
+    % current side
+    % reach circumference
+    Ksc = zeros(size(Tvals));
+    BezProj = zeros(size(Bez));
+    for i = 1:size(Tvals,2)
+      Ksc(i)  = -Bez(:,i)'*Nor(:,i) + sqrt((Bez(:,i)'*Nor(:,i))^2 +1 -norm(Bez(:,i))^2);
+      BezProj(:,i) = Bez(:,i) + Ksc(i)*Nor(:,i);
+    end
+    Ang = atan2(BezProj(2,:),BezProj(1,:));
+    %
+    % error correction to be added
+    tol_flag = true;
+  end
   %
-  % compute positions B(t_i) and distances |B(t_i)-B(t_i+1)|
-  Bez = EvalBezier(currSegment, Tvals);
-  Nor = EvalBezierNormal(currSegment, Tvals, 1);
-  Tan = EvalBezierTangent(currSegment, Tvals, 1);
-  Dis = vecnorm( diff(Bez, 1, 2), 2, 1);
+  % report reults
+  allBez{2*s-1} = Bez;
+  allAng{2*s-1} = Ang;
   %
-  % cumulative angle
-  Ang = [0, cumsum(Dis)]*PerimRatio + currAng;
-  currAng = Ang(end);
-  %
-  % combine results
-  allTvals{ii} = Tvals;
-  allBez{ii}   = Bez;
-  allAng{ii}   = Ang;
-  allNor{ii}   = Nor;
-  allTan{ii}   = Tan;
-end
-% patch: ignore rounding errors from adding angles
-for ii = 1:nSegments
-  allAng{ii} = allAng{ii} * 2*pi/currAng;
+  % between sides, only if necessary
+  if s<nSegments
+    s_next = s+1;
+  else
+    s_next = 1;
+  end
+  currNor = -EvalBezierNormal(HPath{s}, 1, 1);
+  nextNor = -EvalBezierNormal(HPath{s_next}, 0, 1);
+  if atan2(nextNor(2),nextNor(1)) - atan2(currNor(2),currNor(1)) ~= 0
+    % doing this exactly twice, so I am recycling variables
+    Bez = EvalBezier(HPath{s},1);
+    Ksc = -Bez'*currNor + sqrt((Bez'*currNor)^2 +1 -norm(Bez)^2);
+    BezProj = Bez + Ksc*currNor;
+    currAng = mod( atan2(BezProj(2),BezProj(1)), 2*pi);
+    %
+    Bez = EvalBezier(HPath{s_next},0);
+    Ksc = -Bez'*nextNor + sqrt((Bez'*nextNor)^2 +1 -norm(Bez)^2);
+    BezProj = Bez + Ksc*nextNor;
+    nextAng = mod( atan2(BezProj(2),BezProj(1)), 2*pi);
+    %
+    Ang = linspace(currAng, nextAng, ceil((nextAng-currAng)/Tol)+1);
+    %
+    % report reults
+    allBez{2*s} = Bez*ones(size(Ang)); % repeat as needed
+    allAng{2*s} = Ang;
+  end
 end
 
 % move from cell array to vector
 Bezz = [];
 Angg = [];
-Norr = [];
-Tann = [];
-for ii = 1:nSegments
+for ii = 1:(2*nSegments)
   Bezz = [Bezz, allBez{ii}];
   Angg = [Angg, allAng{ii}];
-  Norr = [Norr, allNor{ii}];
-  Tann = [Tann, allTan{ii}];
 end
+% for convenience, the rotation will start at 0
+Bezz = [Bezz, [1;0]];
+Angg = [Angg, 0];
+
+% sort
+Angg = mod(Angg, 2*pi);
+[Angg, idx] = sort(Angg);
+Bezz = Bezz(:,idx);
 
 % remove duplicates
 [~, i, ~] = unique(Angg,'first');
@@ -80,71 +103,14 @@ idxDupes  = find(not(ismember(1:numel(Angg),i)));
 %
 Angg(   idxDupes) = [];
 Bezz( :,idxDupes) = [];
-Norr( :,idxDupes) = [];
-Tann( :,idxDupes) = [];
 
-% iterative correction: angle increment PROPORTIONAL to area covered
-Angg_old = Inf(size(Angg));
-while max(abs(Angg - Angg_old)) > 0.01
-  disp(max(abs(Angg - Angg_old)))
-  Angg_old = Angg;
-  %
-  % QUANT ~ area of B(t_i)-C(t_i)-C(t_i+1)-B(t_i+1) 
-  DiffAngg     = [0, diff(Angg)];
-  DistBezzCirc = vecnorm( Bezz - [cos(Angg);sin(Angg)], 2, 1);
-  Discrepancy = zeros(1, size(Bezz,2));
-  for jj = 1:size(Bezz,2)
-    vecN = (Bezz(:,jj) - [cos(Angg(jj));sin(Angg(jj))]) / norm((Bezz(:,jj) - [cos(Angg(jj));sin(Angg(jj))]));
-    Discrepancy(jj) = abs( vecN' * (-Norr(:,jj)) );
-  end
-  Pull = zeros(1, size(Bezz,2));
-  for jj = 1:size(Bezz,2)
-    Pull(jj) = abs( [-sin(Angg(jj));cos(Angg(jj))]' * (Tann(:,jj)) );
-  end
-  %
-  TheoryDist = 1 - vecnorm( Bezz, 2, 1 );
-  DistDiff = TheoryDist - DistBezzCirc;
-  %
-  %QUANT1 = ( DiffAngg.*DistBezzCirc/2 ).^0.25;
-  medianDist = median(DistBezzCirc);
-  %QUANT2 = ( DistBezzCirc/medianDist ).^0.5;
-  QUANT1 = Discrepancy+0.25;
-  %QUANT1 = Pull;
-  %QUANT2 = (((Discrepancy)/1).* DistBezzCirc).^1;
-  %QUANT1 = DistDiff + 2;
-  %
-  %Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) + (cumsum(QUANT2) ) * 2*pi/sum(QUANT2) )/3;
-  Angg  = (Angg + cumsum(QUANT1) * 2*pi/sum(QUANT1) )/2;
-end
-
-% % iterative correction: angle increment PROPORTIONAL to area covered
-% Angg_old = Inf(size(Angg));
-% while max(abs(Angg - Angg_old)) > 0.01
-%   disp(max(abs(Angg - Angg_old)))
-%   Angg_old = Angg;
-%   %
-%   for jj = 2:(size(Bezz,2)-1)
-%     ang_tmp = linspace(Angg_old(jj-1),Angg_old(jj+1),20);
-%     DistBezzCirc = vecnorm( Bezz(:,jj) - [cos(ang_tmp);sin(ang_tmp)], 2, 1);
-%     [~,ix] = min(DistBezzCirc);
-%     ix = min(max(ix,2),19);
-%     Angg(jj) = ang_tmp(ix);
-%   end
-% end
-
-% PATCH
-nAng = size(Angg,2);
-Angg(2:nAng) = Angg(1:(nAng-1));
-Angg(1) = 0;
-Angg = Angg * 2*pi/Angg(end);
-
-% another patch
-Diss = [0, cumsum(vecnorm( diff(Bezz, 1, 2), 2, 1) )];
+% PATCH: adding the duplicate angle 0=2pi for interpolation
+Bezz = [Bezz, [1;0]];
+Angg = [Angg, 2*pi];
 
 % report results
 BezBase = Bezz;
 AngBase = Angg;
-DisBase = Diss;
 
 if CheckFit
   figure()
@@ -156,5 +122,8 @@ if CheckFit
     plot([Bezz(1,jj), cos(Angg(jj))], [Bezz(2,jj), sin(Angg(jj))],'blue')
   end
 end
+
+% fix later
+DisBase = 0;
 
 end

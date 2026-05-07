@@ -126,11 +126,14 @@ Cwhite     = [255, 255, 255]/255;
 Cdkmagenta = [139,   0, 139]/255;
 Cscarlet   = [255,  36,   0]/255;
 Cblack     = [  0,   0,   0];
+Cruby_cl   = [224,  17,  95]/255;
+Cruby_dk   = [ 78,   9,  15]/255;
+Cbatman_y  = [152, 136,  41]/255;
 
 % specific choice
 %ColorVector = {{Cwhite, Cmarigold, Cmarigold}, {Cscarlet, Cwhite}};
 
-ColorVector = {{Cwhite, Cmarigold, Cmarigold}, {Cscarlet, Cwhite}};
+ColorVector = {{Cruby_cl, Cruby_cl, Cbatman_y}};
 
 %%
 % preview curve
@@ -143,7 +146,7 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-ColorCycles   = 12;
+ColorCycles   = 10;
 ColorRefCurve = 'CumDist';
 %ColorRefCurve = 'Bezier';
 
@@ -247,7 +250,7 @@ ExtraOpts.TimeRefCurve = 'Average';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 
-ExtraOpts.ColorCycles   = 12;
+ExtraOpts.ColorCycles   = 10;
 ExtraOpts.ColorRefCurve = 'CumDist';
 %ExtraOpts.ColorRefCurve = 'Bezier';
 
@@ -259,4 +262,4 @@ MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_260428_21_1', ExtraOpts )
+  30, 7.5, 'test_2600506_11_3', ExtraOpts )
