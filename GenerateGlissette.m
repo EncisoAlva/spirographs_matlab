@@ -172,11 +172,11 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
   %     plot(LocHoleCtrPos(1,:),LocHoleCtrPos(2,:))
   %     plot(MarkerPos(1,:),MarkerPos(2,:))
   %   end
-  %   %
-  %   % update initial values
-  %   CurrTime0  = Time(end);
-  %   CurrAngle0 = MarkerAngle(end);
-  % end
+    %
+    % update initial values
+    CurrTime0  = Time(end);
+    CurrAngle0 = MarkerAngle(end);
+  end
   %
   % update number of spins
   CurrSpin = CurrSpin + 1;
