@@ -56,11 +56,7 @@ end
 
 % this evaluation is for background decoration only
 DecorativeBez  = PathEval(BPath, ExtraOpts.Tol);
-HPath_scaled   = cell(1, size(HPath,2));
-for i = 1:size(HPath,2)
-  HPath_scaled{i} = HPath{i} * WheelRadius;
-end
-DecorativeHole = PathEval(HPath_scaled, ExtraOpts.Tol);
+DecorativeHole = PathEval(HPath, ExtraOpts.Tol);
 
 % containers
 AllBezierPos   = cell(1,nPts);

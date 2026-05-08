@@ -249,15 +249,16 @@ ExtraOpts.TimeRefCurve = 'Average';
 %ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
+ExtraOpts.WheelRadii = WheelRadius*ones(1,nPts);
 
 ExtraOpts.ColorCycles   = 10;
 ExtraOpts.ColorRefCurve = 'CumDist';
 %ExtraOpts.ColorRefCurve = 'Bezier';
-
-WhoIsCenter = 1;
+%
+ExtraOpts.WhoIsCenter = 1;
 
 % video
-MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+MakeVideo_Npts( nPts, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...

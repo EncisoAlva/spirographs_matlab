@@ -2,6 +2,10 @@
 % to use them for exploring.
 
 %%
+% my first example, very bad
+OG_example = {[-1,0;-4,4;4,7;3,0]', [3,0; 2,0; 0,0; -1,0]'};
+
+%%
 % line
 Line = { LineToBezier([0,0]', [1,0]'), ...
   LineToBezier([1,0]', [-1,0]'),...
@@ -925,7 +929,7 @@ end
 Bone{1} = c2;
 Bone{end+1} = c1;
 
-clear c1 c2 th ROT
+clear c1 c2 th ROT i
 
 %%
 % roses

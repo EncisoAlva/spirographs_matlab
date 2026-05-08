@@ -105,8 +105,10 @@ Angg(   idxDupes) = [];
 Bezz( :,idxDupes) = [];
 
 % PATCH: adding the duplicate angle 0=2pi for interpolation
-Bezz = [Bezz, [1;0]];
-Angg = [Angg, 2*pi];
+if ~ismember(2*pi, Angg)
+  Bezz = [Bezz, [1;0]];
+  Angg = [Angg, 2*pi];
+end
 
 % report results
 BezBase = Bezz;

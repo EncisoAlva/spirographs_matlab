@@ -20,7 +20,7 @@
 % ** No explicit output. Video is saved to path. **
 %
 %
-function MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+function MakeVideo_Npts( nPts, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
@@ -33,7 +33,13 @@ if ~isfield(ExtraOpts, 'Method')
 end
 
 % parameters
-nCenters = size(WhoIsCenter,2);
+nCenters = size(ExtraOpts.WhoIsCenter,2);
+if size(ExtraOpts.WheelRadii,2) < max(ExtraOpts.WhoIsCenter)
+  WhoIsCenter_mod = mod(ExtraOpts.WhoIsCenter-1, size(ExtraOpts.WheelRadii,2)) + 1;
+  CenterRadii = ExtraOpts.WheelRadii(WhoIsCenter_mod);
+else
+  CenterRadii = ExtraOpts.WheelRadii(ExtraOpts.WhoIsCenter);
+end
 
 % I want to be able to declare either (1) one single color for all curves,
 % (2) a few colors to be alternated, or (3) one color for each curve
@@ -179,13 +185,13 @@ for p = 1:nPts
 end
 
 % rolling wheel, as a polygon
-aang = 0:(2*pi/ ceil( 2*pi/(ExtraOpts.Tol/WheelRadius) )):(2*pi);
+aang = 0:(2*pi/ ceil( 2*pi/(ExtraOpts.Tol/max(CenterRadii)) )):(2*pi);
 aux_angles = 0:(pi/6):(2*pi);
 switch ExtraOpts.Method
   case 'Default'
-    circ = WheelRadius*[cos(aang); sin(aang)];
+    circ = [cos(aang); sin(aang)];
   case 'Hole'
-    circ = [ WheelRadius*[cos(aang); sin(aang)], ExtraOpts.DecorativeHole ];
+    circ = [ [cos(aang); sin(aang)], ExtraOpts.DecorativeHole ];
 end
 
 % original figure
@@ -203,7 +209,7 @@ switch ExtraOpts.Orientation
   case 'in'
     ExtraBorder = 0;
   case 'out'
-    ExtraBorder = 2*WheelRadius;
+    ExtraBorder = 2*max(CenterRadii);
 end
 %
 x0 = min(DecorativeBez(1,:));
@@ -306,8 +312,8 @@ for i = 0:nTimes
   RefWheelCtr = zeros(2,nCenters);
   RefAngle = zeros(1,nCenters);
   for q = 1:nCenters
-    RefWheelCtr(:,q) = AllWhCtrPos{WhoIsCenter(q)}(:,jj(WhoIsCenter(q)));
-    RefAngle(q) =   AllMarkerAngle{WhoIsCenter(q)}(  jj(WhoIsCenter(q)));
+    RefWheelCtr(:,q) = AllWhCtrPos{ExtraOpts.WhoIsCenter(q)}(:,jj(ExtraOpts.WhoIsCenter(q)));
+    RefAngle(q) =   AllMarkerAngle{ExtraOpts.WhoIsCenter(q)}(  jj(ExtraOpts.WhoIsCenter(q)));
   end
   %
   % the white dot is unnecessarily challenging
@@ -322,18 +328,18 @@ for i = 0:nTimes
   for q = 1:nCenters
     switch ExtraOpts.Method
       case 'Default'
-        fill(RefWheelCtr(1,q)+circ(1,:),RefWheelCtr(2,q)+circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
+        fill(RefWheelCtr(1,q)+circ(1,:)*ExtraOpts.WheelRadii(q),RefWheelCtr(2,q)+circ(2,:)*ExtraOpts.WheelRadii(q), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
       case 'Hole'
         th = RefAngle(q);
-        rolled_circ = [cos(th), -sin(th); sin(th), cos(th)] * circ;
+        rolled_circ = [cos(th), -sin(th); sin(th), cos(th)] * circ * ExtraOpts.WheelRadii(q);
         fill(RefWheelCtr(1,q)+rolled_circ(1,:),RefWheelCtr(2,q)+rolled_circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
         %
-        rolled_hole = [cos(th), -sin(th); sin(th), cos(th)] * ExtraOpts.DecorativeHole;
+        rolled_hole = [cos(th), -sin(th); sin(th), cos(th)] * ExtraOpts.DecorativeHole*ExtraOpts.WheelRadii(q);
         plot(RefWheelCtr(1,q)+rolled_hole(1,:), RefWheelCtr(2,q)+rolled_hole(2,:), 'Color',[0,0,0,0.5])
     end
     for w = 1:size(aux_angles,2)
-      plot(RefWheelCtr(1,q)+[0,cos(aux_angles(w)+RefAngle(q))*WheelRadius],...
-           RefWheelCtr(2,q)+[0,sin(aux_angles(w)+RefAngle(q))*WheelRadius],...
+      plot(RefWheelCtr(1,q)+[0,cos(aux_angles(w)+RefAngle(q))*CenterRadii(q)],...
+           RefWheelCtr(2,q)+[0,sin(aux_angles(w)+RefAngle(q))*CenterRadii(q)],...
         'Color',[0,0,0,0.5])
     end
   end

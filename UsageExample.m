@@ -7,7 +7,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','OG_example'));
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -68,7 +68,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 9/5;
+WheelBezRatio = 5/3;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -121,7 +121,11 @@ BPath_new = ShiftPath( BPath_new, 1, true);
 %%
 % colors
 
-ColorVector = {'yellow','magenta','blue','red','green'};
+%ColorVector = {'yellow','magenta','blue','red','green'};
+
+%ColorVector = {'yellow','yellow','blue','red','green'};
+
+ColorVector = {'magenta'};
 
 %ColorVector = {'red','white', 'red'};
 
@@ -146,7 +150,7 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-aang = 2*pi*(0:1/1:1)+1*pi;
+aang = 2*pi*(0:1/1:1)+0*pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -186,9 +190,6 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 3;
 
-MarkerAngle0Array = 0;
-nPts = size(MarkerAngle0Array,2);
-
 % compute curves
 [ DecorativeBez,...
   AllBezierPos, AllLocTime, ...
@@ -206,11 +207,12 @@ ExtraOpts.TimerefCurve = 'Average';
 %ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
-
-WhoIsCenter = 1;
+ExtraOpts.WheelRadii = WheelRadius*ones(1,nPts);
+%
+ExtraOpts.WhoIsCenter = 1;
 
 % video
-MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+MakeVideo_Npts( nPts, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...

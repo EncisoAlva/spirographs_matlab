@@ -22,7 +22,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{2};
+BPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Cylinder1_2'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -141,10 +141,10 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 10/7;
+WheelBezRatio = 12/11; %4/3
 
 Shift  = 0;
-Halfen = false;
+Halfen = true;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -289,18 +289,19 @@ ExtraOpts.TimeRefCurve = 'Average';
 %ExtraOpts.TimerefCurve = 'Wheel';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
+ExtraOpts.WheelRadii = WheelRadius*ones(1,nPts);
 %
 ExtraOpts.Method  = 'Hole';
 ExtraOpts.BezBase = BezBase;
 ExtraOpts.AngBase = AngBase;
 ExtraOpts.DecorativeHole = DecorativeHole;
-
-WhoIsCenter = 1;
+%
+ExtraOpts.WhoIsCenter = 1;
 
 % video
-MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
+MakeVideo_Npts( nPts, ...
   DecorativeBez,...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600506_11_4', ExtraOpts )
+  30, 10, 'test_2600507_18_0', ExtraOpts )
