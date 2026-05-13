@@ -22,7 +22,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{3};
+BPath = BPath_pack2{2};
 
 clear BPath_pack1 BPath_pack2
 
@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Cylinder1_2'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Line'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -81,7 +81,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Polygon'));
 BPath_pack2 = BPath_pack1{1};
-HPath = BPath_pack2{3};
+HPath = BPath_pack2{6};
 
 clear BPath_pack1 BPath_pack2
 
@@ -141,10 +141,11 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 12/11; %4/3
+WheelBezRatio = 3/2;
+% 3/2
 
 Shift  = 0;
-Halfen = true;
+Halfen = false;
 
 % willing to loose 1% of total area due to each corner rounding
 CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
@@ -304,4 +305,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600507_18_0', ExtraOpts )
+  30, 10, 'test_2600511_01_2', ExtraOpts )
