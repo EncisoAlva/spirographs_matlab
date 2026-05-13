@@ -62,8 +62,10 @@ for s = 1:nSegments
   currNor = -EvalBezierNormal(HPath{s}, 1, 1);
   nextNor = -EvalBezierNormal(HPath{s_next}, 0, 1);
   if atan2(nextNor(2),nextNor(1)) - atan2(currNor(2),currNor(1)) ~= 0
+  Bez = EvalBezier(HPath{s},1);
+  if abs(norm(Bez)-1) > Tol % if not currently touching the circle
     % doing this exactly twice, so I am recycling variables
-    Bez = EvalBezier(HPath{s},1);
+    %Bez = EvalBezier(HPath{s},1);
     Ksc = -Bez'*currNor + sqrt((Bez'*currNor)^2 +1 -norm(Bez)^2);
     BezProj = Bez + Ksc*currNor;
     currAng = mod( atan2(BezProj(2),BezProj(1)), 2*pi);
@@ -79,6 +81,7 @@ for s = 1:nSegments
     allBez{2*s} = Bez*ones(size(Ang)); % repeat as needed
     allAng{2*s} = Ang;
   end
+  end
 end
 
 % move from cell array to vector
@@ -88,9 +91,6 @@ for ii = 1:(2*nSegments)
   Bezz = [Bezz, allBez{ii}];
   Angg = [Angg, allAng{ii}];
 end
-% for convenience, the rotation will start at 0
-Bezz = [Bezz, [1;0]];
-Angg = [Angg, 0];
 
 % sort
 Angg = mod(Angg, 2*pi);
@@ -104,10 +104,30 @@ idxDupes  = find(not(ismember(1:numel(Angg),i)));
 Angg(   idxDupes) = [];
 Bezz( :,idxDupes) = [];
 
-% PATCH: adding the duplicate angle 0=2pi for interpolation
-if ~ismember(2*pi, Angg)
-  Bezz = [Bezz, [1;0]];
-  Angg = [Angg, 2*pi];
+% if either 0 or 2*pi are not accounted for
+if ~ismember(0, Angg) || ~ismember(2*pi, Angg)
+  % pick angles around 0 to interpolate
+  idx0 = 1:length(Angg);
+  idxA = idx0(abs(Angg     )<0.2);
+  idxB = idx0(abs(Angg-2*pi)<0.2);
+  idxx = unique([idxA, idxB]);
+  if ~isempty(idxx)
+  Ang_int = Angg(    idxx );
+  Bez_int = Bezz( :, idxx );
+  Ang_int = mod(Ang_int +pi, 2*pi) -pi; % find equivalents from ~2pi to ~0
+  % interpolate
+  Bez0 = zeros(2,1);
+  Bez0(1) = interp1(Ang_int, Bez_int(1,:), 0);
+  Bez0(2) = interp1(Ang_int, Bez_int(2,:), 0);
+  if ~ismember(0, Angg)
+    Bezz = [Bezz, Bez0];
+    Angg = [Angg, 0];
+  end
+  if ~ismember(2*pi, Angg)
+    Bezz = [Bezz, Bez0];
+    Angg = [Angg, 2*pi];
+  end
+  end
 end
 
 % report results
