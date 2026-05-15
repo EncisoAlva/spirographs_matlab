@@ -161,17 +161,18 @@ while (CurrSpin < MaxSpins) && (~ClosedFlag)
     MarkerPos   = [MarkerPos,   locMarkerPos];
     MarkerAngle = [MarkerAngle, locMarkerAngle];
     %
-  %   % debug
-  %   if ExtraOpts.Method == 'Ring2'
-  %     LocHoleCtrPos = WhCtrPos + SegmentOpts.CtrHoleDist * [cos(MarkerAngle); sin(MarkerAngle)];
-  %     figure()
-  %     hold on
-  %     axis equal
-  %     plot(BezierPos(1,:),BezierPos(2,:))
-  %     plot(WhCtrPos(1,:),WhCtrPos(2,:))
-  %     plot(LocHoleCtrPos(1,:),LocHoleCtrPos(2,:))
-  %     plot(MarkerPos(1,:),MarkerPos(2,:))
-  %   end
+    % debug
+    % if ExtraOpts.Method == 'Ring2'
+    %   LocHoleCtrPos = WhCtrPos + SegmentOpts.CtrHoleDist * [cos(MarkerAngle); sin(MarkerAngle)];
+    %   figure()
+    %   hold on
+    %   axis equal
+    %   grid on
+    %   plot(BezierPos(1,:),BezierPos(2,:))
+    %   plot(WhCtrPos(1,:),WhCtrPos(2,:))
+    %   plot(LocHoleCtrPos(1,:),LocHoleCtrPos(2,:))
+    %   plot(MarkerPos(1,:),MarkerPos(2,:))
+    % end
     %
     % update initial values
     CurrTime0  = Time(end);

@@ -8,7 +8,7 @@
 %  MarkerAngle0  Initial angle between the wheelcenter-curve line and the
 %                wheelcenter-marker line [1]
 %         Time0  Initial timestamp [1]
-%     ExtraOpts  More arguments, including optional [structs]
+%   SegmentOpts  More arguments, including optional [structs]
 % -------------
 %           Tol  Maximum allowable distance between neighboring points [1]
 %        Method  What is inside the rolling circle
@@ -30,42 +30,42 @@
 %
 function [Time, BezierPos, WhCtrPos, MarkerPos, MarkerAngle] = ...
   SingleBezierSegment( CtrlPts, WheelRadius, MarkerAngle0, Time0, ...
-  ExtraOpts )
+  SegmentOpts )
 
 % dealing with optional arguments
-if ~isfield(ExtraOpts, 'Tol')
+if ~isfield(SegmentOpts, 'Tol')
   Tol = 1e-3; 
 else
-  Tol = ExtraOpts.Tol;
+  Tol = SegmentOpts.Tol;
 end
-if ~isfield(ExtraOpts, 'Method')
-  ExtraOpts.Method = 'Default';
+if ~isfield(SegmentOpts, 'Method')
+  SegmentOpts.Method = 'Default';
 end
-switch ExtraOpts.Method
+switch SegmentOpts.Method
   case 'Default'
-    if ~isfield(ExtraOpts, 'MarkerRadius')
+    if ~isfield(SegmentOpts, 'MarkerRadius')
       MarkerRadius = 0;
     else
-      MarkerRadius = ExtraOpts.MarkerRadius;
+      MarkerRadius = SegmentOpts.MarkerRadius;
     end
   case 'Hole'
-    if ~isfield(ExtraOpts, 'RollDist0')
+    if ~isfield(SegmentOpts, 'RollDist0')
       RollDist0 = 0; 
     else
-      RollDist0 = ExtraOpts.RollDist0; 
+      RollDist0 = SegmentOpts.RollDist0; 
     end
-    BezBase = ExtraOpts.BezBase;
-    AngBase = ExtraOpts.AngBase;
+    BezBase = SegmentOpts.BezBase;
+    AngBase = SegmentOpts.AngBase;
   case 'Ring2'
-    if ~isfield(ExtraOpts, 'RollDist0')
+    if ~isfield(SegmentOpts, 'RollDist0')
       RollDist0 = 0; 
     else
-      RollDist0 = ExtraOpts.RollDist0; 
+      RollDist0 = SegmentOpts.RollDist0; 
     end
-    CtrHoleDist   = ExtraOpts.CtrHoleDist;
-    HoleRadius    = ExtraOpts.HoleRadius;
-    Wheel2Radius  = ExtraOpts.Wheel2Radius;
-    Marker2Radius = ExtraOpts.Marker2Radius;
+    CtrHoleDist   = SegmentOpts.CtrHoleDist;
+    HoleRadius    = SegmentOpts.HoleRadius;
+    Wheel2Radius  = SegmentOpts.Wheel2Radius;
+    Marker2Radius = SegmentOpts.Marker2Radius;
 end
 
 % initial guess for time
@@ -99,7 +99,7 @@ end
 
 % position and angle for the marker
 MarkerAngle = cumsum([MarkerAngle0, -DiffAngle+BezNormAngleDiff]);
-switch ExtraOpts.Method
+switch SegmentOpts.Method
   case 'Default'
     % add a point in a circle with given center and radius
     MarkerPos = WhCtrPos + [cos(MarkerAngle); sin(MarkerAngle)]*MarkerRadius;
@@ -122,9 +122,7 @@ switch ExtraOpts.Method
     RollAngle = cumsum([RollDist0, DiffAngle ]);
     % compute the angle rolled by the smallest gear
     CircProject = [cos(RollAngle); sin(RollAngle)] - [CtrHoleDist;0];
-    LocRollAngle = -atan2(CircProject(2,:),CircProject(1,:));
-    % position of ring center
-    LocHoleCtrPos = WhCtrPos + CtrHoleDist * [cos(MarkerAngle); sin(MarkerAngle)];
+    LocRollAngle = atan2(CircProject(2,:),CircProject(1,:));
     % position of marker IF ring was static
     LocMarkerPos = [...
       (HoleRadius-Wheel2Radius)*cos(LocRollAngle) + Marker2Radius*cos(LocRollAngle*((HoleRadius-Wheel2Radius)/Wheel2Radius));...

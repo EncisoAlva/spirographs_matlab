@@ -36,8 +36,8 @@ for j = 1:nCurves
     norm(CurrCtrlPts(:,2)-CurrCtrlPts(:,3)) + ...
     norm(CurrCtrlPts(:,3)-CurrCtrlPts(:,4));
   LocalTime   = 0:( 1/ceil(PerUpBound/(Tol/2)) ):1;
-  %iter = 0;
-  while true
+  iter = 0;
+  while iter < 10
     BezierVals  = EvalBezier( CurrCtrlPts, LocalTime );
     DiffCurve   = vecnorm( diff(BezierVals,1,2), 2, 1);
     if max(DiffCurve) < Tol
@@ -54,7 +54,7 @@ for j = 1:nCurves
       end
     end
     LocalTime = unique( [LocalTime, NewTimes], "sorted" );
-    %iter = iter +1; % additional penalization
+    iter = iter +1; % additional penalization
   end
   Perimeter   = Perimeter + sum(DiffCurve);
 end
