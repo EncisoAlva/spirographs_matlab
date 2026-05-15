@@ -20,9 +20,9 @@ clear BPath_pack
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Crossed_Circlegon_2'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{2};
+BPath = BPath_pack2{7};
 
 clear BPath_pack1 BPath_pack2
 
@@ -81,7 +81,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Polygon'));
 BPath_pack2 = BPath_pack1{1};
-HPath = BPath_pack2{6};
+HPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -141,7 +141,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 3/2;
+WheelBezRatio = 5/4;
 % 3/2
 
 Shift  = 0;
@@ -305,4 +305,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600511_01_2', ExtraOpts )
+  30, 10, 'test_2600513_02_3', ExtraOpts )

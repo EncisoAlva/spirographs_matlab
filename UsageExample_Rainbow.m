@@ -24,7 +24,7 @@ clear BPath_pack1 BPath_pack2
 
 %%
 % load from file
-BPath_pack = LoadSVG( './curves_svg/octopi1.svg' );
+BPath_pack = LoadSVG( './curves_svg/Yscavenge.svg' );
 BPath = BPath_pack{1};
 clear BPath_pack
 
@@ -54,7 +54,7 @@ BPath = FlipPath(BPath);
 
 PlotPath(BPath)
 
-BPath = ShiftPath( BPath, 2, false );
+BPath = ShiftPath( BPath, 1, false );
 
 %%
 % parameters
@@ -68,7 +68,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 12/5;
+WheelBezRatio = 6;
 WheelMarkerRatio = 4/5;
 
 Shift  = 0;
@@ -129,11 +129,15 @@ Cblack     = [  0,   0,   0];
 Cruby_cl   = [224,  17,  95]/255;
 Cruby_dk   = [ 78,   9,  15]/255;
 Cbatman_y  = [152, 136,  41]/255;
+Cpurple    = [128,   0, 128]/255;
+Cpurple_cl = [192,   0, 192]/255;
+Cblue_fcy  = [ 36, 122, 253]/255;
+Cflower_y  = [255, 229,  90]/255;
 
 % specific choice
 %ColorVector = {{Cwhite, Cmarigold, Cmarigold}, {Cscarlet, Cwhite}};
 
-ColorVector = {{Cruby_cl, Cruby_cl, Cbatman_y}};
+ColorVector = {{Cblue_fcy, Cblue_fcy, Cflower_y}, {Cwhite, Cwhite, Cblue_fcy}};
 
 %%
 % preview curve
@@ -146,11 +150,11 @@ CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
 CurveOpts.MinSpins = 0;
 
-ColorCycles   = 10;
+ColorCycles   = 3;
 ColorRefCurve = 'CumDist';
 %ColorRefCurve = 'Bezier';
 
-aang = 2*pi*(0:1/1:1)+1*pi;
+aang = 2*pi*(0:1/2:1)+0*pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
 nPts = size(MarkerAngle0Array,2);
@@ -173,7 +177,7 @@ for p = 1:nPts
   ColorNum = 0.5 - 0.5*cos( ColorCycles* ColorVal * 2*pi );
   %
   colorTable = zeros(size(ColorVector{p},2), 3+1);
-  for q = 1:size(ColorVector{1},2)
+  for q = 1:size(ColorVector{p},2)
     colorTable(q,2:end) = ColorVector{p}{q};
   end
   colorTable(:,1) = linspace(0,1, size(ColorVector{p},2));
@@ -251,7 +255,7 @@ ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 ExtraOpts.WheelRadii = WheelRadius*ones(1,nPts);
 
-ExtraOpts.ColorCycles   = 10;
+ExtraOpts.ColorCycles   = 3;
 ExtraOpts.ColorRefCurve = 'CumDist';
 %ExtraOpts.ColorRefCurve = 'Bezier';
 %
@@ -263,4 +267,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_2600506_11_3', ExtraOpts )
+  30, 7.5, 'test_2600515_02_3', ExtraOpts )
