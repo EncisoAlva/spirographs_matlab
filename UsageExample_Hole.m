@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Line'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','LetterI'));
 HPath = BPath_pack{1};
 
 clear BPath_pack

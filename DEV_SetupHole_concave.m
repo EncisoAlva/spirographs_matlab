@@ -30,103 +30,111 @@ tab_T    = [];
 tab_Segm = [];
 
 % identify convex hull
-convex_hull_identified = false;
-while ~convex_hull_identified
-  for s = 1:nSegments
-    currSegment = HPath{s};
-    % initial guess for tvals
-    Tvals = linspace(0,1, ceil(PathPerimeter({currSegment},Tol)/Tol)+1);
-    while ~tol_flag
-      Bez = EvalBezier(currSegment, Tvals);
-      Nor = -EvalBezierNormal(currSegment, Tvals, 1);
-      %
-      % current side
-      % reach circumference
-      Ksc = zeros(size(Tvals));
-      BezProj = zeros(size(Bez));
-      for i = 1:size(Tvals,2)
-        Ksc(i)  = -Bez(:,i)'*Nor(:,i) + sqrt((Bez(:,i)'*Nor(:,i))^2 +1 -norm(Bez(:,i))^2);
-      BezProj(:,i) = Bez(:,i) + Ksc(i)*Nor(:,i);
-    end
-    Ang = atan2(BezProj(2,:),BezProj(1,:));
-    %
-    % error correction to be added
-    tol_flag = true;
-    end
-  end
-  end
-end
-
-
-allBez    = cell(1,nSegments*2);
-allAng    = cell(1,nSegments*2);
-
 for s = 1:nSegments
   currSegment = HPath{s};
   % initial guess for tvals
   Tvals = linspace(0,1, ceil(PathPerimeter({currSegment},Tol)/Tol)+1);
   %
-  tol_flag = false;
-  while ~tol_flag
+  tol_reached = false;
+  while ~tol_reached
     Bez = EvalBezier(currSegment, Tvals);
-    Nor = -EvalBezierNormal(currSegment, Tvals, 1);
     %
-    % current side
-    % reach circumference
-    Ksc = zeros(size(Tvals));
-    BezProj = zeros(size(Bez));
-    for i = 1:size(Tvals,2)
-      Ksc(i)  = -Bez(:,i)'*Nor(:,i) + sqrt((Bez(:,i)'*Nor(:,i))^2 +1 -norm(Bez(:,i))^2);
-      BezProj(:,i) = Bez(:,i) + Ksc(i)*Nor(:,i);
+    % add later error correction
+    tol_reached = true;
+  end
+  tab_Bez = [tab_Bez, Bez];
+  tab_T   = [tab_T, Tvals];
+  tab_Segm = [tab_Segm, s*ones(1,size(Tvals,2))];
+end
+
+% index of points in convex hull
+CHind = convhull(tab_Bez')';
+
+% add duplicates on the convex hull
+for j = 2:size(tab_T,2)
+  if ismember(j,CHind)
+    if norm(tab_Bez(:,j)-tab_Bez(:,j-1)) == 0
+      % if a repeated point
+      CHind = [CHind, j];
     end
-    Ang = atan2(BezProj(2,:),BezProj(1,:));
-    %
-    % error correction to be added
-    tol_flag = true;
   end
-  %
-  % report reults
-  allBez{2*s-1} = Bez;
-  allAng{2*s-1} = Ang;
-  %
-  % between sides, only if necessary
-  if s<nSegments
-    s_next = s+1;
+end
+if ismember(1,CHind)
+  if norm(tab_Bez(:,end)-tab_Bez(:,1)) == 0
+    CHind = [CHind, size(tab_T,2)];
+  end
+end
+CHind = sort(unique(CHind));
+
+% identify 'gaps' in the hole
+GapIdx = [];
+for i = 2:size(CHind,2)
+  if CHind(i)-CHind(i-1) > 1
+    GapIdx = [GapIdx, [CHind(i-1); CHind(i)]];
+  end
+end
+nGaps = size(GapIdx,2);
+
+% label points according to the gap
+tab_Gap = zeros(1,size(tab_T,2));
+currGap = 1;
+ingap = false;
+for i = 1:size(tab_T,2)
+  if ~ingap
+    if ismember(i,CHind)
+      % no change, no gap -> no gap
+    else
+      % entering gap
+      ingap = true;
+      tab_Gap(i) = currGap;
+    end
   else
-    s_next = 1;
-  end
-  currNor = -EvalBezierNormal(HPath{s}, 1, 1);
-  nextNor = -EvalBezierNormal(HPath{s_next}, 0, 1);
-  if atan2(nextNor(2),nextNor(1)) - atan2(currNor(2),currNor(1)) ~= 0
-  Bez = EvalBezier(HPath{s},1);
-  if abs(norm(Bez)-1) > Tol % if not currently touching the circle
-    % doing this exactly twice, so I am recycling variables
-    %Bez = EvalBezier(HPath{s},1);
-    Ksc = -Bez'*currNor + sqrt((Bez'*currNor)^2 +1 -norm(Bez)^2);
-    BezProj = Bez + Ksc*currNor;
-    currAng = mod( atan2(BezProj(2),BezProj(1)), 2*pi);
-    %
-    Bez = EvalBezier(HPath{s_next},0);
-    Ksc = -Bez'*nextNor + sqrt((Bez'*nextNor)^2 +1 -norm(Bez)^2);
-    BezProj = Bez + Ksc*nextNor;
-    nextAng = mod( atan2(BezProj(2),BezProj(1)), 2*pi);
-    %
-    Ang = linspace(currAng, nextAng, ceil((nextAng-currAng)/Tol)+1);
-    %
-    % report reults
-    allBez{2*s} = Bez*ones(size(Ang)); % repeat as needed
-    allAng{2*s} = Ang;
-  end
+    if ismember(i,CHind)
+      % getting outside the gap
+      ingap = false;
+      currGap = currGap + 1;
+    else
+      % no change, gap -> gap
+      tab_Gap(i) = currGap;
+    end
   end
 end
 
-% move from cell array to vector
-Bezz = [];
-Angg = [];
-for ii = 1:(2*nSegments)
-  Bezz = [Bezz, allBez{ii}];
-  Angg = [Angg, allAng{ii}];
+% line points in gaps
+GapStart = zeros(2,nGaps);
+GapVect  = zeros(2,nGaps);
+for j = 1:nGaps
+  GapStart(:,j) = tab_Bez(:,GapIdx(1,j));
+  tmp = tab_Bez(:,GapIdx(2,j)) - tab_Bez(:,GapIdx(1,j));
+  GapVect(:,j) = tmp/norm(tmp);
 end
+
+% compute tangents
+Ang = zeros(1,size(tab_T,2));
+for i = 1:size(tab_T,2)
+  if ismember(i,CHind)
+    % normal vector
+    Bez_i = tab_Bez(:,i);
+    Nor_i = -EvalBezierNormal(HPath{tab_Segm(i)}, tab_T(i), 1);
+    % reach circumference
+    Ksc  = -Bez_i'*Nor_i + sqrt((Bez_i'*Nor_i)^2 +1 -norm(Bez_i)^2);
+    BezProj = Bez_i + Ksc*Nor_i;
+    Ang(i) = atan2(BezProj(2),BezProj(1));
+  else
+    Bez_i = tab_Bez(:,i);
+    LinePt = GapStart(:,tab_Gap(i)) + (GapVect(:,tab_Gap(i))'*(Bez_i-GapStart(:,tab_Gap(i))))*GapVect(:,tab_Gap(i));
+    tmp = LinePt - Bez_i;
+    LineVect = tmp / norm(tmp);
+    % reach circumference
+    Ksc  = -LinePt'*LineVect + sqrt((LinePt'*LineVect)^2 +1 -norm(LinePt)^2);
+    BezProj = LinePt + Ksc*LineVect;
+    Ang(i) = atan2(BezProj(2),BezProj(1));
+  end
+end
+
+% patch
+Angg = Ang;
+Bezz = tab_Bez;
 
 % sort
 Angg = mod(Angg, 2*pi);
