@@ -50,27 +50,60 @@ end
 % index of points in convex hull
 CHind = convhull(tab_Bez')';
 
-% add duplicates on the convex hull
-for j = 2:size(tab_T,2)
+% for any segment, each endpoint is also in another segment
+% add duplicates on the convex hull, which is avoided by default
+for j = 1:size(tab_T,2)
   if ismember(j,CHind)
-    if norm(tab_Bez(:,j)-tab_Bez(:,j-1)) == 0
-      % if a repeated point
-      CHind = [CHind, j];
+    j_ = mod(j-1-1,size(tab_T,2))+1;
+    if norm(tab_Bez(:,j)-tab_Bez(:,j_)) == 0
+      j_m = mod(j-2-1,size(tab_T,2))+1;
+      j_p = mod(j+1-1,size(tab_T,2))+1;
+      if ~ismember(j_m,CHind) || ~ismember(j_p,CHind)
+        % at border of gap, consider carefully
+        if ~ismember(j_m,CHind)
+          % gap -> these points -> CH
+          CHind(CHind==j_) = [];
+          CHind = [CHind, j];
+        else
+          % CH -> these points -> gap
+          CHind(CHind==j) = [];
+          CHind = [CHind, j_];
+        end
+      else
+        % away from gaps, just add it
+        CHind = [CHind, j_];
+      end
     end
-  end
-end
-if ismember(1,CHind)
-  if norm(tab_Bez(:,end)-tab_Bez(:,1)) == 0
-    CHind = [CHind, size(tab_T,2)];
+    j_ = mod(j+1-1,size(tab_T,2))+1;
+    if norm(tab_Bez(:,j)-tab_Bez(:,j_)) == 0
+      j_m = mod(j-1-1,size(tab_T,2))+1;
+      j_p = mod(j+2-1,size(tab_T,2))+1;
+      if ~ismember(j_m,CHind) || ~ismember(j_p,CHind)
+        % at border of gap, consider carefully
+        if ~ismember(j_m,CHind)
+          % gap -> these points -> CH
+          CHind(CHind==j) = [];
+          CHind = [CHind, j_];
+        else
+          % CH -> these points -> gap
+          CHind(CHind==j_) = [];
+          CHind = [CHind, j];
+        end
+      else
+        % away from gaps, just add it
+        CHind = [CHind, j_];
+      end
+    end
   end
 end
 CHind = sort(unique(CHind));
 
 % identify 'gaps' in the hole
 GapIdx = [];
-for i = 2:size(CHind,2)
-  if CHind(i)-CHind(i-1) > 1
-    GapIdx = [GapIdx, [CHind(i-1); CHind(i)]];
+for i = 1:size(CHind,2)
+  i_ = mod(i+1-1,size(CHind,2)) +1;
+  if abs(CHind(i)-CHind(i_)) > 1
+    GapIdx = [GapIdx, [CHind(i); CHind(i_)]];
   end
 end
 nGaps = size(GapIdx,2);
@@ -123,8 +156,9 @@ for i = 1:size(tab_T,2)
   else
     Bez_i = tab_Bez(:,i);
     LinePt = GapStart(:,tab_Gap(i)) + (GapVect(:,tab_Gap(i))'*(Bez_i-GapStart(:,tab_Gap(i))))*GapVect(:,tab_Gap(i));
-    tmp = LinePt - Bez_i;
-    LineVect = tmp / norm(tmp);
+    %tmp = LinePt - Bez_i;
+    %LineVect = tmp / norm(tmp);
+    LineVect = [0,1; -1,0] * GapVect(:,tab_Gap(i));
     % reach circumference
     Ksc  = -LinePt'*LineVect + sqrt((LinePt'*LineVect)^2 +1 -norm(LinePt)^2);
     BezProj = LinePt + Ksc*LineVect;
@@ -149,28 +183,44 @@ Angg(   idxDupes) = [];
 Bezz( :,idxDupes) = [];
 
 % if either 0 or 2*pi are not accounted for
-if ~ismember(0, Angg) || ~ismember(2*pi, Angg)
-  % pick angles around 0 to interpolate
-  idx0 = 1:length(Angg);
-  idxA = idx0(abs(Angg     )<0.2);
-  idxB = idx0(abs(Angg-2*pi)<0.2);
-  idxx = unique([idxA, idxB]);
-  if ~isempty(idxx)
-  Ang_int = Angg(    idxx );
-  Bez_int = Bezz( :, idxx );
-  Ang_int = mod(Ang_int +pi, 2*pi) -pi; % find equivalents from ~2pi to ~0
-  % interpolate
-  Bez0 = zeros(2,1);
-  Bez0(1) = interp1(Ang_int, Bez_int(1,:), 0);
-  Bez0(2) = interp1(Ang_int, Bez_int(2,:), 0);
-  if ~ismember(0, Angg)
-    Bezz = [Bezz, Bez0];
-    Angg = [Angg, 0];
-  end
-  if ~ismember(2*pi, Angg)
-    Bezz = [Bezz, Bez0];
-    Angg = [Angg, 2*pi];
-  end
+% patch: what if there is an angle similar to zero, up to tol?
+dist_to_0   = min(abs(Angg-0));
+dist_to_2pi = min(abs(Angg-2*pi));
+if (dist_to_0>Tol) || (dist_to_2pi>Tol)
+  % if at least one is present, copy-paste to the other
+  if (dist_to_0<Tol) || (dist_to_2pi<Tol)
+    if (dist_to_0<Tol)
+      [~,idx_tmp]   = min(abs(Angg-0));
+      Bezz = [Bezz, Bezz(:,idx_tmp)];
+      Angg = [Angg, 2*pi];
+    else
+      [~,idx_tmp]   = min(abs(Angg-2*pi));
+      Bezz = [Bezz, Bezz(:,idx_tmp)];
+      Angg = [Angg, 0];
+    end
+  else
+    % pick angles around 0 to interpolate
+    idx0 = 1:length(Angg);
+    idxA = idx0(abs(Angg     )<0.2);
+    idxB = idx0(abs(Angg-2*pi)<0.2);
+    idxx = unique([idxB, idxA]);
+    if ~isempty(idxx)
+    Ang_int = Angg(    idxx );
+    Bez_int = Bezz( :, idxx );
+    Ang_int = mod(Ang_int +pi, 2*pi) -pi; % find equivalents from ~2pi to ~0
+    % interpolate
+    Bez0 = zeros(2,1);
+    Bez0(1) = interp1(Ang_int, Bez_int(1,:), 0);
+    Bez0(2) = interp1(Ang_int, Bez_int(2,:), 0);
+    if ~ismember(0, Angg)
+      Bezz = [Bezz, Bez0];
+      Angg = [Angg, 0];
+    end
+    if ~ismember(2*pi, Angg)
+      Bezz = [Bezz, Bez0];
+      Angg = [Angg, 2*pi];
+    end
+    end
   end
 end
 
