@@ -287,8 +287,9 @@ ExtraOpts.Plot2Circles = false;
 ExtraOpts.Format = 'mp4';
 ExtraOpts.Orientation = 'in';
 ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimeRefCurve = 'Average';
-%ExtraOpts.TimerefCurve = 'Wheel';
+%ExtraOpts.TimeRefCurve = 'Average';
+%ExtraOpts.TimeRefCurve = 'Wheel';
+ExtraOpts.TimeRefCurve = 'Marker';
 ExtraOpts.LineWidth = 2;
 ExtraOpts.Tol = Tol;
 ExtraOpts.WheelRadii = WheelRadius*ones(1,nPts);
@@ -306,4 +307,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600524_04_0', ExtraOpts )
+  30, 10, 'test_2600524_04_1', ExtraOpts )

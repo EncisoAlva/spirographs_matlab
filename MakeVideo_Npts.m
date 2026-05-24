@@ -143,6 +143,11 @@ switch ExtraOpts.TimeRefCurve
       TimeFromCurve{p} = zeros(1,size(AllBezierPos{p},2));
       TimeFromCurve{p}(2:end) = cumsum( vecnorm( diff(AllBezierPos{p},1,2), 2, 1 ) );
     end
+  case 'Marker'
+    for p = 1:nPts
+      TimeFromCurve{p} = zeros(1,size(AllMarkerPos{p},2));
+      TimeFromCurve{p}(2:end) = cumsum( vecnorm( diff(AllMarkerPos{p},1,2), 2, 1 ) );
+    end
   case 'Wheel'
     for p = 1:nPts
       TimeFromCurve{p} = zeros(1,size(AllBezierPos{p},2));
