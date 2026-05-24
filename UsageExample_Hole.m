@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterV'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -142,7 +142,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 8/7;
+WheelBezRatio = 9/7;
 % 3/2
 
 Shift  = 0;
@@ -267,7 +267,7 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 100;
+CurveOpts.MaxSpins = 7;
 CurveOpts.Method = 'Hole';
 
 CurveOpts.MinSpins = 1;
@@ -307,4 +307,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600524_04_1', ExtraOpts )
+  30, 10, 'test_2600524_04_3', ExtraOpts )
