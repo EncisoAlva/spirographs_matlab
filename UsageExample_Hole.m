@@ -69,7 +69,7 @@ BPath = ShiftPath( BPath, 1, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterI'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','LetterV'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
@@ -126,6 +126,7 @@ HPath = ShiftPath( HPath, -1, false );
 %%
 % prepare for interpolation
 [BezBase, AngBase] = SetupHole(HPath, 0.01, true);
+[BezBase, AngBase] = DEV_SetupHole_concave(HPath, 0.01, true);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +142,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 35/29;
+WheelBezRatio = 8/7;
 % 3/2
 
 Shift  = 0;
@@ -305,4 +306,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600518_03_5', ExtraOpts )
+  30, 10, 'test_2600524_04_0', ExtraOpts )
