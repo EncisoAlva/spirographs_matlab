@@ -160,6 +160,13 @@ switch ExtraOpts.TimeRefCurve
       TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff( AllWhCtrPos{p},1,2), 2, 1 ) );
       TimeFromCurve{p} = mean(TimeFromCurve_pre,1);
     end
+  case 'Avg_MarkerBezier'
+    for p = 1:nPts
+      TimeFromCurve_pre = zeros(2,size(AllMarkerPos{p},2));
+      TimeFromCurve_pre(1,2:end) = cumsum( vecnorm( diff(AllMarkerPos{p},1,2), 2, 1 ) );
+      TimeFromCurve_pre(2,2:end) = cumsum( vecnorm( diff( AllWhCtrPos{p},1,2), 2, 1 ) );
+      TimeFromCurve{p} = mean(TimeFromCurve_pre,1);
+    end
 end
 
 % duration of video
