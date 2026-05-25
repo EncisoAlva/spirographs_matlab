@@ -49,6 +49,7 @@ end
 
 % index of points in convex hull
 CHind = convhull(tab_Bez')';
+CHind = sort(unique(CHind));
 
 % for any segment, each endpoint is also in another segment
 % add duplicates on the convex hull, which is avoided by default
@@ -110,26 +111,11 @@ nGaps = size(GapIdx,2);
 
 % label points according to the gap
 tab_Gap = zeros(1,size(tab_T,2));
-currGap = 1;
-ingap = false;
-for i = 1:size(tab_T,2)
-  if ~ingap
-    if ismember(i,CHind)
-      % no change, no gap -> no gap
-    else
-      % entering gap
-      ingap = true;
-      tab_Gap(i) = currGap;
-    end
-  else
-    if ismember(i,CHind)
-      % getting outside the gap
-      ingap = false;
-      currGap = currGap + 1;
-    else
-      % no change, gap -> gap
-      tab_Gap(i) = currGap;
-    end
+for currGap = 1:nGaps
+  i = mod(GapIdx(1,currGap)+1-1,size(tab_T,2))+1;
+  while i ~= GapIdx(2,currGap)
+    tab_Gap(i) = currGap;
+    i = mod(i+1-1,size(tab_T,2))+1;
   end
 end
 
@@ -186,10 +172,10 @@ Bezz( :,idxDupes) = [];
 % patch: what if there is an angle similar to zero, up to tol?
 dist_to_0   = min(abs(Angg-0));
 dist_to_2pi = min(abs(Angg-2*pi));
-if (dist_to_0>Tol) || (dist_to_2pi>Tol)
+if (dist_to_0>Tol/10) || (dist_to_2pi>Tol/10)
   % if at least one is present, copy-paste to the other
-  if (dist_to_0<Tol) || (dist_to_2pi<Tol)
-    if (dist_to_0<Tol)
+  if (dist_to_0<Tol/10) || (dist_to_2pi<Tol/10)
+    if (dist_to_0<Tol/10)
       [~,idx_tmp]   = min(abs(Angg-0));
       Bezz = [Bezz, Bezz(:,idx_tmp)];
       Angg = [Angg, 2*pi];
@@ -201,8 +187,8 @@ if (dist_to_0>Tol) || (dist_to_2pi>Tol)
   else
     % pick angles around 0 to interpolate
     idx0 = 1:length(Angg);
-    idxA = idx0(abs(Angg     )<0.2);
-    idxB = idx0(abs(Angg-2*pi)<0.2);
+    idxA = idx0(abs(Angg     )<pi/4);
+    idxB = idx0(abs(Angg-2*pi)<pi/4);
     idxx = unique([idxB, idxA]);
     if ~isempty(idxx)
     Ang_int = Angg(    idxx );
