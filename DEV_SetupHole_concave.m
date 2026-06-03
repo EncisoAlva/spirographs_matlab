@@ -136,20 +136,25 @@ for i = 1:size(tab_T,2)
     Bez_i = tab_Bez(:,i);
     Nor_i = -EvalBezierNormal(HPath{tab_Segm(i)}, tab_T(i), 1);
     % reach circumference
-    Ksc  = -Bez_i'*Nor_i + sqrt((Bez_i'*Nor_i)^2 +1 -norm(Bez_i)^2);
-    BezProj = Bez_i + Ksc*Nor_i;
-    Ang(i) = atan2(BezProj(2),BezProj(1));
+    if norm(Bez_i) >= 1
+      BezProj = Bez_i;
+    else
+      Ksc  = -Bez_i'*Nor_i + sqrt((Bez_i'*Nor_i)^2 +1 -norm(Bez_i)^2);
+      BezProj = Bez_i + Ksc*Nor_i;
+    end
   else
     Bez_i = tab_Bez(:,i);
     LinePt = GapStart(:,tab_Gap(i)) + (GapVect(:,tab_Gap(i))'*(Bez_i-GapStart(:,tab_Gap(i))))*GapVect(:,tab_Gap(i));
-    %tmp = LinePt - Bez_i;
-    %LineVect = tmp / norm(tmp);
     LineVect = [0,1; -1,0] * GapVect(:,tab_Gap(i));
     % reach circumference
-    Ksc  = -LinePt'*LineVect + sqrt((LinePt'*LineVect)^2 +1 -norm(LinePt)^2);
-    BezProj = LinePt + Ksc*LineVect;
-    Ang(i) = atan2(BezProj(2),BezProj(1));
+    if norm(LinePt) >= 1
+      BezProj = LinePt;
+    else
+      Ksc  = -LinePt'*LineVect + sqrt((LinePt'*LineVect)^2 +1 -norm(LinePt)^2);
+      BezProj = LinePt + Ksc*LineVect;
+    end
   end
+  Ang(i) = atan2(BezProj(2),BezProj(1));
 end
 
 % patch

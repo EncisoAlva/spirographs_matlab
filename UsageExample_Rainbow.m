@@ -137,7 +137,7 @@ Cflower_y  = [255, 229,  90]/255;
 % specific choice
 %ColorVector = {{Cwhite, Cmarigold, Cmarigold}, {Cscarlet, Cwhite}};
 
-ColorVector = {{Cblue_fcy, Cblue_fcy, Cflower_y}, {Cwhite, Cwhite, Cblue_fcy}};
+ColorVector = {{Cblue_fcy, Cblue_fcy, Cflower_y, Cpurple_cl, Cpurple_cl, Cflower_y}};
 
 %%
 % preview curve
@@ -148,7 +148,7 @@ CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
 CurveOpts.MaxSpins = 100;
-CurveOpts.MinSpins = 0;
+CurveOpts.MinSpins = 6;
 
 ColorCycles   = 3;
 ColorRefCurve = 'CumDist';

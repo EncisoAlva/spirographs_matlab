@@ -10,7 +10,7 @@
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC_border'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','Number8'));
 BPath = BPath_pack{1};
 
 clear BPath_pack
@@ -22,7 +22,7 @@ who -file ExampleCollections.mat
 % load curve
 BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
 BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{2};
+BPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -58,7 +58,7 @@ BPath = FlipPath(BPath);
 
 PlotPath(BPath)
 
-BPath = ShiftPath( BPath, 2, false );
+BPath = ShiftPath( BPath, 1, false );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,30 +69,19 @@ BPath = ShiftPath( BPath, 2, false );
 who -file ExampleCurves.mat
 
 % load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','Semicircle'));
+BPath_pack = struct2cell(load('ExampleCurves.mat','RotatedSquare'));
 HPath = BPath_pack{1};
 
 clear BPath_pack
 
 %%
 % check available curves in the example file
-who -file ExampleHoles.mat
-
-% load curve
-BPath_pack1 = struct2cell(load('ExampleHoles.mat','IcecreamUp'));
-BPath_pack2 = BPath_pack1{1};
-HPath = BPath_pack2{4};
-
-clear BPath_pack1 BPath_pack2
-
-%%
-% check available curves in the example file
 who -file ExampleCollections.mat
 
 % load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
+BPath_pack1 = struct2cell(load('ExampleCollections.mat','Hypocycloid'));
 BPath_pack2 = BPath_pack1{1};
-HPath = BPath_pack2{2};
+HPath = BPath_pack2{3};
 
 clear BPath_pack1 BPath_pack2
 
@@ -163,7 +152,7 @@ WheelRadiusTol = 0.000001;
 % designer stuff
 MarkerAngle0 = 0;
 
-WheelBezRatio = 8/7;
+WheelBezRatio = 6/5;
 % 3/2
 
 Shift  = 0;
@@ -259,12 +248,22 @@ CurveOpts.MinSpins = 1;
 aang = 2*pi*(0:1/1:1)+0*pi;
 aang(end) = [];
 MarkerAngle0Array = aang;
-nPts = size(MarkerAngle0Array,2);
+%nPts = size(MarkerAngle0Array,2);
 k = size(ColorVector,2);
 
+nPts = size(HPathArray,2);
+
 % compute curves
-[ DecorativeBez, ~, ~, ~, ~, AllMarkerPos, ~ ] = ...
-    SetupCurves_HoleBasic(nPts, BPath_new, HPath, BezBase, AngBase, WheelRadius, MarkerAngle0Array, CurveOpts);
+for j = 1:nPts
+  if j == 1
+    [ DecorativeBez, ~, ~, ~, ~, AllMarkerPos0, ~ ] = ...
+      SetupCurves_HoleBasic(nPts, BPath_new, HPathArray{j}, BezBase, AngBase, WheelRadius, MarkerAngle0Array, CurveOpts);
+  else
+    [ ~, ~, ~, ~, ~, AllMarkerPos0, ~ ] = ...
+      SetupCurves_HoleBasic(nPts, BPath_new, HPathArray{j}, BezBase, AngBase, WheelRadius, MarkerAngle0Array, CurveOpts);
+  end
+  AllMarkerPos{j} = AllMarkerPos0;
+end
 
 % plotting per se
 figure()
@@ -288,11 +287,10 @@ CurveOpts = {};
 CurveOpts.CloseEnds = false;
 CurveOpts.Tol = Tol;
 CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 11;
+CurveOpts.MaxSpins = 6;
 CurveOpts.Method = 'Hole';
 
 CurveOpts.MinSpins = 1;
-
 
 % compute curves
 [ DecorativeBez, DecorativeHole,...
@@ -329,4 +327,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 10, 'test_2600603_05_0', ExtraOpts )
+  30, 10, 'test_2600528_11_4', ExtraOpts )
