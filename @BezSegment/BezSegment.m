@@ -1,8 +1,11 @@
 classdef BezSegment
   properties
     CtrlPts
+    %
     Tol
     MaxIter
+    %
+    Perimeter
   end
 
   methods
@@ -33,6 +36,7 @@ classdef BezSegment
     [BezierTangent] = EvalTangent(  obj, TVals, CirRadius)
     [BezierNormal]  = EvalNormal(   obj, TVals, CirRadius)
     [CrossTime1, CrossTime2] = FindCollisionTime( obj, obj2, WheelRadius )
+    [Perimeter] = GetSegmentPerimeter( obj )
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end
 end
