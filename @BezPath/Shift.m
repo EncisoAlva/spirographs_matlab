@@ -11,32 +11,39 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BPathShifted] = ShiftPath( BPath, Shift, Halfen)
+function obj = Shift( obj, Shift, Halfen)
 
 % if there is no actual shift, return the input unchanged
-if (Shift == 0)&&(Halfen==false)
-  BPathShifted = BPath;
-  return
+if ( Shift>0 )||( Halfen==true )
+
+if Halfen
+  Segment_new = cell(1, obj.nSegments +1);
+else
+  Segment_new = cell(1, obj.nSegments);
 end
 
-nCurves = size(BPath,2);
-BPathShifted = {};
-
-for i = 1:nCurves
-  j = mod( i+Shift -1, nCurves ) + 1;
+for i = 1:obj.nSegments
+  j = mod( i+Shift -1, nSegments ) + 1;
   if Halfen
     if i == 1
-      [c1, c2] = HalfBezierSingle( BPath{j} );
-      BPathShifted{1} = c2;
-    elseif i == nCurves
-      BPathShifted{end+1} = BPath{j};
-      BPathShifted{end+1} = c1;
+      CurrSegment = obj.Segment{j};
+      [c1, c2] = CurrSegment.HalfSegment();
+      Segment_new{i} = BezSegment( c2 );
     else
-      BPathShifted{end+1} = BPath{j};
+      Segment_new{i} = obj.Segment{j};
+      if i == obj.nSegments
+        Segment_new{i+1} = BezSegment( c1 );
+      end
     end
   else
-    BPathShifted{end+1} = BPath{j};
+    Segment_new{i} = obj.Segment{j};
   end
+end
+
+if Halfen
+  obj.nSegments = obj.nSegments + 1;
+end
+
 end
 
 end

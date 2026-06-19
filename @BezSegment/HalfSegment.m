@@ -1,4 +1,4 @@
-% Change the direction of a Bezier curve.
+% Take all Bezier curves and divide each one in half. The purpose is to
 %
 % ---- INUPUT ------------------------------------------------------------
 %  CtrlPtsArray  Array with control points for each one of the Bezier
@@ -11,24 +11,29 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = RemovePointCurves( obj )
+function [CtrlPts1, CtrlPts2] = HalfSegment( obj )
 
-Segment_new = {};
+% original
+P = obj.CtrlPts;
+% first and second
+Q = zeros(2,4);
+R = zeros(2,4);
 
-for i = 1:obj.nSegments
-  CurrSegment     = obj.Segment{i};
-  CurrCtrlPts     = CurrSegment.CtrlPts;
-  CurrCtrlPtsDiff = CurrCtrlPts - mean(CurrCtrlPts, 2);
-  if max( vecnorm( CurrCtrlPtsDiff, 2, 1 ) ) > obj.Tol
-    Segment_new{end+1} = CurrSegment;
-  end
-end
+%  Casteljau algorithm for r = 1/2
+Q(:,1) = P(:,1);
+R(:,4) = P(:,4);
 
-% only update if there are changes
-nSegments_new = size(Segment_new, 2);
-if obj.nSegments ~= nSegments_new
-  obj.Segment = Segment_new;
-  obj.nSegments = nSegments_new;
-end
+Q(:,2) = ( P(:,1) + P(:,2) )/2;
+delta  = ( P(:,2) + P(:,3) )/2;
+R(:,3) = ( P(:,3) + P(:,4) )/2;
+
+Q(:,3) = ( Q(:,2) + delta  )/2;
+R(:,2) = ( R(:,3) + delta  )/2;
+
+Q(:,4) = ( Q(:,3) + R(:,2) )/2;
+R(:,1) = Q(:,4);
+
+CtrlPts1 = Q;
+CtrlPts2 = R;
 
 end

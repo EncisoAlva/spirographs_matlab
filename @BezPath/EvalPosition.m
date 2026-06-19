@@ -12,30 +12,30 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BezierVals] = PathEval( BPath, Tol)
+function [BezierVals] = EvalPosition( obj )
 
 BezierVals = [];
 
 % loop
 for j = 1:obj.nSegments
-  CurrCtrlPts = BPath{j};
-  LocalTime   = 0:( 1/ceil(1/(Tol/2)) ):1;
-  %iter = 0;
-  while true
-    LocalBezV = EvalBezier( CurrCtrlPts, LocalTime );
+  CurrSegment = obj.Segment{j};
+  LocalTime   = 0:( 1/ceil(1/(obj.Tol/2)) ):1;
+  iter = 0;
+  while iter < obj.MaxIter
+    LocalBezV = CurrSegment.EvalPosition( LocalTime );
     DiffCurve = vecnorm( diff(LocalBezV,1,2), 2, 1);
-    if max(DiffCurve) < Tol
+    if max(DiffCurve) < obj.Tol
       break
     end
     NewTimes = [];
     for i = 2:length(LocalTime)
-      if( DiffCurve(i-1) > Tol )
-        epsilon  = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(Tol/2));
+      if( DiffCurve(i-1) > obj.Tol )
+        epsilon  = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(obj.Tol/2));
         NewTimes = [ NewTimes, (LocalTime(i-1):epsilon:LocalTime(i)) ];
       end
     end
     LocalTime = unique( [LocalTime, NewTimes], "sorted" );
-    %iter = iter +1; % additional penalization
+    iter = iter +1; % additional penalization
   end
   BezierVals = [BezierVals, LocalBezV];
 end

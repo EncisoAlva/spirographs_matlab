@@ -18,9 +18,10 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BPath_scaled] = RescalePath( BPath, MaxRangeX, MaxRangeY)
+function obj = FitBox( obj, Center, MaxRange )
 
-nCurves = size(BPath,2);
+MaxRangeX = MaxRange(1);
+MaxRangeY = MaxRange(2);
 
 % init
 minX = Inf;
@@ -30,13 +31,14 @@ maxY = -Inf;
 
 % rudimentary bounding box, designed to be fast
 % doesn't account for the actual curve, only control points
-for i = 1:nCurves
-  currCurve = BPath{i};
+for i = 1:obj.nSegments
+  currSegment = obj.Segment{i};
+  currCtrlPts = currSegment.CtrlPts;
   % ony first and last control points are part of the curve
-  minX = min( [minX, currCurve(1,1), currCurve(1,4)] );
-  maxX = max( [maxX, currCurve(1,1), currCurve(1,4)] );
-  minY = min( [minY, currCurve(2,1), currCurve(2,4)] );
-  maxY = max( [maxY, currCurve(2,1), currCurve(2,4)] );
+  minX = min( [minX, currCtrlPts(1,1), currCtrlPts(1,4)] );
+  maxX = max( [maxX, currCtrlPts(1,1), currCtrlPts(1,4)] );
+  minY = min( [minY, currCtrlPts(2,1), currCtrlPts(2,4)] );
+  maxY = max( [maxY, currCtrlPts(2,1), currCtrlPts(2,4)] );
 end
 RangeX = maxX - minX;
 RangeY = maxY - minY;
@@ -49,9 +51,9 @@ elseif RangeX * (MaxRangeY / RangeY) <= MaxRangeX
 end
 
 % scaling per se
-BPath_scaled = cell(1, nCurves);
-for i = 1:nCurves
-  BPath_scaled{i} = BPath{i} * scaleFactor;
+for i = 1:obj.nSegments
+  currSegment = obj.Segment{i};
+  obj.Segment{i} = currSegment.Rescale( Center, scaleFactor );
 end
 
 end

@@ -12,31 +12,37 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function PlotHole( HPath )
+function PlotHole( obj )
 
 figure()
 hold on
 axis equal
 grid on
 
-ShowFig  = [PathEval(HPath, 0.01), [cos(2*pi*(0:0.01:1)); sin(2*pi*(0:0.01:1))]];
+ShowFig  = [obj.EvalPosition(), [cos(2*pi*(0:0.01:1)); sin(2*pi*(0:0.01:1))]];
 fill(ShowFig(1,:),ShowFig(2,:), [.1,.1,.1], 'EdgeColor', 'none');
 
 % plot control points
-for i = 1:size(HPath,2)
-  plot(HPath{i}(1,[1,2]),HPath{i}(2,[1,2]),'Color','blue')
-  plot(HPath{i}(1,[3,4]),HPath{i}(2,[3,4]),'Color','blue')
-  scatter(HPath{i}(1,[2,3]), HPath{i}(2,[2,3]),[],'blue','filled')
+for i = 1:obj.nSegments
+  CurrSegment = obj.Segment{i};
+  CPts = CurrSegment.CtrlPts;
+  plot(CPts(1,[1,2]),CPts(2,[1,2]),'Color','blue')
+  plot(CPts(1,[3,4]),CPts(2,[3,4]),'Color','blue')
+  scatter(CPts(1,[2,3]), CPts(2,[2,3]),[],'blue','filled')
 end
 
 % points with numbers
 for i = 1:2
-  scatter(HPath{i}(1,1),HPath{i}(2,1),200,'red','filled','o')
-  text(HPath{i}(1,1),HPath{i}(2,1),num2str(i-1),'Color','white','HorizontalAlignment','center')
+  CurrSegment = obj.Segment{i};
+  CPts = CurrSegment.CtrlPts;
+  scatter(CPts(1,1),CPts(2,1),200,'red','filled','o')
+  text(CPts(1,1),CPts(2,1),num2str(i-1),'Color','white','HorizontalAlignment','center')
 end
-for i = 3:size(HPath,2)
-  scatter(HPath{i}(1,1),HPath{i}(2,1),200,'blue','filled','o')
-  text(HPath{i}(1,1),HPath{i}(2,1),num2str(i-1),'Color','white','HorizontalAlignment','center')
+for i = 3:obj.nSegments
+  CurrSegment = obj.Segment{i};
+  CPts = CurrSegment.CtrlPts;
+  scatter(CPts(1,1),CPts(2,1),200,'blue','filled','o')
+  text(CPts(1,1),CPts(2,1),num2str(i-1),'Color','white','HorizontalAlignment','center')
 end
 
 % center of wheel, for reference

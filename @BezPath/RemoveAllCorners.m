@@ -18,32 +18,26 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BPath_rounded] = RemoveAllCorners( BPath, WheelRadius, Tol, ...
-  SkipNegPi)
+function obj_return = RemoveAllCorners( obj, WheelRadius )
 
-nCurves = size(BPath,2);
-CornerAngles = zeros(1,nCurves);
+CornerAngles = zeros(1,obj.nSegments);
+nSegments_new = obj.nSegments;
 
 % an array that will be changed multiple times
-BPath_aux = BPath;
-BPath_gap = BPath_aux;
-for i = 1:nCurves
-  BPath_gap{i} = [];
-end
+Segment_copy = obj.Segment;
+Segment_roll = cell( 1, obj.nSegments );
 
 % check for corners
-for i = 1:nCurves
+for i = 1:obj.nSegments
   % next curve may be the first curve
-  if i < nCurves
-    i_ = i+1;
-  else
-    i_ = 1;
-  end
+  i_ = mod( i+1-1, obj.nSegments ) +1;
   %
   % find the cornering angle
-  TangentPre = EvalBezierNormal(BPath_aux{i},  1, WheelRadius );
-  TangentPos = EvalBezierNormal(BPath_aux{i_}, 0, WheelRadius );
-  if (norm(TangentPos)>Tol) && (norm(TangentPre)>Tol)
+  SegmentPrev = Segment_copy{i};
+  SegmentPost = Segment_copy{i_};
+  TangentPre = SegmentPrev.EvalNormal( 1, WheelRadius );
+  TangentPos = SegmentPost.EvalNormal( 0, WheelRadius );
+  if (norm(TangentPos)>obj.Tol) && (norm(TangentPre)>obj.Tol)
     CornerAngles(i) = mod( atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1)), 2*pi);
   else
     % exception: vanishing first derivative; throw to exception handler
@@ -53,31 +47,38 @@ for i = 1:nCurves
   % only act if wheel can't roll freely
   % worst-case scenario found: if the corner angle is -pi
   if CornerAngles(i) >= pi
-    if (CornerAngles(i) == pi)&&(SkipNegPi)
+    if (CornerAngles(i) == pi)&&(obj.SkipNegPi)
       CornerAngles(i) = 0;
       continue
     end
-    CurvePre = BPath_aux{i};
-    CurvePos = BPath_aux{i_};
-    [CurvePre_new, CurvePos_new, Curve_gap] =...
-      RemoveSingleCorner(CurvePre, CurvePos, WheelRadius, Tol);
+    CtrlPtsPrev = SegmentPrev.CtrlPts;
+    CtrlPtsPost = SegmentPost.CtrlPts;
+    [SuccessFlag, CtrlPtsPrev_new, CtrlPtsPost_new, CtrlPts_roll] = ...
+      SegmentPrev.RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius );
     %
-    BPath_aux{i}  = CurvePre_new;
-    BPath_aux{i_} = CurvePos_new;
-    BPath_gap{i}  = Curve_gap;
+    if SuccessFlag
+      Segment_copy{i}  = CtrlPtsPrev_new;
+      Segment_copy{i_} = CtrlPtsPost_new;
+      Segment_roll{i}  = CtrlPts_roll;
+      nSegments_new    = nSegments_new + 1;
+    end
   end
 end
 
 % get auxiliary curves in line
-BPath_rounded = {};
-for i = 1:nCurves
-  BPath_rounded{end+1} = BPath_aux{i};
+Segment_new = cell( 1, nSegments_new );
+idx_cell = 1;
+for i = 1:obj.nSegments
+  Segment_new{idx_cell} = Segment_copy{i};
+  idx_cell = idx_cell + 1;
   if CornerAngles(i) >= pi
-    BPath_rounded{end+1} = BPath_gap{i};
+    Segment_new{idx_cell} = Segment_roll{i};
+    idx_cell = idx_cell + 1;
   end
 end
 
 % remove curves with all 4 points equal to each other
-BPath_rounded = RemovePointCurves( BPath_rounded, Tol );
+obj_return = Segment( Segment_new );
+obj_return = obj_return.RemovePointCurves( Segment_new );
 
 end

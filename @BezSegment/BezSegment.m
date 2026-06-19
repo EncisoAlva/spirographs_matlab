@@ -37,6 +37,7 @@ classdef BezSegment
     [BezierNormal]  = EvalNormal(   obj, TVals, CirRadius)
     [CrossTime1, CrossTime2] = FindCollisionTime( obj, obj2, WheelRadius )
     [Perimeter] = GetSegmentPerimeter( obj )
+    [CtrlPts1, CtrlPts2] = HalfSegment( obj )
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end
 end

@@ -11,12 +11,11 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BPathTrasnlated] = TranslatePath( BPath, xy )
-
-BPathTrasnlated = BPath;
+function obj = Translate(  obj, Translation )
  
-for i = 1:size(BPath, 2)
-  BPathTrasnlated{i} = BPath{i} + xy;
+for i = 1:obj.nSegments
+  currSegment = obj.Segment{i};
+  obj.Segment{i} = currSegment.Translate( Translation );
 end
 
 end

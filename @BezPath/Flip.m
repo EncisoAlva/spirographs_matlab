@@ -11,13 +11,13 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BPathRotated] = RotatePath( BPath, th )
+function obj = Flip( obj )
 
-BPathRotated = BPath;
+obj.Segment = flip( obj.Segment );
 
-ROT = [cos(th), -sin(th); sin(th), cos(th)];
-for i = 1:size(BPath, 2)
-  BPathRotated{i} = ROT * BPath{i};
+for i = 1:obj.nSegments
+  currSegment = obj.Segment{i};
+  obj.Segment{i} = currSegment.Flip();
 end
 
 end
