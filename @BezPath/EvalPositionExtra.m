@@ -12,9 +12,11 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BezierVals] = EvalPosition( obj, Tol2 )
+function [BezierVals, Curve, Tval] = EvalPositionExtra( obj, Tol2 )
 
 BezierVals = [];
+Curve = [];
+Tval = [];
 
 % loop
 for j = 1:obj.nSegments
@@ -38,6 +40,8 @@ for j = 1:obj.nSegments
     iter = iter +1; % additional penalization
   end
   BezierVals = [BezierVals, LocalBezV];
+  Curve = [Curve, j*ones(size(LocalBezV))];
+  Tval = [Tval, LocalTime];
 end
 
 end

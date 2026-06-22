@@ -8,15 +8,21 @@
 % MATLAB Central File Exchange. Retrieved September 22, 2025. 
 %
 % ---- INUPUT ------------------------------------------------------------
-%         svgname  File name of SVG file [string]
+%        FileName  File name of SVG file [string]
 %
 % ---- OUTPUT ------------------------------------------------------------
 %      BPathArray  Array {1x?} <- Array of control points {1x?} <- [2,4]
 %
-function BPathArray = LoadSVG( svgname )
+function [BPathArray] = LoadSVG( FileName )
+
+if ~isfile(FileName)
+  warning(['Bezier curves cannot be leaded. File ',FileName,' does not exist.'])
+  BPathArray = [];
+  return
+end
 
 % get raw file contents
-svgtext = fileread(svgname);
+svgtext = fileread(FileName);
 
 % technical config, I'm not sure the format
 P_status = '[MmCcLlSsVvHhZz]';
