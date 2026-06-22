@@ -3,62 +3,35 @@
 BezPath.CheckExamples();
 
 %%
+% generate empty curve
+Curve = BezGlissette();
 
-% load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC'));
-BPath = BPath_pack{1};
-clear BPath_pack
+% load path from example
+Curve.LoadBezPath( 'UniqueCurve', 'LetterC' )
 
-%%
-% check available curves in the example file
-who -file ExampleCollections.mat
+% load path from indexed example
+Curve.LoadBezPath( 'IndexedCurve', 'Circlegon', 2 )
 
-% load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
-BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{4};
-
-clear BPath_pack1 BPath_pack2
-
-%%
-% load from file
-BPath_pack = LoadSVG( './curves_svg/Yscavenge.svg' );
-BPath = BPath_pack{1};
-clear BPath_pack
+% load path from SVG file
+Curve.LoadBezPath( 'SVG', './curves_svg/Yscavenge.svg' )
 
 %%
 % pre-processing
 
-% rotate by an angle
-BPath = RotatePath( BPath, pi/2 );
+Curve.BPath.Rotate( pi/2 );
 
-% change orientation
-BPath = FlipPath(BPath);
+Curve.BPath.Flip();
 
-%%
-% show control points
+Curve.BPath.Shift( 1, false );
 
-PlotPath(BPath)
-
-BPath = ShiftPath( BPath, 1, false );
+Curve.BPath.PlotPath()
 
 %%
-% parameters
-
-% technical stuff
-Tol = 0.005;
-CloseTol = 0.01;
-MaxSpins = 100;
-WheelRadiusTol = 0.000001;
+% designer parameters
 
 % designer stuff
-MarkerAngle0 = 0;
-
 WheelBezRatio = 6;
 WheelMarkerRatio = 4/5;
-
-Shift  = 0;
-Halfen = false;
 
 %% 
 % remove inner corners
@@ -94,12 +67,6 @@ BPath_new = ShiftPath( BPath_new, Shift, Halfen );
 BPath_new = ShiftPath( BPath, Shift, Halfen );
 WheelRadius = (PathPerimeter(BPath_new,0.00001)/(2*pi))/WheelBezRatio
 MarkerRadius = WheelRadius*WheelMarkerRatio;
-
-%% 
-% adjust start point after rounding
-PlotPath(BPath_new)
-
-BPath_new = ShiftPath( BPath_new, 1, true);
 
 %%
 

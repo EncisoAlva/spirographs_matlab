@@ -26,8 +26,20 @@ classdef BezPath
           CurveName  = varargin{1};
           CurveIndex = varargin{2};
           BPath_pack1 = struct2cell(load('ExampleCollections.mat',CurveName));
-          BPath_pack2 = BPath_pack1{CurveIndex};
-          CtrlPtsArray = BPath_pack2{4};
+          BPath_pack2 = BPath_pack1{1};
+          CtrlPtsArray = BPath_pack2{CurveIndex};
+          clear BPath_pack1 BPath_pack2
+        case 'SVG'
+          FileName = varargin{1};
+          % use first curve in file, unless otherwise is requested
+          if size(varargin, 2) > 1
+            CurveIndex = varargin{2};
+          else
+            CurveIndex = 1;
+          end
+          BPath_pack1 = BezPath.LoadSVG( FileName );
+          BPath_pack2 = BPath_pack1{1};
+          CtrlPtsArray = BPath_pack2{CurveIndex};
           clear BPath_pack1 BPath_pack2
       end
       %
