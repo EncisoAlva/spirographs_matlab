@@ -15,6 +15,7 @@ classdef BezGlissette < handle
     CloseTol
     MaxSpins
     WheelRadiusTol
+    CloseEnds
     %
     MinSpins
   end
@@ -30,6 +31,7 @@ classdef BezGlissette < handle
       obj.Marker1Angle0 = 0;
       obj.Shiften = 0;
       obj.Halfen = false;
+      obj.CloseEnds = true;
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     LoadBezPath(obj, varargin)
