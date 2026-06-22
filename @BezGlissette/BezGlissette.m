@@ -2,9 +2,14 @@ classdef BezGlissette < handle
   properties
     BPath
     %
+    Wheel1BezRatio_num
+    Wheel1BezRatio_den
+    %
     Marker1Angle0
     Shiften
     Halfen
+    RemoveCorners_Rolling
+    RemoveCorners_NonRolling
     %
     Tol
     CloseTol
@@ -28,6 +33,7 @@ classdef BezGlissette < handle
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     LoadBezPath(obj, varargin)
+    Set_Wheel1BezRatio(obj, varargin)
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end

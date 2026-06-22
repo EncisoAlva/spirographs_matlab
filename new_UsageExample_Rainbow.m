@@ -28,10 +28,9 @@ Curve.BPath.PlotPath()
 
 %%
 % designer parameters
+Curve.Set_Wheel1BezRatio( 6 );
 
-% designer stuff
-WheelBezRatio = 6;
-WheelMarkerRatio = 4/5;
+Curve.WheelMarkerRatio = 4/5;
 
 %% 
 % remove inner corners
