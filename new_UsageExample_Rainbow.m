@@ -67,51 +67,23 @@ Curve.SetColor( {Cblue_fcy, Cblue_fcy, Cflower_y, Cpurple_cl, Cpurple_cl, Cflowe
 %%
 % preview curve
 
-% compute curves
-[ DecorativeBez, AllBezierPos, ~, ~, AllMarkerPos, ~ ] = ...
-    SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-      CurveOpts);
+Curve.ProcessGlissette()
 
 Curve.PlotGlissette()
 
 %%
 % video
 
-% curve parameters
-CurveOpts = {};
-CurveOpts.CloseEnds = false;
-CurveOpts.Tol = Tol;
-CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 100;
-CurveOpts.MinSpins = 1;
-
-MarkerAngle0Array = 0;
-nPts = size(MarkerAngle0Array,2);
-
-% compute curves
-[ DecorativeBez,...
-  AllBezierPos, AllLocTime, ...
-  AllWhCtrPos, AllMarkerPos, AllMarkerAngle ] = ...
-    SetupCurves_Npts( nPts, BPath_new, WheelRadius, MarkerRadius, MarkerAngle0Array, ...
-      CurveOpts);
-
 % video parameters
-ExtraOpts = {};
-ExtraOpts.Plot2Circles = false;
-ExtraOpts.Format = 'mp4';
-ExtraOpts.Orientation = 'in';
-ExtraOpts.Ratio = 16/9;
-ExtraOpts.TimeRefCurve = 'Average';
-%ExtraOpts.TimerefCurve = 'Wheel';
-ExtraOpts.LineWidth = 2;
-ExtraOpts.Tol = Tol;
-ExtraOpts.WheelRadii = WheelRadius*ones(1,nPts);
-
-ExtraOpts.ColorCycles   = 3;
-ExtraOpts.ColorRefCurve = 'CumDist';
-%ExtraOpts.ColorRefCurve = 'Bezier';
-%
-ExtraOpts.WhoIsCenter = 1;
+VideoOpts = {};
+VideoOpts.Format = 'mp4';
+VideoOpts.Orientation = 'in';
+VideoOpts.Ratio = 16/9;
+VideoOpts.TimeRefCurve = 'Average';
+%VideoOpts.TimerefCurve = 'Wheel';
+VideoOpts.LineWidth = 2;
+VideoOpts.WhoIsCenter = 1;
+VideoOpts.WheelRadii = Curve.Wheel1Radius;
 
 % video
 MakeVideo_Npts( nPts, ...
@@ -119,4 +91,4 @@ MakeVideo_Npts( nPts, ...
   AllBezierPos, AllLocTime, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
-  30, 7.5, 'test_2600515_02_3', ExtraOpts )
+  30, 7.5, 'test_2600515_02_3', VideoOpts )

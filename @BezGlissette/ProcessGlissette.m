@@ -62,8 +62,8 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
 
     % main loop
     iter = 0;
-    locTolFlag = false;
-    while (iter < obj.MaxIter) && ~locTolFlag
+    %locTolFlag = false;
+    while (iter < obj.MaxIter) %&& ~locTolFlag
       iter = iter+1; % max iterations
       nPts = size(LocalTime,2);
       
@@ -129,7 +129,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       % check if the marker points are not too far from each other
       DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);
       if max(DiffCurve) < Tol
-        locTolFlag = true;
+        %locTolFlag = true;
         break
       end
       

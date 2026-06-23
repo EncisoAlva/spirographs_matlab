@@ -71,6 +71,8 @@ classdef BezGlissette < handle
     SetColor( obj, ColorVector, varargin )
     ProcessColors( obj )
     PlotGlisette( obj )
+    ProcessGlissette( obj )
+    MakeVideo( obj )
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end
