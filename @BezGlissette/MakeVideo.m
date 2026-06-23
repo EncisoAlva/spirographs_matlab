@@ -34,9 +34,6 @@ else
   AfterTime = 7.5;
 end
 
-% patch
-nMarkers = 1;
-
 % parameters
 nCenters = size(VideoOpts.WhoIsCenter,2);
 if size(VideoOpts.WheelRadii,2) < max(VideoOpts.WhoIsCenter)
