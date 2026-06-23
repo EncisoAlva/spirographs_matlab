@@ -8,6 +8,9 @@ classdef BezGlissette < handle
     Wheel1BezRatio_den
     Wheel1BezRatio
     %
+    Wheel1Radius
+    MarkerRadius
+    %
     Marker1Angle0
     Shiften
     Halfen
@@ -28,6 +31,7 @@ classdef BezGlissette < handle
     WheelRadiusTol
     CloseEnds
     MaxIter
+    ChangeOrient
     %
     MinSpins
   end
@@ -50,6 +54,15 @@ classdef BezGlissette < handle
       obj.RemoveCorners_NonRolling = false;
       obj.RemoveCorners_Both = false;
       obj.Multicolor = false;
+      obj.ChangeOrient = false;
+      %
+      % relative tolerance
+      minX = min(obj.BPath.CtrlPts(1,:));
+      maxX = max(obj.BPath.CtrlPts(1,:));
+      minY = min(obj.BPath.CtrlPts(2,:));
+      maxY = max(obj.BPath.CtrlPts(2,:));
+      obj.Tol = max( norm( [ maxX-minX; maxY-minY ] )*(1e-4), 0.005);
+      obj.CloseTol = max( obj.Tol*(1e-1), 0.001);
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     LoadBezPath(obj, varargin)
