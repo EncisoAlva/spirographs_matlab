@@ -24,4 +24,7 @@ function obj = Set_Wheel1BezRatio( obj, varargin )
 
   % others
   obj.MinSpins = obj.Wheel1BezRatio_den;
+
+  % for ease of use, keep both the number and the numerator and denominator
+  obj.Wheel1BezRatio = obj.Wheel1BezRatio_num / obj.Wheel1BezRatio_den;
 end

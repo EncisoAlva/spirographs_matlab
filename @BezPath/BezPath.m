@@ -1,4 +1,4 @@
-classdef BezPath
+classdef BezPath < handle
   properties
     Segment  % array, it is singular for ease of reading
     nSegments
@@ -57,14 +57,15 @@ classdef BezPath
       obj.StandardPreprocess()
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    obj = StandardPreprocess( obj )
-    obj = Flip( obj )
-    obj = RemovePointCurves( obj )
-    obj = PointInwards( obj )
-    obj = FitBox( obj, Center, MaxRange )
-    obj = Rescale( obj, Center, ScaleFactor )
-    obj = Rotate( obj, Center, Angle )
-    obj = Translate(  obj, Translation )
+    StandardPreprocess( obj )
+    Flip( obj )
+    RemovePointCurves( obj )
+    PointInwards( obj )
+    FitBox( obj, Center, MaxRange )
+    Rescale( obj, Center, ScaleFactor )
+    Rotate( obj, Center, Angle )
+    Translate(  obj, Translation )
+    Shift( obj, Shift, Halfen)
     %
     PlotPath( obj )
     PlotHole( obj )
