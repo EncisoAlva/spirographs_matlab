@@ -1,8 +1,10 @@
 classdef BezGlissette < handle
   properties
+    Method
     BPath
     OG_BPath
-    Method
+    HPath
+    OG_HPath
     %
     Wheel1BezRatio_num
     Wheel1BezRatio_den
@@ -65,10 +67,13 @@ classdef BezGlissette < handle
       obj.CloseTol = max( obj.Tol*(1e-1), 0.001);
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    LoadBezPath(obj, varargin)
+    LoadRolingPath(obj, varargin)
+    LoadHolePath(obj, varargin)
     Set_Wheel1BezRatio(obj, varargin)
     RemoveCorners( obj )
     SetColor( obj, ColorVector, varargin )
+    SetupHole( obj, CheckFit )
+    DEV_SetupHole_concave( obj, CheckFit )
     ProcessColors( obj )
     PlotGlisette( obj )
     ProcessGlissette( obj )

@@ -2,9 +2,12 @@
 % check available curves
 BezPath.CheckExamples();
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% load path to roll on
+
 %%
 % generate empty curve
-Curve = BezGlissette( 'Standard' );
+Curve = BezGlissette( 'Hole' );
 
 % load path from example
 Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
@@ -26,9 +29,47 @@ Curve.BPath.Shift( 1, false );
 
 Curve.BPath.PlotPath()
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% load path for the hole in the wheel
+
+% load path from example
+Curve.LoadHolePath( 'UniqueCurve', 'LetterC' )
+
+% load path from indexed example
+Curve.LoadHolePath( 'IndexedCurve', 'Circlegon', 2 )
+
+% load path from SVG file
+Curve.LoadHolePath( 'SVG', './curves_svg/Yscavenge.svg' )
+
+%%
+% pre-processing
+
+Curve.BPath.FitBox( [0;0], [1;1] )
+
+Curve.BPath.Flip().RemoveAllCorners().Flip()
+
+Curve.BPath.Translate( [0,0.5]' )
+
+Curve.BPath.Rotate( -pi/2 );
+
+Curve.BPath.Flip();
+
+Curve.BPath.Shift( 1, false );
+
+Curve.BPath.PlotHole()
+
+%%
+% prepare for interpolation
+Curve.SetupHole( true )
+
+% experimental
+Curve.DEV_SetupHole_concave( true )
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%
 % designer parameters
-Curve.Set_Wheel1BezRatio( 6 );
+Curve.Set_Wheel1BezRatio( 8, 7 );
 
 Curve.WheelMarkerRatio = 4/5;
 
@@ -79,8 +120,11 @@ VideoOpts = {};
 VideoOpts.Format = 'mp4';
 VideoOpts.Orientation = 'in';
 VideoOpts.Ratio = 16/9;
-VideoOpts.TimeRefCurve = 'Average';
-%VideoOpts.TimerefCurve = 'Wheel';
+%ExtraOpts.TimeRefCurve = 'Average';
+%ExtraOpts.TimeRefCurve = 'Wheel';
+%ExtraOpts.TimeRefCurve = 'Marker';
+ExtraOpts.TimeRefCurve = 'Avg_MarkerBezier';
+
 VideoOpts.LineWidth = 2;
 VideoOpts.WhoIsCenter = 1;
 VideoOpts.WheelRadii = Curve.Wheel1Radius;

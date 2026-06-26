@@ -3,6 +3,12 @@ function ProcessGlissette( obj )
 % this evaluation is for background decoration only
 obj.DecorativeBez = obj.BPath.EvalPotition( obj.Tol );
 
+% additional, specific, preparation for each method
+switch obj.Method
+  case 'Hole'
+    obj.DecorativeHole = obj.HPath.EvalPotition( obj.Tol );
+end
+
 % trying to generate a glissette without defining a method
 if ~isprop(obj, 'Method')
   obj.Method = 'Default';
