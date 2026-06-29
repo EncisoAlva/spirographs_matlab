@@ -17,7 +17,7 @@
 %
 function [Perimeter] = GetSegmentPerimeter( obj )
 
-if ~isprop( obj, 'Perimeter' )
+if ~isprop( obj, 'Perimeter' ) || isempty(obj.Perimeter)
 % compute only if it was not computed before
 
 obj.Perimeter = 0;
@@ -52,10 +52,6 @@ while iter < obj.MaxIter
 end
 
 obj.Perimeter = sum(DiffCurve);
-
-end
-
-Perimeter = obj.Perimeter;
 
 end
 

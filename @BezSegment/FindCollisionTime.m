@@ -20,7 +20,11 @@
 % control point of the first curve. This is not checked.
 %
 function [CrossTime1, CrossTime2] = ...
-  FindCollisionTime( obj, obj2, WheelRadius )
+  FindCollisionTime( CtrlPts1, CtrlPts2, WheelRadius )
+
+% for evaluation, convert to BezSegments
+Curve1 = BezSegment(CtrlPts1);
+Curve2 = BezSegment(CtrlPts2);
 
 % initial and finishing times
 t0_1 = 0;
@@ -30,15 +34,15 @@ tF_2 = 1;
 
 % approximate the curve: if precision up to Tol is not reached, iterate
 iter = 1;
-while iter < obj.MaxIter
+while iter < Curve1.MaxIter
   % interpolate curves adn their normals
-  LocalTime1 = t0_1:((tF_1-t0_1)/(ceil((tF_1-t0_1)/obj.Tol)+iter)):tF_1;
-  LocalTime2 = t0_2:((tF_2-t0_2)/(ceil((tF_2-t0_2)/obj.Tol)+iter)):tF_2;
+  LocalTime1 = t0_1:((tF_1-t0_1)/(ceil((tF_1-t0_1)/Curve1.Tol)+iter)):tF_1;
+  LocalTime2 = t0_2:((tF_2-t0_2)/(ceil((tF_2-t0_2)/Curve1.Tol)+iter)):tF_2;
 
-  BezierPos1  = obj.EvalPosition(  LocalTime1 );
-  BezierPos2  = obj2.EvalPosition( LocalTime2 );
-  BezierNorm1 = obj.EvalNormal(  LocalTime1, WheelRadius );
-  BezierNorm2 = obj2.EvalNormal( LocalTime2, WheelRadius );
+  BezierPos1  = Curve1.EvalPosition(  LocalTime1 );
+  BezierPos2  = Curve2.EvalPosition( LocalTime2 );
+  BezierNorm1 = Curve1.EvalNormal(  LocalTime1, WheelRadius );
+  BezierNorm2 = Curve2.EvalNormal( LocalTime2, WheelRadius );
 
   WhCtrPos1 = BezierPos1 + BezierNorm1;
   WhCtrPos2 = BezierPos2 + BezierNorm2;
@@ -57,7 +61,7 @@ while iter < obj.MaxIter
   idx2 = curve1_dis_idx(idx1);
 
   % if the normals are different, make a better approximation
-  if dist < obj.Tol
+  if dist < Curve1.Tol
     break
   end
   t0_1 = max(0,LocalTime1(idx1)-0.5/2^iter);
@@ -68,7 +72,7 @@ while iter < obj.MaxIter
 end
 
 % report results
-if iter < obj.MaxIter
+if iter < Curve1.MaxIter
   CrossTime1 = LocalTime1(idx1);
   CrossTime2 = LocalTime2(idx2);
 else

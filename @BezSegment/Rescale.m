@@ -18,8 +18,16 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = Rescale( obj, Center, ScaleFactor )
+function Rescale( obj, ScaleFactor, varargin )
 
+% by default, the center of scaling is the origin
+if size(varargin)>0
+  Center = varargin{1}; 
+else
+  Center = [0,0]';
+end
+
+% actual rescaling is simple
 obj.CtrlPts = ( obj.CtrlPts - Center )*ScaleFactor + Center;
 
 end

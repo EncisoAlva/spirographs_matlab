@@ -13,7 +13,14 @@
 %   TangentVals  Radius of spirograph wheel, a negative radius indicates
 %                that the wheel rolls inside the curve [1]
 %
-function [BezierTangent] = EvalTangent( obj, TVals, CirRadius)
+function [BezierTangent] = EvalTangent( obj, TVals, varargin)
+  % often it is not important the length of the vector
+  if ~isempty(varargin)
+    CirRadius = varargin{1};
+  else
+    CirRadius = 1;
+  end
+
   % the tangent vector is the derivative of the curve
   BezierPrime = 3*( (1-TVals).^2) .* (obj.CtrlPts(:,2)-obj.CtrlPts(:,1))+ ...
     6 * ((1-TVals).*(TVals)) .* (obj.CtrlPts(:,3)-obj.CtrlPts(:,2)) + ...

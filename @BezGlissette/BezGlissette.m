@@ -76,6 +76,7 @@ classdef BezGlissette < handle
     DEV_SetupHole_concave( obj, CheckFit )
     ProcessColors( obj )
     PlotGlisette( obj )
+    PlotStarFilling( obj )
     ProcessGlissette( obj )
     MakeVideo( obj )
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

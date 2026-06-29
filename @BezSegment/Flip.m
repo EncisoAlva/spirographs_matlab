@@ -11,7 +11,7 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = Flip( obj )
+function Flip( obj )
 
 obj.CtrlPts = flip( obj.CtrlPts, 2 );
 

@@ -11,7 +11,7 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = ForceCubicLine( obj )
+function ForceCubicLine( obj )
 
 % case: P0 = P1
 CurrCurve = obj.CtrlPts;

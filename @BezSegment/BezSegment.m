@@ -1,4 +1,4 @@
-classdef BezSegment
+classdef BezSegment < handle
   properties
     CtrlPts
     %
@@ -26,18 +26,21 @@ classdef BezSegment
       obj.MaxIter = 10;
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    obj = ForceCubicLine( obj )
-    obj = Flip( obj )
-    obj = Rescale( obj, Center, ScaleFactor )
-    obj = Rotate(  obj, Center, Angle )
-    obj = Translate(  obj, Translation )
+    ForceCubicLine( obj )
+    Flip( obj )
+    Rescale( obj, ScaleFactor, varargin )
+    Rotate(  obj, Angle, varargin )
+    Translate(  obj, Translation )
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [BezierVals]    = EvalPosition( obj, TVals)
-    [BezierTangent] = EvalTangent(  obj, TVals, CirRadius)
-    [BezierNormal]  = EvalNormal(   obj, TVals, CirRadius)
-    [CrossTime1, CrossTime2] = FindCollisionTime( obj, obj2, WheelRadius )
+    [BezierTangent] = EvalTangent(  obj, TVals, varargin)
+    [BezierNormal]  = EvalNormal(   obj, TVals, varargin)
     [Perimeter] = GetSegmentPerimeter( obj )
+    [CtrlPts1, CtrlPts2] = HalfSegment( obj )
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  end
+  methods (Static)
+    [CrossTime1, CrossTime2] = FindCollisionTime( CtrlPts1, CtrlPts2, WheelRadius )
   end
 end
 

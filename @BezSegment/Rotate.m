@@ -11,7 +11,14 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = Rotate(  obj, Center, Angle )
+function obj = Rotate(  obj, Angle, varargin )
+
+% by default, the center of scaling is the origin
+if size(varargin)>0
+  Center = varargin{1};
+else
+  Center = [0,0]';
+end
 
 ROT = [cos(Angle), -sin(Angle); sin(Angle), cos(Angle)];
 obj.CtrlPts = ROT * ( obj.CtrlPts - Center ) + Center;
