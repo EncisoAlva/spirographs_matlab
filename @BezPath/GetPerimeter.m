@@ -17,7 +17,7 @@
 %
 function [Perimeter] = GetPerimeter( obj )
 
-if ~isprop( obj, 'Perimeter' )
+if ~isprop( obj, 'Perimeter' ) || isempty(obj.Perimeter)
 
 obj.Perimeter = 0;
 

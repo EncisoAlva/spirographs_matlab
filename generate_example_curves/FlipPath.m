@@ -1,7 +1,7 @@
 % Change the direction of a Bezier curve.
 %
 % ---- INUPUT ------------------------------------------------------------
-%  BPath  Array with control points for each one of the Bezier
+%         BPath  Array with control points for each one of the Bezier
 %                curves that make the curve {?} <- [2,4]'s
 %
 % ---- OUTPUT ------------------------------------------------------------
@@ -11,10 +11,12 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function ForceCubicLines( obj )
+function [BPathFlipped] = FlipPath( BPath)
 
-for i = 1:obj.nSegments
-  obj.Segment{i}.ForceCubicLine();
+BPathFlipped = flip( BPath );
+
+for i = 1:size(BPath,2)
+  BPathFlipped{i} = flip( BPathFlipped{i}, 2 );
 end
 
 end

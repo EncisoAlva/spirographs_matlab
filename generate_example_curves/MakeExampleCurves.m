@@ -174,9 +174,6 @@ VertEye = {R*[...
   [-1,-0.5]',...
   [-1,0]'...
   ]};
-[c1,c2] = HalfBezierSingle(VertEye{1});
-VertEye{1} = c2;
-VertEye{end+1} = c1;
 
 clear R
 
@@ -267,13 +264,12 @@ Heart = {[...
 
 %%
 % simple 4-spike star
-[c1, c2] = HalfBezierSingle([...
+Astroid4 = {[...
   [-1,0]',...
   [-1,0]'+[1, 0]'*(4/3)*tan(pi/8), ...
   [ 0,1]'+[0,-1]'*(4/3)*tan(pi/8), ...
   [0,1]'
-  ]);
-Astroid4 = {c2,[...
+  ],[...
   [0,1]',...
   [0,1]'+[0,-1]'*(4/3)*tan(pi/8), ...
   [1,0]'+[-1,0]'*(4/3)*tan(pi/8), ...
@@ -288,9 +284,7 @@ Astroid4 = {c2,[...
   [0,-1]'+[0,1]'*(4/3)*tan(pi/8), ...
   [-1,0]'+[1,0]'*(4/3)*tan(pi/8), ...
   [-1,0]'
-  ], c1};
-
-clear c1 c2
+  ]};
 
 %%
 % rotated square
@@ -325,12 +319,8 @@ LetterI = {R*[...
   [-1+(4/3)*tan(pi/8),0]',...
   [-1,0]'
   ]};
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(LetterI{1});
-LetterI{1} = c2;
-LetterI{end+1} = c1;
 
-clear R c1 c2
+clear R
 
 %%
 % semicircle
@@ -583,16 +573,16 @@ LetterB = {...
 
 
 %%
-% self-intersecting shcape
+% self-intersecting shape
 xx = 1;
 yy = 3;
-[c1, c2] = HalfBezierSingle([1,0; 1+1+xx, -yy; -1-1-xx, -yy; -1,0]');
-SelfIntersect2 = {c2,[...
+SelfIntersect2 = {[...
+  1,0; 1+1+xx, -yy; -1-1-xx, -yy; -1,0 ...
+  ]',[...
   -1,0; 1+2*xx, 2*yy; -1-2*xx, 2*yy; 1, 0 ...
-  ]',...
-  c1};
+  ]'};
 
-clear xx yy c1 c2
+clear xx yy
 
 %%
 % self-intersecting circle
@@ -627,7 +617,6 @@ SelfIntersectCircle = {[...
   [0,-1]'+[1, 0]'*(4/3)*tan(pi/8),...
   [0,-1]'
   ]};
-SelfIntersectCircle = FlipPath(SelfIntersectCircle);
 
 %%
 % up V with circle borders
@@ -697,13 +686,6 @@ for i = 1:(size(PtsAll,2)-1)
   %
   Star5{end+1} = CurrCurve;
 end
-
-%Star5_backup = Star5;
-%[mid1, mid2] = HalfBezierSingle( Star5{1} );
-%Star5 = { mid1, mid2 };
-%for i = 2:size(Star5_backup,2)
-%  Star5{end+1} = Star5_backup{i};
-%end
 
 clear aang CurrCurve i mid1 mid2 PtsAll PtsInn PtsOut Star5_backup
 
@@ -778,12 +760,7 @@ for i = 1:5
   Angel5{end+1} = CurrCtrl;
 end
 
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Angel5{1});
-Angel5{1} = c2;
-Angel5{end+1} = c1;
-
-clear aang hex_pts CurrCtrl c1 c2 i
+clear aang hex_pts CurrCtrl i
 
 %%
 % 6 eyes thingy
@@ -800,12 +777,7 @@ for i = 1:6
   Angel6{end+1} = CurrCtrl;
 end
 
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Angel6{1});
-Angel6{1} = c2;
-Angel6{end+1} = c1;
-
-clear aang hex_pts CurrCtrl c1 c2 i
+clear aang hex_pts CurrCtrl i
 
 %%
 % 6 hexagon circles stitched together
@@ -822,12 +794,7 @@ for i = 1:6
   Balls6{end+1} = CurrCtrl;
 end
 
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Balls6{1});
-Balls6{1} = c2;
-Balls6{end+1} = c1;
-
-clear aang hex_pts CurrCtrl c1 c2 i
+clear aang hex_pts CurrCtrl i
 
 %%
 % error on fidget, maybe profitable
@@ -844,12 +811,7 @@ for i = 1:6
   Fidget3_bad{end+1} = CurrCtrl;
 end
 
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Fidget3_bad{1});
-Fidget3_bad{1} = c2;
-Fidget3_bad{end+1} = c1;
-
-clear aang hex_pts CurrCtrl c1 c2 i
+clear aang hex_pts CurrCtrl i
 
 %%
 % 3 fidget spinner
@@ -866,12 +828,7 @@ for i = 1:6
   Fidget3{end+1} = CurrCtrl;
 end
 
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Fidget3{1});
-Fidget3{1} = c2;
-Fidget3{end+1} = c1;
-
-clear aang hex_pts CurrCtrl c1 c2 i
+clear aang hex_pts CurrCtrl i
 
 %%
 % bone
@@ -924,12 +881,7 @@ for i = 1:size(Bone, 2)
   Bone{i} = ROT * Bone{i};
 end
 
-% change starting point (artistic choice)
-[c1,c2] = HalfBezierSingle(Bone{1});
-Bone{1} = c2;
-Bone{end+1} = c1;
-
-clear c1 c2 th ROT i
+clear th ROT i
 
 %%
 % roses
@@ -1010,9 +962,6 @@ TwoCircles = {[...
   [-6, 0]'+[ 0,-3]'*(4/3)*tan(pi/8),...
   [-6, 0]'...
   ]};
-
-% rotate
-TwoCircles = RotatePath( TwoCircles, pi/2 );
 
 %%
 save('ExampleCurves.mat')

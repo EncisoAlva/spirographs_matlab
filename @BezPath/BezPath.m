@@ -24,7 +24,11 @@ classdef BezPath < handle
           clear BPath_pack
         case 'IndexedCurve'
           CurveName  = varargin{1};
-          CurveIndex = varargin{2};
+          if size(varargin, 2) > 1
+            CurveIndex = varargin{2};
+          else
+            CurveIndex = 1;
+          end
           BPath_pack1 = struct2cell(load('ExampleCollections.mat',CurveName));
           BPath_pack2 = BPath_pack1{1};
           CtrlPtsArray = BPath_pack2{CurveIndex};
@@ -54,7 +58,7 @@ classdef BezPath < handle
       obj.Area = obj.GetArea();
       %
       obj.CornerRoundingRadius = sqrt(0.001*obj.Area/pi);
-      obj.StandardPreprocess()
+      %obj.StandardPreprocess()
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     StandardPreprocess( obj )
@@ -72,8 +76,9 @@ classdef BezPath < handle
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [Area] = GetArea( obj )
     [Perimeter] = GetPerimeter( obj )
-    [BezierVals] = EvalPosition( obj, Tol2 )
-    [BezierVals, Curve, Tval] = EvalPositionExtra( obj, Tol2 )
+    [BezierVals] = EvalAllPositions( obj, Tol2 )
+    [BezierVals] = EvalPosition( obj, Index, Tvals )
+    [BezierVals, Curve, Tval] = EvalAllPositionsExtra( obj, Tol2 )
     %
     [SuccessFlag, CtrlPtsPrev_new, CtrlPtsPost_new, CtrlPts_roll] = ...
       RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius )

@@ -11,11 +11,11 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = StandardPreprocess( obj )
+function StandardPreprocess( obj )
 
-obj = obj.RemovePointCurves();
-obj = obj.ForceCubicLines();
-obj = obj.FitBox( [0;0], [2;2] );
-obj = obj.PointInwards();
+obj.RemovePointCurves();
+obj.ForceCubicLines();
+obj.FitBox( [0;0], [2;2] );
+obj.PointInwards();
 
 end

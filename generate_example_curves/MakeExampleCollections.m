@@ -396,9 +396,6 @@ for i = 0:(N-1)
 end
 
 % change starting point
-[c1, c2] = HalfBezierSingle(Target_N{1});
-Target_N{1}   = c2;
-Target_N{end} = c1;
 Target_N = FlipPath(Target_N);
 
 Target{N} = Target_N;
@@ -430,15 +427,12 @@ for i = 0:(N-1)
 end
 
 % change starting point
-[c1, c2] = HalfBezierSingle(Target_N{1});
-Target_N{1}   = c2;
-Target_N{end} = c1;
 Target_N = FlipPath(Target_N);
 
 Target_in{N} = Target_N;
 end
 
-clear ang_i ang_i1 c1 c2 i magn N Target_N
+clear ang_i ang_i1 i magn N Target_N
 
 %%
 % polygon with squares as sides
