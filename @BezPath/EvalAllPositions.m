@@ -12,7 +12,14 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BezierVals] = EvalPosition( obj, Tol2 )
+function [BezierVals] = EvalAllPositions( obj, varargin )
+
+% the point of Tol2 is to generate low-resolution renders
+if ~isempty(varargin)
+  Tol2 = varargin{1};
+else
+  Tol2 = obj.Tol*10;
+end
 
 BezierVals = [];
 

@@ -12,32 +12,9 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BezierVals] = EvalPosition( obj, Tol2 )
+function [BezierVals] = EvalPosition( obj, Index, Tvals )
 
-BezierVals = [];
-
-% loop
-for j = 1:obj.nSegments
-  CurrSegment = obj.Segment{j};
-  LocalTime   = 0:( 1/ceil(1/(Tol2/2)) ):1;
-  iter = 0;
-  while iter < obj.MaxIter
-    LocalBezV = CurrSegment.EvalPosition( LocalTime );
-    DiffCurve = vecnorm( diff(LocalBezV,1,2), 2, 1);
-    if max(DiffCurve) < Tol2
-      break
-    end
-    NewTimes = [];
-    for i = 2:length(LocalTime)
-      if( DiffCurve(i-1) > Tol2 )
-        epsilon  = (LocalTime(i)-LocalTime(i-1))/ceil(DiffCurve(i-1)/(Tol2/2));
-        NewTimes = [ NewTimes, (LocalTime(i-1):epsilon:LocalTime(i)) ];
-      end
-    end
-    LocalTime = unique( [LocalTime, NewTimes], "sorted" );
-    iter = iter +1; % additional penalization
-  end
-  BezierVals = [BezierVals, LocalBezV];
-end
+% just pasre the value to the appropriae segment
+BezierVals = obj.Segment{Index}.EvalPosition(Tvals);
 
 end

@@ -6,6 +6,7 @@ classdef BezPath < handle
     Tol
     SkipNegPi
     CornerRoundingRadius
+    MaxIter
     %
     Area
     Perimeter
@@ -15,7 +16,7 @@ classdef BezPath < handle
     %%%  CONSTRUCTORS  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function obj = BezPath( BezPathSource, varargin )
       switch BezPathSource
-        case 'CtrlPts'
+        case 'CtrlPtsArray'
           CtrlPtsArray = varargin{1};
         case 'UniqueCurve'
           CurveName = varargin{1};
@@ -56,6 +57,7 @@ classdef BezPath < handle
       obj.Tol = 0.001;
       obj.SkipNegPi = true;
       obj.Area = obj.GetArea();
+      obj.MaxIter = 10;
       %
       obj.CornerRoundingRadius = sqrt(0.001*obj.Area/pi);
       %obj.StandardPreprocess()
@@ -65,8 +67,8 @@ classdef BezPath < handle
     Flip( obj )
     RemovePointCurves( obj )
     PointInwards( obj )
-    FitBox( obj, Center, MaxRange )
-    Rescale( obj, Center, ScaleFactor )
+    FitBox( obj, MaxRange, varargin )
+    Rescale( obj, ScaleFactor, varargin )
     Rotate( obj, Center, Angle )
     Translate(  obj, Translation )
     Shift( obj, Shift, Halfen)
@@ -76,15 +78,13 @@ classdef BezPath < handle
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [Area] = GetArea( obj )
     [Perimeter] = GetPerimeter( obj )
-    [BezierVals] = EvalAllPositions( obj, Tol2 )
+    [BezierVals] = EvalAllPositions( obj, varargin )
     [BezierVals] = EvalPosition( obj, Index, Tvals )
-    [BezierVals, Curve, Tval] = EvalAllPositionsExtra( obj, Tol2 )
+    [BezierVals, Curve, Tval] = EvalAllPositionsExtra( obj, varargin )
     %
-    [SuccessFlag, CtrlPtsPrev_new, CtrlPtsPost_new, CtrlPts_roll] = ...
-      RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius )
-    obj_return = RemoveAllCorners( obj, WheelRadius )
-    obj_return = RemoveAllInnerCorners( obj, WheelRadius )
-    obj_return = RemoveAllOuterCorners( obj, WheelRadius )
+    obj_return = RemoveAllCorners( obj, varargin )
+    %obj_return = RemoveAllInnerCorners( obj, WheelRadius )
+    %obj_return = RemoveAllOuterCorners( obj, WheelRadius )
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end
   methods (Static)
@@ -96,6 +96,9 @@ classdef BezPath < handle
       disp('Curves included as indexed curves:')
       who -file ExampleCollections.mat
     end
+    %
+    [SuccessFlag, CtrlPtsPrev_new, CtrlPtsPost_new, CtrlPts_roll] = ...
+      RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius )
   end
 end
 

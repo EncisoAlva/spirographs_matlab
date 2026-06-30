@@ -11,11 +11,10 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = Translate(  obj, Translation )
+function Translate(  obj, Translation )
  
 for i = 1:obj.nSegments
-  currSegment = obj.Segment{i};
-  obj.Segment{i} = currSegment.Translate( Translation );
+  obj.Segment{i}.Translate( Translation );
 end
 
 end

@@ -22,8 +22,7 @@ if ~isprop( obj, 'Perimeter' ) || isempty(obj.Perimeter)
 obj.Perimeter = 0;
 
 for j = 1:obj.nSegments
-  CurrSegment = obj.Segment{j};
-  obj.Perimeter   = obj.Perimeter + CurrSegment.GetSegmentPerimeter();
+  obj.Perimeter = obj.Perimeter + obj.Segment{j}.GetSegmentPerimeter();
 end
 
 end

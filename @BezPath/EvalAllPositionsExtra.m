@@ -12,7 +12,13 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function [BezierVals, Curve, Tval] = EvalPositionExtra( obj, Tol2 )
+function [BezierVals, Curve, Tval] = EvalAllPositionsExtra( obj, varargin )
+
+if ~isempty(varargin)
+  Tol2  =varargin{1};
+else
+  Tol2 = obj.Tol;
+end
 
 BezierVals = [];
 Curve = [];

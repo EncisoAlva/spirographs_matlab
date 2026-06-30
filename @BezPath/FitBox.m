@@ -18,7 +18,14 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = FitBox( obj, Center, MaxRange )
+function FitBox( obj, MaxRange, varargin )
+
+% by default, the center is the origin
+if ~isempty(varargin)
+  Center = varargin{1};
+else
+  Center = [0,0]';
+end
 
 MaxRangeX = MaxRange(1);
 MaxRangeY = MaxRange(2);
@@ -52,8 +59,7 @@ end
 
 % scaling per se
 for i = 1:obj.nSegments
-  currSegment = obj.Segment{i};
-  obj.Segment{i} = currSegment.Rescale( Center, scaleFactor );
+  obj.Segment{i}.Rescale( scaleFactor, Center );
 end
 
 end

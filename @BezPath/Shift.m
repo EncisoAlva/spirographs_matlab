@@ -11,7 +11,14 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = Shift( obj, Shift, Halfen)
+function Shift( obj, Shift, varargin)
+
+% by default, the center is the origin
+if ~isempty(varargin)
+  Halfen = varargin{1};
+else
+  Halfen = false;
+end
 
 % if there is no actual shift, return the input unchanged
 if ( Shift>0 )||( Halfen==true )
@@ -26,8 +33,7 @@ for i = 1:obj.nSegments
   j = mod( i+Shift -1, nSegments ) + 1;
   if Halfen
     if i == 1
-      CurrSegment = obj.Segment{j};
-      [c1, c2] = CurrSegment.HalfSegment();
+      [c1, c2] = obj.Segment{j}.HalfSegment();
       Segment_new{i} = BezSegment( c2 );
     else
       Segment_new{i} = obj.Segment{j};

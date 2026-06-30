@@ -16,7 +16,7 @@
 %
 function [Area] = GetArea( obj )
 
-if ~isprop( obj, 'Area' ) || isempty(obj.Perimeter)
+if ~isprop( obj, 'Area' ) || isempty(obj.Area)
 % compute only if it was not computed before
 
 AllBezierVals = [];

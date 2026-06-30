@@ -15,7 +15,7 @@ function StandardPreprocess( obj )
 
 obj.RemovePointCurves();
 obj.ForceCubicLines();
-obj.FitBox( [0;0], [2;2] );
+obj.FitBox( [2;2] );
 obj.PointInwards();
 
 end

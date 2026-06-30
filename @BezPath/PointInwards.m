@@ -11,22 +11,22 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = PointInwards( obj )
+function PointInwards( obj )
 
 % construct convex hull
-[BezPts, Curve, Tval] = obj.EvalPositionExtra( 0.01 );
-ConvHullIdx = convhull( BezPts );
-ConvHullPt  = BezPts( ConvHullIdx, : );
+[BezPts, Curve, Tval] = obj.EvalAllPositionsExtra( 0.01 );
+ConvHullIdx = convhull( BezPts' )';
+ConvHullPt  = BezPts( :, ConvHullIdx );
 ConvHulSegm = Curve( ConvHullIdx );
 ConvHulTval = Tval( ConvHullIdx );
 
 % check if the normal vector goes outside or inside the convex hull
 CurrSegment = obj.Segment{ ConvHulSegm(1) };
-NormVec = CurrSegment.EvalNormal( ConvHulTval(1), 0.1 ) + ConvHullPt(1,:);
+NormVec = CurrSegment.EvalNormal( ConvHulTval(1), 0.1 ) + ConvHullPt(:,1);
 
 % flip if normal vector is outside the convex hull
 if ~inpolygon( NormVec(1),NormVec(2), ConvHullPt(1),ConvHullPt(2) )
-  obj = obj.Flip();
+  obj.Flip();
 end
 
 end

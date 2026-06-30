@@ -16,7 +16,7 @@ hold on
 axis equal
 grid on
 
-ShowFig  = obj.EvalPosition();
+ShowFig  = obj.EvalAllPositions();
 fill(ShowFig(1,:),ShowFig(2,:), [.1,.1,.1], 'EdgeColor', 'none');
 
 % plot control points
@@ -31,7 +31,7 @@ end
 % normal vector
 CurrSegment = obj.Segment{1};
 CPts = CurrSegment.CtrlPts;
-NormVec = CurrSegment.EvalNormal( 0,0.5 );
+NormVec = CurrSegment.EvalNormal( 0, 0.5 );
 quiver(CPts(1,1),CPts(2,1),NormVec(1),NormVec(2),'Color','red')
 
 % points with numbers

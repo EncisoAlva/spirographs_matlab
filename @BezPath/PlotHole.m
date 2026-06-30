@@ -19,13 +19,13 @@ hold on
 axis equal
 grid on
 
-ShowFig  = [obj.EvalPosition(), [cos(2*pi*(0:0.01:1)); sin(2*pi*(0:0.01:1))]];
+ShowFig  = [obj.EvalAllPositions(), ...
+  [cos(2*pi*(0:0.01:1)); sin(2*pi*(0:0.01:1))]];
 fill(ShowFig(1,:),ShowFig(2,:), [.1,.1,.1], 'EdgeColor', 'none');
 
 % plot control points
 for i = 1:obj.nSegments
-  CurrSegment = obj.Segment{i};
-  CPts = CurrSegment.CtrlPts;
+  CPts = obj.Segment{i}.CtrlPts;
   plot(CPts(1,[1,2]),CPts(2,[1,2]),'Color','blue')
   plot(CPts(1,[3,4]),CPts(2,[3,4]),'Color','blue')
   scatter(CPts(1,[2,3]), CPts(2,[2,3]),[],'blue','filled')
@@ -33,16 +33,8 @@ end
 
 % points with numbers
 for i = 1:2
-  CurrSegment = obj.Segment{i};
-  CPts = CurrSegment.CtrlPts;
+  CPts = obj.Segment{i}.CtrlPts;
   scatter(CPts(1,1),CPts(2,1),200,'red','filled','o')
-  text(CPts(1,1),CPts(2,1),num2str(i-1),'Color','white','HorizontalAlignment','center')
-end
-for i = 3:obj.nSegments
-  CurrSegment = obj.Segment{i};
-  CPts = CurrSegment.CtrlPts;
-  scatter(CPts(1,1),CPts(2,1),200,'blue','filled','o')
-  text(CPts(1,1),CPts(2,1),num2str(i-1),'Color','white','HorizontalAlignment','center')
 end
 
 % center of wheel, for reference

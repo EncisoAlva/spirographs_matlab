@@ -18,12 +18,18 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj = Rescale( obj, Center, ScaleFactor )
+function Rescale( obj, ScaleFactor, varargin )
+
+% by default, the center is the origin
+if ~isempty(varargin)
+  Center = varargin{1};
+else
+  Center = [0,0]';
+end
 
 % scaling each segment
 for i = 1:obj.nSegments
-  currSegment = obj.Segment{i};
-  obj.Segment{i} = currSegment.Rescale( Center, ScaleFactor );
+  obj.Segment{i}.Rescale( ScaleFactor, Center );
 end
 
 end

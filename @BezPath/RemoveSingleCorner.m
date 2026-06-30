@@ -25,10 +25,11 @@ function [SuccessFlag, CtrlPtsPrev_new, CtrlPtsPost_new, CtrlPts_roll] = ...
   RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius )
 
 % find collision time of curves, if there is one
-SegmentPrev = BezSegment( CtrlPtsPrev );
-SegmentPost = BezSegment( CtrlPtsPost );
+%SegmentPrev = BezSegment( CtrlPtsPrev );
+%SegmentPost = BezSegment( CtrlPtsPost );
 
-[ct1,ct2] = SegmentPrev.FindCollisionTime( SegmentPost, WheelRadius );
+[ct1,ct2] = ...
+  BezSegment.FindCollisionTime( CtrlPtsPrev, CtrlPtsPost, WheelRadius );
 
 % do stuff only if there is a roll
 SuccessFlag = false;

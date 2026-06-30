@@ -18,7 +18,14 @@
 % The last control point of the last curve must be equal to the first
 % control point of the first curve. This is not checked.
 %
-function obj_return = RemoveAllCorners( obj, WheelRadius )
+function obj_return = RemoveAllCorners( obj, varargin )
+
+% by default, use the corner rounding radius
+if ~isempty(varargin)
+  WheelRadius = varargin{1};
+else
+  WheelRadius = obj.CornerRoundingRadius;
+end
 
 CornerAngles = zeros(1,obj.nSegments);
 nSegments_new = obj.nSegments;
@@ -35,10 +42,10 @@ for i = 1:obj.nSegments
   % find the cornering angle
   SegmentPrev = Segment_copy{i};
   SegmentPost = Segment_copy{i_};
-  TangentPre = SegmentPrev.EvalNormal( 1, WheelRadius );
-  TangentPos = SegmentPost.EvalNormal( 0, WheelRadius );
-  if (norm(TangentPos)>obj.Tol) && (norm(TangentPre)>obj.Tol)
-    CornerAngles(i) = mod( atan2(TangentPre(2),TangentPre(1)) - atan2(TangentPos(2),TangentPos(1)), 2*pi);
+  NormalPre = SegmentPrev.EvalNormal( 1 );
+  NormalPos = SegmentPost.EvalNormal( 0 );
+  if (norm(NormalPos)>obj.Tol) && (norm(NormalPre)>obj.Tol)
+    CornerAngles(i) = mod( atan2(NormalPre(2),NormalPre(1)) - atan2(NormalPos(2),NormalPos(1)), 2*pi);
   else
     % exception: vanishing first derivative; throw to exception handler
     CornerAngles(i) = pi;
@@ -54,31 +61,31 @@ for i = 1:obj.nSegments
     CtrlPtsPrev = SegmentPrev.CtrlPts;
     CtrlPtsPost = SegmentPost.CtrlPts;
     [SuccessFlag, CtrlPtsPrev_new, CtrlPtsPost_new, CtrlPts_roll] = ...
-      SegmentPrev.RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius );
+      BezPath.RemoveSingleCorner( CtrlPtsPrev, CtrlPtsPost, WheelRadius );
     %
     if SuccessFlag
-      Segment_copy{i}  = CtrlPtsPrev_new;
-      Segment_copy{i_} = CtrlPtsPost_new;
-      Segment_roll{i}  = CtrlPts_roll;
+      Segment_copy{i}  = BezSegment( CtrlPtsPrev_new );
+      Segment_copy{i_} = BezSegment( CtrlPtsPost_new );
+      Segment_roll{i}  = BezSegment( CtrlPts_roll );
       nSegments_new    = nSegments_new + 1;
     end
   end
 end
 
 % get auxiliary curves in line
-Segment_new = cell( 1, nSegments_new );
+CtrlPtsArray = cell( 1, nSegments_new );
 idx_cell = 1;
 for i = 1:obj.nSegments
-  Segment_new{idx_cell} = Segment_copy{i};
+  CtrlPtsArray{idx_cell} = Segment_copy{i}.CtrlPts;
   idx_cell = idx_cell + 1;
   if CornerAngles(i) >= pi
-    Segment_new{idx_cell} = Segment_roll{i};
+    CtrlPtsArray{idx_cell} = Segment_roll{i}.CtrlPts;
     idx_cell = idx_cell + 1;
   end
 end
 
 % remove curves with all 4 points equal to each other
-obj_return = Segment( Segment_new );
-obj_return = obj_return.RemovePointCurves( Segment_new );
+obj_return = BezPath( 'CtrlPtsArray', CtrlPtsArray );
+obj_return.RemovePointCurves();
 
 end
