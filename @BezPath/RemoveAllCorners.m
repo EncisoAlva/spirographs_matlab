@@ -78,7 +78,7 @@ idx_cell = 1;
 for i = 1:obj.nSegments
   CtrlPtsArray{idx_cell} = Segment_copy{i}.CtrlPts;
   idx_cell = idx_cell + 1;
-  if CornerAngles(i) >= pi
+  if ~isempty(Segment_roll{i})
     CtrlPtsArray{idx_cell} = Segment_roll{i}.CtrlPts;
     idx_cell = idx_cell + 1;
   end

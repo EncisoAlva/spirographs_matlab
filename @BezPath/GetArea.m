@@ -19,12 +19,14 @@ function [Area] = GetArea( obj )
 if ~isprop( obj, 'Area' ) || isempty(obj.Area)
 % compute only if it was not computed before
 
+Tol2 = min( obj.Tol*100, 0.1 );
+
 AllBezierVals = [];
 
 % loop
 for j = 1:obj.nSegments
   CurrSegment = obj.Segment{j};
-  LocalTime   = 0:( 1/ceil(1/(obj.Tol/2)) ):1;
+  LocalTime   = 0:( 1/ceil(1/(Tol2/2)) ):1;
   %iter = 0;
   while true
     BezierVals  = CurrSegment.EvalPosition( LocalTime );

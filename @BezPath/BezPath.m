@@ -54,7 +54,7 @@ classdef BezPath < handle
         obj.Segment{i} = BezSegment( CtrlPtsArray{i} );
       end
       %
-      obj.Tol = 0.001;
+      obj.Tol = 0.0001;
       obj.SkipNegPi = true;
       obj.Area = obj.GetArea();
       obj.MaxIter = 10;

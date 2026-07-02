@@ -25,6 +25,7 @@ function [CrossTime1, CrossTime2] = ...
 % for evaluation, convert to BezSegments
 Curve1 = BezSegment(CtrlPts1);
 Curve2 = BezSegment(CtrlPts2);
+Tol2   = min( Curve1.Tol*100, 0.1);
 
 % initial and finishing times
 t0_1 = 0;
@@ -34,14 +35,16 @@ tF_2 = 1;
 
 % approximate the curve: if precision up to Tol is not reached, iterate
 iter = 1;
+stagnant_iter = 0;
+CurrMinDist = Inf;
 while iter < Curve1.MaxIter
   % interpolate curves adn their normals
-  LocalTime1 = t0_1:((tF_1-t0_1)/(ceil((tF_1-t0_1)/Curve1.Tol)+iter)):tF_1;
-  LocalTime2 = t0_2:((tF_2-t0_2)/(ceil((tF_2-t0_2)/Curve1.Tol)+iter)):tF_2;
+  LocalTime1 = t0_1:((tF_1-t0_1)/(ceil((tF_1-t0_1)/Tol2)+iter)):tF_1;
+  LocalTime2 = t0_2:((tF_2-t0_2)/(ceil((tF_2-t0_2)/Tol2)+iter)):tF_2;
 
-  BezierPos1  = Curve1.EvalPosition(  LocalTime1 );
+  BezierPos1  = Curve1.EvalPosition( LocalTime1 );
   BezierPos2  = Curve2.EvalPosition( LocalTime2 );
-  BezierNorm1 = Curve1.EvalNormal(  LocalTime1, WheelRadius );
+  BezierNorm1 = Curve1.EvalNormal( LocalTime1, WheelRadius );
   BezierNorm2 = Curve2.EvalNormal( LocalTime2, WheelRadius );
 
   WhCtrPos1 = BezierPos1 + BezierNorm1;
@@ -61,6 +64,14 @@ while iter < Curve1.MaxIter
   idx2 = curve1_dis_idx(idx1);
 
   % if the normals are different, make a better approximation
+  if dist < CurrMinDist
+    CurrMinDist = dist;
+  else
+    stagnant_iter = stagnant_iter + 1;
+    if stagnant_iter > 2
+      break
+    end
+  end
   if dist < Curve1.Tol
     break
   end
@@ -69,10 +80,11 @@ while iter < Curve1.MaxIter
   tF_1 = min(1,LocalTime1(idx1)+0.5/2^iter);
   tF_2 = min(1,LocalTime2(idx2)+0.5/2^iter);
   iter = iter+1;
+  Tol2 = Tol2/4;
 end
 
 % report results
-if iter < Curve1.MaxIter
+if (iter < Curve1.MaxIter) && (stagnant_iter<=2)
   CrossTime1 = LocalTime1(idx1);
   CrossTime2 = LocalTime2(idx2);
 else

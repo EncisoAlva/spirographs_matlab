@@ -55,8 +55,11 @@ CtrlPtsPost_new(:,1) = (1-ct2)^3*CtrlPtsPost(:,1) + 3*(1-ct2)^2*ct2*CtrlPtsPost(
 % getting normal vectors to use the 4/3 tan(th/4) approx of a circle
 SegmentPrev_new = BezSegment( CtrlPtsPrev_new );
 SegmentPost_new = BezSegment( CtrlPtsPost_new );
-N1 = SegmentPrev_new.EvalNormal( ct1, 1 );
-N2 = SegmentPost_new.EvalNormal( ct2, 1 );
+N1 = SegmentPrev_new.EvalNormal( 1, WheelRadius );
+N2 = SegmentPost_new.EvalNormal( 0, WheelRadius );
+
+T1 = SegmentPrev_new.EvalTangent( 1, WheelRadius );
+T2 = SegmentPost_new.EvalTangent( 0, WheelRadius );
 
 GapAngle = atan2(N2(2),N2(1)) - atan2(N1(2),N1(1));
 if GapAngle < 0
@@ -64,10 +67,10 @@ if GapAngle < 0
 end
 
 % gap is filled with a circle arc
-CtrlPts_roll(:,1) = SegmentPrev_new.EvalPosition( ct1 );
-CtrlPts_roll(:,4) = SegmentPost_new.EvalPosition( ct2 );
-CtrlPts_roll(:,2) = CtrlPts_roll(:,1) + [0,1;-1,0]*N1* (4/3)*tan(GapAngle/4)*WheelRadius;
-CtrlPts_roll(:,3) = CtrlPts_roll(:,4) + [0,-1;1,0]*N2* (4/3)*tan(GapAngle/4)*WheelRadius;
+CtrlPts_roll(:,1) = SegmentPrev_new.EvalPosition( 1 );
+CtrlPts_roll(:,4) = SegmentPost_new.EvalPosition( 0 );
+CtrlPts_roll(:,2) = CtrlPts_roll(:,1) + T1*(4/3)*tan(GapAngle/4);
+CtrlPts_roll(:,3) = CtrlPts_roll(:,4) - T2*(4/3)*tan(GapAngle/4);
 
 end
 
