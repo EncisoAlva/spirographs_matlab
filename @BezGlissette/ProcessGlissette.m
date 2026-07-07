@@ -1,23 +1,23 @@
 function ProcessGlissette( obj )
 
 % this evaluation is for background decoration only
-obj.DecorativeBez = obj.BPath.EvalPotition( obj.Tol );
+obj.DecorativeBez = obj.BPath.EvalAllPositions();
 
 % additional, specific, preparation for each method
 switch obj.Method
   case 'Hole'
-    obj.DecorativeHole = obj.HPath.EvalPotition( obj.Tol );
+    obj.DecorativeHole = obj.HPath.EvalAllPositions();
 end
 
 % trying to generate a glissette without defining a method
-if ~isprop(obj, 'Method')
+if ~isprop(obj, 'Method') || isempty(obj.Method)
   obj.Method = 'Default';
 end
 
 % default parameters
 switch obj.Method
   case 'Default'
-    if ~isprop(obj, 'MarkerRadius')
+    if ~isprop(obj, 'MarkerRadius') || isempty(obj.MarkerRadius)
       warning('Using default values.')
       obj.MarkerRadius = 0;
     end
@@ -42,7 +42,7 @@ MarkerAngle = [];
 
 % initialize
 FirstTangent = obj.BPath.Segment{1}.EvalNormal(0,1);
-CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + MarkerAngle0 + pi; % point to the curve
+CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + obj.MarkerAngle0 + pi; % point to the curve
 CurrTime0    = 0;
 
 %%
@@ -54,17 +54,11 @@ CurrRollDist0 = 0;
 while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
   for j = 1:obj.BPath.nSegments
     disp(strcat('Spin: ',num2str(CurrSpin),' , Segment: ',num2str(j)))
-    CurrSegment = obj.BPath{j};
-    CurrCtrlPts = CurrSegment.CtrlPts;
+    CurrSegment = obj.BPath.Segment{j};
     
     % run one single Bezier curve at the time
     % initial guess for time
-    PerUpBound = ...
-      norm(CurrCtrlPts(:,1)-CurrCtrlPts(:,2)) + ...
-      norm(CurrCtrlPts(:,2)-CurrCtrlPts(:,3)) + ...
-      norm(CurrCtrlPts(:,3)-CurrCtrlPts(:,4));
-    DistDelta = 1/ceil(PerUpBound/Tol);
-    LocalTime = 0:DistDelta:1;
+    LocalTime = linspace(0,1, ceil(CurrSegment.GetSegmentPerimeter()/obj.Tol) );
 
     % main loop
     iter = 0;
@@ -133,8 +127,8 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       end
       
       % check if the marker points are not too far from each other
-      DiffCurve = vecnorm( diff(MarkerPos,1,2), 2, 1);
-      if max(DiffCurve) < Tol
+      DiffCurve = vecnorm( diff(locMarkerPos,1,2), 2, 1);
+      if max(DiffCurve) < obj.Tol
         %locTolFlag = true;
         break
       end
@@ -157,7 +151,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
 
     %
     % concatenate results from the current segment to the overall outputs
-    Time        = [Time,        locTime+CurrTime0];
+    Time        = [Time,        LocalTime+CurrTime0];
     BezierPos   = [BezierPos,   locBezierPos];
     WhCtrPos    = [WhCtrPos,    locWhCtrPos];
     MarkerPos   = [MarkerPos,   locMarkerPos];
@@ -166,11 +160,10 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     % update initial values
     CurrTime0  = Time(end);
     CurrAngle0 = MarkerAngle(end);
-    CurrRollDist0 = CurrRollDist0 + PathPerimeter(CurrCtrlPts, Tol)/obj.Wheel1Radius;
+    CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter()/obj.Wheel1Radius;
     
     % prepare for a corner
-    NextSegment = obj.BPath{mod(j+1-1,obj.BPath.nSegments)+1};
-    NextCtrlPts = NextSegment.CtrlPts;
+    NextSegment = obj.BPath.Segment{mod(j+1-1,obj.BPath.nSegments)+1};
     
     % roll over the corner, if needed
     %%
@@ -179,12 +172,13 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     WhNormalPos = NextSegment.EvalNormal(0, obj.Wheel1Radius);
 
     % early stop if the wheel won't actually roll
-    if norm( (NextCtrlPts(:,1)+WhNormalPos)-(CurrCtrlPts(:,4)+WhNormalPre) ) < obj.Tol
-      locTime = [];
-      locBezierPos = [];
-      locWhCtrPos = [];
-      locMarkerPos = [];
-      locMarkerAngle = [];
+    if (norm( WhNormalPos-WhNormalPre ) < obj.Tol)&&(norm( NextSegment.EvalPosition(0)-CurrSegment.EvalPosition(1) ) < obj.Tol)
+      continue
+    end
+
+    % early stop is found a discontinuity
+    if (norm( NextSegment.EvalPosition(0)-CurrSegment.EvalPosition(1) ) < obj.Tol)
+      % TO BE PATCHED
       continue
     end
 
@@ -195,28 +189,27 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
 
     % compute the length that the marker will describe
     MarkerPos0 = MarkerPos(:,end);
-    MarkerArcLength = abs(CornerAngle) * norm( MarkerPos0 - NextCtrlPts(:,1) );
+    BezierPos0 = BezierPos(:,end);
+    MarkerArcLength = abs(CornerAngle) * norm( MarkerPos0 - BezierPos0 );
 
     % adjust the rotation, time is set in terms of the marker
-    LocalTime   = 0:1/ceil(MarkerArcLength / obj.Tol):1;
+    LocalTime   = linspace(0,1, ceil(MarkerArcLength / obj.Tol));
     locMarkerAngle = MarkerAngle0 + LocalTime*CornerAngle;
 
     LocalWhCtrAngle   = atan2(WhNormalPre(2),WhNormalPre(1));
-    LocalMarkerAngle  = atan2(MarkerPos0(2)-CurrCtrlPts(2,end),MarkerPos0(1)-CurrCtrlPts(1,end));
-    LocalMarkerRadius = norm( MarkerPos0 - NextCtrlPts(:,1) );
+    LocalMarkerAngle  = atan2(MarkerPos0(2)-BezierPos0(2),MarkerPos0(1)-BezierPos0(1));
+    LocalMarkerRadius = norm( MarkerPos0 - BezierPos0 );
 
-    locWhCtrPos  = CurrCtrlPts(:,4) + [cos(LocalWhCtrAngle  + LocalTime*CornerAngle); sin(LocalWhCtrAngle  + LocalTime*CornerAngle)]*obj.Wheel1Radius;
-    locMarkerPos = CurrCtrlPts(:,4) + [cos(LocalMarkerAngle + LocalTime*CornerAngle); sin(LocalMarkerAngle + LocalTime*CornerAngle)]*LocalMarkerRadius;
-
-    locTime = LocalTime + Time0;
+    locWhCtrPos  = BezierPos0 + [cos(LocalWhCtrAngle  + LocalTime*CornerAngle); sin(LocalWhCtrAngle  + LocalTime*CornerAngle)]*obj.Wheel1Radius;
+    locMarkerPos = BezierPos0 + [cos(LocalMarkerAngle + LocalTime*CornerAngle); sin(LocalMarkerAngle + LocalTime*CornerAngle)]*LocalMarkerRadius;
 
     % technical
     locMarkerAngle = mod(locMarkerAngle, 2*pi);
-    BezierPos   = CurrCtrlPts(:,1) * ones(size(locTime));
+    BezierPos   = BezierPos0 * ones(size(LocalTime));
 
     %
     % concatenate results from the current segment to the overall outputs
-    Time        = [Time,        locTime+CurrTime0];
+    Time        = [Time,        LocalTime+CurrTime0];
     BezierPos   = [BezierPos,   locBezierPos];
     WhCtrPos    = [WhCtrPos,    locWhCtrPos];
     MarkerPos   = [MarkerPos,   locMarkerPos];

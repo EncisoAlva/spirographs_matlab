@@ -1,47 +1,47 @@
+% The marker is a fixed point in the rolling wheel. The rolling wheel is a
+% circle.
+
 %%
 % check available curves
 BezPath.CheckExamples();
 
 %%
 % generate empty curve
-Curve = BezGlissette( 'Standard' );
+Curve = BezGlissette( 'Default' );
 
 % load path from example
-Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
+%Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
 
 % load path from indexed example
 Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 2 )
 
 % load path from SVG file
-Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
+%Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
 
 %%
 % pre-processing
 
-Curve.BPath.Rotate( pi/2 );
+%Curve.BPath.Rotate( pi/2 );
 
 Curve.BPath.Flip();
 
-Curve.BPath.Shift( 1, false );
+Curve.BPath.Shift( 2 );
 
-Curve.BPath.PlotPath()
+Curve.PlotPath()
+
+%%
+% design parameters
+%Curve.RemoveCorners_Rolling = true;
+%Curve.RemoveCorners_NonRolling = true;
+
+% update all relevant parameter with each change of ratios
+Curve.AutoUpdate = true;
 
 %%
 % designer parameters
+Curve.Wheel1MarkerRatio = 4/5;
+
 Curve.Set_Wheel1BezRatio( 6 );
-
-Curve.WheelMarkerRatio = 4/5;
-
-%%
-% additional design parameters
-Curve.RemoveCorners_Rolling = true;
-Curve.RemoveCorners_NonRolling = true;
-
-%% 
-% pre-processing (optional)
-
-Curve.RemoveCorners()
-Curve.BPath.PlotPath()
 
 %%
 
@@ -59,8 +59,8 @@ Cpurple_cl = [192,   0, 192]/255;
 Cblue_fcy  = [ 36, 122, 253]/255;
 Cflower_y  = [255, 229,  90]/255;
 
-Curve.SetColor( {Cblue_fcy, Cblue_fcy, Cflower_y, Cpurple_cl, Cpurple_cl, Cflower_y},...
- 'CumDist', 3 );
+Curve.SetColor( {Cblue_fcy, Cflower_y},...
+ 'CumDist', 6 );
 %'CumDist'
 %'Bezier'
 
@@ -69,6 +69,16 @@ Curve.SetColor( {Cblue_fcy, Cblue_fcy, Cflower_y, Cpurple_cl, Cpurple_cl, Cflowe
 
 Curve.ProcessGlissette()
 
+Curve.PlotGlissette()
+
+%%
+% fast change
+
+Curve.Set_Wheel1BezRatio( 5,3 );
+
+Curve.ProcessGlissette()
+
+%Curve.ColorCycles = 5;
 Curve.PlotGlissette()
 
 %%
@@ -86,4 +96,4 @@ VideoOpts.WhoIsCenter = 1;
 VideoOpts.WheelRadii = Curve.Wheel1Radius;
 
 % video
-Curve.MakeVideo( 'test_2600515_02_3', VideoOpts )
+Curve.MakeVideo( 'test_260707_15_0', VideoOpts )

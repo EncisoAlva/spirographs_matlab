@@ -228,13 +228,13 @@ for i = 0:nTimes
   %
   % locate center of wheels
   RefWheelCtr = obj.WhCtrPos(:,jj);
-  RefAngle    = obj.AllMarkerAngle(jj);
+  RefAngle    = obj.MarkerAngle(jj);
   %
   % the white dot is unnecessarily challenging
   RefBez = obj.BezierPos(:,jj);
   %
   for q = 1:nCenters
-    switch VideoOpts.Method
+    switch obj.Method
       case 'Default'
         fill(RefWheelCtr(1,q)+circ(1,:)*VideoOpts.WheelRadii(q),RefWheelCtr(2,q)+circ(2,:)*VideoOpts.WheelRadii(q), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
       case 'Hole'

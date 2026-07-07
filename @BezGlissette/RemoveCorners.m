@@ -6,8 +6,10 @@ function obj = RemoveCorners( obj )
     WheelRadius_new = (obj.OG_BPath.GetPerimeter()/(2*pi))/obj.Wheel1BezRatio;
     iter = 1;
     while (abs( WheelRadius_new - WheelRadius_old ) > obj.WheelRadiusTol) && (iter<obj.MaxIter)
-      BPath_tmp = obj.OG_BPath.Flip().RemoveAllCorners( WheelRadius_new ).Flip();
+      BPath_tmp = obj.OG_BPath.RemoveAllCorners( WheelRadius_new );
+      BPath_tmp.Flip();
       BPath_tmp = BPath_tmp.RemoveAllCorners( WheelRadius_new );
+      BPath_tmp.Flip();
       %
       WheelRadius_old = WheelRadius_new;
       WheelRadius_new = (BPath_tmp.GetPerimeter()/(2*pi))/obj.Wheel1BezRatio;
@@ -18,7 +20,10 @@ function obj = RemoveCorners( obj )
   else
     % remove corners where the wheel IS NOT rolling
     if obj.RemoveCorners_NonRolling
-      obj.BPath = obj.OG_BPath.Flip().RemoveAllCorners( obj.OG_BPath.CornerRoundingRadius ).Flip();
+      obj.BPath = obj.OG_BPath;
+      obj.BPath.Flip();
+      obj.BPath.RemoveAllCorners( obj.OG_BPath.CornerRoundingRadius );
+      obj.BPath.Flip();
     end
     
     % remove corners where the wheel IS rolling
@@ -47,8 +52,11 @@ function obj = RemoveCorners( obj )
 
   % only compute marker radius if it required, it may or may not be used
   % when using a wheel with a hole, there is no marker radius
-  if isprop( obj, 'WheelMarkerRatio' )
-    obj.MarkerRadius = obj.Wheel1Radius*obj.WheelMarkerRatio;
+  if isprop( obj, 'Wheel1MarkerRatio' )
+    obj.MarkerRadius = obj.Wheel1Radius*obj.Wheel1MarkerRatio;
   end
+
+  % for visualization purposes
+  obj.DecorativeBez = obj.BPath.EvalAllPositions();
 
 end

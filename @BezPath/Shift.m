@@ -30,7 +30,7 @@ else
 end
 
 for i = 1:obj.nSegments
-  j = mod( i+Shift -1, nSegments ) + 1;
+  j = mod( i+Shift -1, obj.nSegments ) + 1;
   if Halfen
     if i == 1
       [c1, c2] = obj.Segment{j}.HalfSegment();
@@ -49,6 +49,8 @@ end
 if Halfen
   obj.nSegments = obj.nSegments + 1;
 end
+
+obj.Segment = Segment_new;
 
 end
 

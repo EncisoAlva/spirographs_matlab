@@ -7,7 +7,7 @@ function SetColor( obj, ColorVector, varargin )
   else
     obj.ColorVector = ColorVector;
     obj.ColorRefCurve = varargin{1};
-    if size(varargin)>1
+    if size(varargin,2)>1
       obj.ColorCycles = varargin{2};
     else
       obj.ColorCycles = 1;

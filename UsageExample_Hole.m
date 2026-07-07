@@ -1,3 +1,6 @@
+% The rolling wheel has a 'hole' in it, the marker will slide trhough the
+% hole as the wheel rolls over the curve. The rolling wheel is a circle.
+
 %%
 % check available curves
 BezPath.CheckExamples();

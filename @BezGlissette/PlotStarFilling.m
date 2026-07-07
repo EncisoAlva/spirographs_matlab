@@ -1,7 +1,7 @@
 function PlotStarFilling( obj )
 
 % process colors, due to updates
-obj.ProcessColors()
+%obj.ProcessColors()
 
 % PATCH: these should be parameters
 ExpectedRatio = 16/9;
@@ -108,7 +108,6 @@ axis off
 grid off
 set(gca,'color', 'k');
 scatter(coordStar(1,:),coordStar(2,:),2,[48, 133, 194]/255,'filled','o')
-
 
 xlim([x0 xF])
 ylim([y0 yF])

@@ -18,7 +18,14 @@
 %       AngBase  Angles A(p) tied to B(p) [1x?]
 %       DisBase  Distance p(t) = lineint_0^t B(t) dt
 %
-function SetupHole( obj, CheckFit )
+function SetupHole( obj, varargin )
+
+% by default, do not show the result
+if ~isempty(varargin)
+  CheckFit = varargin{1};
+else
+  CheckFit = false;
+end
 
 % find values of t with a prescribed max dist between them
 allBez = cell(1,obj.nSegments*2);
@@ -32,8 +39,8 @@ for s = 1:obj.nSegments
   %
   tol_flag = false;
   while ~tol_flag
-    Bez =  currSegment.EvalPosition(Tvals);
-    Nor = -currSegment.EvalNormal(  Tvals, 1);
+    Bez =  currSegment.EvalPosition( Tvals );
+    Nor = -currSegment.EvalNormal(   Tvals );
     %
     % current side
     % reach circumference
@@ -59,8 +66,8 @@ for s = 1:obj.nSegments
   else
     nextSegment = obj.HPath.Segment{1};
   end
-  currNor = -currSegment.EvalNormal( 1, 1);
-  nextNor = -nextSegment.EvalNormal( 0, 1);
+  currNor = -currSegment.EvalNormal( 1 );
+  nextNor = -nextSegment.EvalNormal( 0 );
   if atan2(nextNor(2),nextNor(1)) - atan2(currNor(2),currNor(1)) ~= 0
   Bez = currSegment.EvalPosition(1);
   if abs(norm(Bez)-1) > obj.Tol % if not currently touching the circle

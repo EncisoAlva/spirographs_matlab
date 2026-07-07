@@ -27,4 +27,13 @@ function obj = Set_Wheel1BezRatio( obj, varargin )
 
   % for ease of use, keep both the number and the numerator and denominator
   obj.Wheel1BezRatio = obj.Wheel1BezRatio_num / obj.Wheel1BezRatio_den;
+
+  % if requested, update immediatly the curves and radii
+  if obj.AutoUpdate
+    obj.RemoveCorners()
+    % one cycle per cusp is the default
+    if obj.Multicolor
+      obj.ColorCycles = obj.Wheel1BezRatio_num;
+    end
+  end
 end

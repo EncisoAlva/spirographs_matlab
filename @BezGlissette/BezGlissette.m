@@ -9,16 +9,18 @@ classdef BezGlissette < handle
     Wheel1BezRatio_num
     Wheel1BezRatio_den
     Wheel1BezRatio
+    Wheel1MarkerRatio
     %
     Wheel1Radius
     MarkerRadius
     %
-    Marker1Angle0
+    MarkerAngle0
     Shiften
     Halfen
     RemoveCorners_Rolling
     RemoveCorners_NonRolling
     RemoveCorners_Both
+    AutoUpdate
     %
     ColorVector
     ColorCycles
@@ -36,6 +38,15 @@ classdef BezGlissette < handle
     ChangeOrient
     %
     MinSpins
+    %
+    DecorativeBez
+    DecorativeHole
+    %
+    BezierPos
+    WhCtrPos
+    MarkerPos
+    MarkerAngle
+    LocTime
   end
 
   methods
@@ -48,7 +59,7 @@ classdef BezGlissette < handle
       obj.MaxSpins = 100;
       obj.MinSpins = 1;
       obj.MaxIter = 20;
-      obj.Marker1Angle0 = 0;
+      obj.MarkerAngle0 = 0;
       obj.Shiften = 0;
       obj.Halfen = false;
       obj.CloseEnds = true;
@@ -57,28 +68,26 @@ classdef BezGlissette < handle
       obj.RemoveCorners_Both = false;
       obj.Multicolor = false;
       obj.ChangeOrient = false;
+      obj.AutoUpdate = false;
       %
-      % relative tolerance
-      minX = min(obj.BPath.CtrlPts(1,:));
-      maxX = max(obj.BPath.CtrlPts(1,:));
-      minY = min(obj.BPath.CtrlPts(2,:));
-      maxY = max(obj.BPath.CtrlPts(2,:));
-      obj.Tol = max( norm( [ maxX-minX; maxY-minY ] )*(1e-4), 0.005);
-      obj.CloseTol = max( obj.Tol*(1e-1), 0.001);
+      obj.Tol = 0.0001;
+      obj.CloseTol = 0.0001;
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    LoadRolingPath(obj, varargin)
+    LoadRollingPath(obj, varargin)
     LoadHolePath(obj, varargin)
     Set_Wheel1BezRatio(obj, varargin)
     RemoveCorners( obj )
     SetColor( obj, ColorVector, varargin )
-    SetupHole( obj, CheckFit )
-    DEV_SetupHole_concave( obj, CheckFit )
+    SetupHole( obj, varargin )
+    DEV_SetupHole_concave( obj, varargin )
     ProcessColors( obj )
     PlotGlisette( obj )
     PlotStarFilling( obj )
     ProcessGlissette( obj )
-    MakeVideo( obj )
+    MakeVideo( obj, VidName, VideoOpts, varargin )
+    %
+    PlotPath( obj )
     %%%  METHODS ; OUTPUT = YES  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end

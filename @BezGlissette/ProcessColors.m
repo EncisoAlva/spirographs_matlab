@@ -13,7 +13,7 @@ if obj.Multicolor
   %
   colorTable = zeros(obj.nColors, 3+1);
   for q = 1:obj.nColors
-    colorTable(q,2:end) = obj.ColorVector;
+    colorTable(q,2:end) = obj.ColorVector{q};
   end
   colorTable(:,1) = linspace(0,1, obj.nColors);
   %

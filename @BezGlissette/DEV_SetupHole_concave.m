@@ -18,7 +18,14 @@
 %       AngBase  Angles A(p) tied to B(p) [1x?]
 %       DisBase  Distance p(t) = lineint_0^t B(t) dt
 %
-function DEV_SetupHole_concave( obj, CheckFit )
+function DEV_SetupHole_concave( obj, varargin )
+
+% by default, do not show the result
+if ~isempty(varargin)
+  CheckFit = varargin{1};
+else
+  CheckFit = false;
+end
 
 % will replace with tables but I do not have the time right now
 % containers
@@ -132,7 +139,7 @@ for i = 1:size(tab_T,2)
     tmpSegment = obj.HPath.Segment{tab_Segm(i)};
     % normal vector
     Bez_i = tab_Bez(:,i);
-    Nor_i = -tmpSegment.EvalNormal( tab_T(i), 1);
+    Nor_i = -tmpSegment.EvalNormal( tab_T(i) );
     % reach circumference
     if norm(Bez_i) >= 1
       BezProj = Bez_i;
