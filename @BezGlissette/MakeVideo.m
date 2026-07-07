@@ -22,6 +22,24 @@
 %
 function MakeVideo( obj, VidName, VideoOpts, varargin )
 
+% I want the videos to be ordered by date, by default
+if isprop(VideoOpts, 'DateTimeIndex') && VideoOpts.AddDateTimeIndex
+  DateTimeNow = datetime('now');
+  DateTimeNow.Format = 'yyMMdd-HH';
+  DateTimeStr = string(DateTimeNow);
+  %
+  % search for a name that has not been used
+  for RepeatIdx = 0:99
+    CurrName = strcat(VidName,'-',DateTimeStr,'-',num2str(RepeatIdx,'%02d'));
+    if ~isfile(strcat(CurrName,'.mp4')) && ~isfile(strcat(CurrName,'.avi'))
+      VidName_use = CurrName;
+      break
+    end
+  end
+else
+  VidName_use = VidName;
+end
+
 % determine duration of the video
 if size(varargin,2) > 0
   TotalTime = varargin{1};
@@ -178,15 +196,15 @@ f2 = figure('Visible','off','Name','With circle');
 % video object
 switch VideoOpts.Format
   case 'avi'
-    v = VideoWriter(strcat(VidName,".avi"),'Motion JPEG AVI');
+    v = VideoWriter(strcat(VidName_use,".avi"),'Motion JPEG AVI');
   otherwise
-    v = VideoWriter(strcat(VidName,".mp4"),'MPEG-4');
+    v = VideoWriter(strcat(VidName_use,".mp4"),'MPEG-4');
 end
 v.Quality = 100;
 open(v)
 
 % main loop
-WB = waitbar(0,strcat('Generating video (',VidName,'.mp4)...'), ...
+WB = waitbar(0,strcat('Generating video (',VidName_use,'.mp4)...'), ...
   'Name','Spirograph over Bezier curves by Enciso-Alva (2025)');
 for i = 0:nTimes
   % 
@@ -304,7 +322,7 @@ for stopper = 0:(fps*(3*AfterTime/4))
 end
 
 % save as picture, it may be useful
-[~,name_without_extension, ~] = fileparts(VidName);
+[~,name_without_extension, ~] = fileparts(VidName_use);
 saveas(f2, strcat(name_without_extension,'.png'));
 
 % delete waitbar, if it is still around
