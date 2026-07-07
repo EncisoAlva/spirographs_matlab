@@ -13,53 +13,47 @@ BezPath.CheckExamples();
 Curve = BezGlissette( 'Hole' );
 
 % load path from example
-Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
+%Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
 
 % load path from indexed example
 Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 2 )
 
 % load path from SVG file
-Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
+%Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
 
 %%
 % pre-processing
 
-Curve.BPath.Rotate( pi/2 );
+%Curve.BPath.Rotate( pi/2 );
 
 Curve.BPath.Flip();
 
-Curve.BPath.Shift( 1, false );
+Curve.BPath.Shift( 2 );
 
-Curve.BPath.PlotPath()
+Curve.PlotPath()
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% load path for the hole in the wheel
 
 % load path from example
-Curve.LoadHolePath( 'UniqueCurve', 'LetterC' )
+%Curve.LoadHolePath( 'UniqueCurve', 'LetterC' )
 
 % load path from indexed example
-Curve.LoadHolePath( 'IndexedCurve', 'Circlegon', 2 )
+Curve.LoadHolePath( 'IndexedCurve', 'Polygon', 4 )
 
 % load path from SVG file
-Curve.LoadHolePath( 'SVG', './curves_svg/Yscavenge.svg' )
+%Curve.LoadHolePath( 'SVG', './curves_svg/Yscavenge.svg' )
 
 %%
 % pre-processing
 
-Curve.BPath.FitBox( [0;0], [1;1] )
+Curve.HPath.FitBox( [0.75, 0.75]' )
 
-Curve.BPath.Flip().RemoveAllCorners().Flip()
+Curve.HPath.Translate( [0,0.5]' )
 
-Curve.BPath.Translate( [0,0.5]' )
+Curve.HPath.Rotate( -pi/2 );
 
-Curve.BPath.Rotate( -pi/2 );
-
-Curve.BPath.Flip();
-
-Curve.BPath.Shift( 1, false );
-
-Curve.BPath.PlotHole()
+Curve.HPath.PlotHole()
 
 %%
 % prepare for interpolation
@@ -71,21 +65,17 @@ Curve.DEV_SetupHole_concave( true )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
-% designer parameters
-Curve.Set_Wheel1BezRatio( 8, 7 );
+% design parameters
+%Curve.RemoveCorners_Rolling = true;
+%Curve.RemoveCorners_NonRolling = true;
 
-Curve.WheelMarkerRatio = 4/5;
+% update all relevant parameter with each change of ratios
+Curve.AutoUpdate = true;
 
 %%
-% additional design parameters
-Curve.RemoveCorners_Rolling = true;
-Curve.RemoveCorners_NonRolling = true;
+% designer parameters
 
-%% 
-% pre-processing (optional)
-
-Curve.RemoveCorners()
-Curve.BPath.PlotPath()
+Curve.Set_Wheel1BezRatio( 8, 7 );
 
 %%
 
@@ -116,6 +106,16 @@ Curve.ProcessGlissette()
 Curve.PlotGlissette()
 
 %%
+% fast change
+
+Curve.Set_Wheel1BezRatio( 5,3 );
+
+Curve.ProcessGlissette()
+
+%Curve.ColorCycles = 5;
+Curve.PlotGlissette()
+
+%%
 % video
 
 % video parameters
@@ -123,14 +123,15 @@ VideoOpts = {};
 VideoOpts.Format = 'mp4';
 VideoOpts.Orientation = 'in';
 VideoOpts.Ratio = 16/9;
-%ExtraOpts.TimeRefCurve = 'Average';
-%ExtraOpts.TimeRefCurve = 'Wheel';
-%ExtraOpts.TimeRefCurve = 'Marker';
-ExtraOpts.TimeRefCurve = 'Avg_MarkerBezier';
-
 VideoOpts.LineWidth = 2;
 VideoOpts.WhoIsCenter = 1;
 VideoOpts.WheelRadii = Curve.Wheel1Radius;
+%VideoOpts.TimeRefCurve = 'Average';
+%VideoOpts.TimeRefCurve = 'Wheel';
+%VideoOpts.TimeRefCurve = 'Marker';
+VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
+
+VideoOpts.AddDateTimeIndex = true;
 
 % video
-Curve.MakeVideo( 'test_2600515_02_3', VideoOpts )
+Curve.MakeVideo( 'test', VideoOpts )

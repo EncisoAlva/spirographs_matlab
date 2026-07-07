@@ -28,10 +28,10 @@ else
 end
 
 % find values of t with a prescribed max dist between them
-allBez = cell(1,obj.nSegments*2);
-allAng = cell(1,obj.nSegments*2);
+allBez = cell(1,obj.HPath.nSegments*2);
+allAng = cell(1,obj.HPath.nSegments*2);
 
-for s = 1:obj.nSegments
+for s = 1:obj.HPath.nSegments
   currSegment = obj.HPath.Segment{s};
   % initial guess for tvals
   Tvals = linspace(0,1, ceil(currSegment.GetSegmentPerimeter()/obj.Tol)+1);
@@ -45,7 +45,7 @@ for s = 1:obj.nSegments
     % current side
     % reach circumference
     Ksc = zeros(1, nTPts);
-    BezProj = zeros(1, nTPts);
+    BezProj = zeros(2, nTPts);
     for i = 1:nTPts
       Ksc(i)  = -Bez(:,i)'*Nor(:,i) + sqrt((Bez(:,i)'*Nor(:,i))^2 +1 -norm(Bez(:,i))^2);
       BezProj(:,i) = Bez(:,i) + Ksc(i)*Nor(:,i);
@@ -61,7 +61,7 @@ for s = 1:obj.nSegments
   allAng{2*s-1} = Ang;
   %
   % between sides, only if necessary
-  if s<obj.nSegments
+  if s<obj.HPath.nSegments
     nextSegment = obj.HPath.Segment{s+1};
   else
     nextSegment = obj.HPath.Segment{1};
@@ -94,7 +94,7 @@ end
 % move from cell array to vector
 Bezz = [];
 Angg = [];
-for ii = 1:(2*obj.nSegments)
+for ii = 1:(2*obj.HPath.nSegments)
   Bezz = [Bezz, allBez{ii}];
   Angg = [Angg, allAng{ii}];
 end
@@ -147,7 +147,8 @@ if CheckFit
   xlim([-1,1])
   ylim([-1,1])
   axis equal
-  for jj = 1:size(Bezz,2)
+  skip = floor( size(Bezz,2)/360 );
+  for jj = 1:skip:size(Bezz,2)
     plot([Bezz(1,jj), cos(Angg(jj))], [Bezz(2,jj), sin(Angg(jj))],'blue')
   end
 end

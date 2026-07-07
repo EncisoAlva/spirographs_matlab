@@ -47,6 +47,9 @@ classdef BezGlissette < handle
     MarkerPos
     MarkerAngle
     LocTime
+    %
+    BezBase
+    AngBase
   end
 
   methods

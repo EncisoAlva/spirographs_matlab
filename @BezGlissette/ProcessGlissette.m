@@ -92,7 +92,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           locMarkerPos = locWhCtrPos + [cos(locMarkerAngle); sin(locMarkerAngle)]*obj.MarkerRadius;
         case 'Hole'
           % distance that the wheel has rolled so far
-          RollAngle = mod( cumsum([RollDist0, DiffAngle ]), 2*pi);
+          RollAngle = mod( cumsum([CurrRollDist0, DiffAngle ]), 2*pi);
           % 1. interpolate where the marker is in the hole
           HolePos = zeros(2, nPts);
           HolePos(1,:) = interp1(obj.AngBase, obj.BezBase(1,:), mod(RollAngle,2*pi));
@@ -106,7 +106,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           end
         case 'Ring2'
           % distance that the wheel has rolled so far
-          RollAngle = cumsum([RollDist0, DiffAngle ]);
+          RollAngle = cumsum([CurrRollDist0, DiffAngle ]);
           % compute the angle rolled by the smallest gear
           CircProject = [cos(RollAngle); sin(RollAngle)] - [obj.CtrHoleDist;0];
           LocRollAngle = atan2(CircProject(2,:),CircProject(1,:));

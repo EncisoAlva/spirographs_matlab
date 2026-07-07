@@ -34,7 +34,7 @@ tab_T    = [];
 tab_Segm = [];
 
 % identify convex hull
-for s = 1:obj.nSegments
+for s = 1:obj.HPath.nSegments
   currSegment = obj.HPath.Segment{s};
   % initial guess for tvals
   Tvals = linspace(0,1, ceil(currSegment.GetSegmentPerimeter()/obj.Tol)+1);
@@ -230,7 +230,8 @@ if CheckFit
   xlim([-1,1])
   ylim([-1,1])
   axis equal
-  for jj = 1:size(Bezz,2)
+  skip = floor( size(Bezz,2)/360 );
+  for jj = 1:skip:size(Bezz,2)
     plot([Bezz(1,jj), cos(Angg(jj))], [Bezz(2,jj), sin(Angg(jj))],'blue')
   end
 end
