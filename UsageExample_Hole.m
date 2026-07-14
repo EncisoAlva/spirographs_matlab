@@ -126,10 +126,10 @@ VideoOpts.Ratio = 16/9;
 VideoOpts.LineWidth = 2;
 VideoOpts.WhoIsCenter = 1;
 VideoOpts.WheelRadii = Curve.Wheel1Radius;
-%VideoOpts.TimeRefCurve = 'Average';
+VideoOpts.TimeRefCurve = 'Average';
 %VideoOpts.TimeRefCurve = 'Wheel';
 %VideoOpts.TimeRefCurve = 'Marker';
-VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
+%VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
 
 VideoOpts.AddDateTimeIndex = true;
 
