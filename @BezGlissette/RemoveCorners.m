@@ -52,8 +52,9 @@ function obj = RemoveCorners( obj )
 
   % only compute marker radius if it required, it may or may not be used
   % when using a wheel with a hole, there is no marker radius
-  if isprop( obj, 'Wheel1MarkerRatio' )
-    obj.MarkerRadius = obj.Wheel1Radius*obj.Wheel1MarkerRatio;
+  switch obj.Method
+    case 'Default'
+      obj.MarkerRadius = obj.Wheel1Radius*obj.Wheel1MarkerRatio;
   end
 
   % for visualization purposes

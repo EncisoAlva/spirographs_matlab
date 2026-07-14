@@ -75,7 +75,7 @@ Curve.AutoUpdate = true;
 %%
 % designer parameters
 
-Curve.Set_Wheel1BezRatio( 8, 7 );
+Curve.Set_Wheel1BezRatio( 1, 1 );
 
 %%
 
@@ -93,7 +93,7 @@ Cpurple_cl = [192,   0, 192]/255;
 Cblue_fcy  = [ 36, 122, 253]/255;
 Cflower_y  = [255, 229,  90]/255;
 
-Curve.SetColor( {Cblue_fcy, Cblue_fcy, Cflower_y, Cpurple_cl, Cpurple_cl, Cflower_y},...
+Curve.SetColor( {Cblue_fcy, Cflower_y},...
  'CumDist', 3 );
 %'CumDist'
 %'Bezier'

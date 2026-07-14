@@ -41,8 +41,7 @@ MarkerPos   = [];
 MarkerAngle = [];
 
 % initialize
-FirstTangent = obj.BPath.Segment{1}.EvalNormal(0,1);
-CurrAngle0   = atan2(FirstTangent(2), FirstTangent(1)) + obj.MarkerAngle0 + pi; % point to the curve
+CurrAngle0   = obj.MarkerAngle0; % point to the curve
 CurrTime0    = 0;
 
 %%
@@ -71,44 +70,43 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       locBezierPos  = CurrSegment.EvalPosition( LocalTime );
       locBezierNorm = CurrSegment.EvalNormal(   LocalTime, obj.Wheel1Radius );
       if obj.Wheel1Radius > 0
-        locWhCtrPos = locBezierPos + locBezierNorm;
+        locWh1CtrPos = locBezierPos + locBezierNorm;
       else
-        locWhCtrPos = locBezierPos;
+        locWh1CtrPos = locBezierPos;
       end
-      BezNormAngleDiff = diff( atan2(locBezierNorm(2,:), locBezierNorm(1,:)), 1, 2 );
+      BezNormAngle = -atan2(locBezierNorm(2,:), locBezierNorm(1,:));
 
-      % angle that the wheel spun between two given points
+      % distance rolled by wheel 1
+      CumRollWh1 = CurrRollDist0 + cumsum([0, vecnorm( diff(locBezierPos,1,2), 2, 1)]);
       if obj.Wheel1Radius > 0
-        DiffAngle = vecnorm( diff(locBezierPos,1,2), 2, 1) / obj.Wheel1Radius;
+        CumAngleWh1 = CumRollWh1 / obj.Wheel1Radius;
       else
-        DiffAngle = vecnorm( diff(locBezierPos,1,2), 2, 1);
+        CumAngleWh1 = CumRollWh1;
       end
+      locWh1Angle = -CumAngleWh1 - BezNormAngle;
 
       % position and angle for the marker
-      locMarkerAngle = cumsum([CurrAngle0, -DiffAngle+BezNormAngleDiff]);
       switch obj.Method
         case 'Default'
           % add a point in a circle with given center and radius
-          locMarkerPos = locWhCtrPos + [cos(locMarkerAngle); sin(locMarkerAngle)]*obj.MarkerRadius;
+          locMarkerPos = locWh1CtrPos + [cos(locWh1Angle); sin(locWh1Angle)]*obj.MarkerRadius;
         case 'Hole'
           % distance that the wheel has rolled so far
-          RollAngle = mod( cumsum([CurrRollDist0, DiffAngle ]), 2*pi);
           % 1. interpolate where the marker is in the hole
           HolePos = zeros(2, nPts);
-          HolePos(1,:) = interp1(obj.AngBase, obj.BezBase(1,:), mod(RollAngle,2*pi));
-          HolePos(2,:) = interp1(obj.AngBase, obj.BezBase(2,:), mod(RollAngle,2*pi));
+          HolePos(1,:) = interp1(obj.AngBase, obj.BezBase(1,:), mod(CumAngleWh1,2*pi));
+          HolePos(2,:) = interp1(obj.AngBase, obj.BezBase(2,:), mod(CumAngleWh1,2*pi));
           % 2. rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
           for k = 1:nPts
-            th = locMarkerAngle(k);
-            locMarkerPos(:,k) = locWhCtrPos(:,k) + ...
+            th = locWh1Angle(k);
+            locMarkerPos(:,k) = locWh1CtrPos(:,k) + ...
               obj.Wheel1Radius * [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,j);
           end
         case 'Ring2'
           % distance that the wheel has rolled so far
-          RollAngle = cumsum([CurrRollDist0, DiffAngle ]);
           % compute the angle rolled by the smallest gear
-          CircProject = [cos(RollAngle); sin(RollAngle)] - [obj.CtrHoleDist;0];
+          CircProject = [cos(CumAngleWh1); sin(CumAngleWh1)] - [obj.CtrHoleDist;0];
           LocRollAngle = atan2(CircProject(2,:),CircProject(1,:));
           % position of marker IF ring was static
           InnMarkerPos = [...
@@ -118,12 +116,12 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           % rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
           for k = 1:nPts
-            th = locMarkerAngle(k);
-            locMarkerPos(:,k) = locWhCtrPos(:,k) + ...
+            th = locWh1Angle(k);
+            locMarkerPos(:,k) = locWh1CtrPos(:,k) + ...
               [cos(th) -sin(th); sin(th) cos(th)] * ( InnMarkerPos(:,k) + [obj.CtrHoleDist;0] );
           end
         otherwise
-          locMarkerPos = locWhCtrPos;
+          locMarkerPos = locWh1CtrPos;
       end
       
       % check if the marker points are not too far from each other
@@ -147,20 +145,33 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     end
 
     % technical
-    locMarkerAngle = mod(locMarkerAngle, 2*pi);
+    locWh1Angle = mod(locWh1Angle, 2*pi);
 
     %
     % concatenate results from the current segment to the overall outputs
-    Time        = [Time,        LocalTime+CurrTime0];
+    Time        = [Time,        LocalTime + CurrTime0];
     BezierPos   = [BezierPos,   locBezierPos];
-    WhCtrPos    = [WhCtrPos,    locWhCtrPos];
+    WhCtrPos    = [WhCtrPos,    locWh1CtrPos];
     MarkerPos   = [MarkerPos,   locMarkerPos];
-    MarkerAngle = [MarkerAngle, locMarkerAngle];
+    MarkerAngle = [MarkerAngle, locWh1Angle];
+
+    % debug
+    if false
+      %figure()
+      hold on
+      axis equal
+      plot(BezierPos(1,:),BezierPos(2,:))
+      scatter(BezierPos(1,end),BezierPos(2,end),'filled')
+      plot(WhCtrPos(1,:),WhCtrPos(2,:))
+      scatter(WhCtrPos(1,end),WhCtrPos(2,end),'filled')
+      plot(MarkerPos(1,:),MarkerPos(2,:))
+      scatter(MarkerPos(1,end),MarkerPos(2,end),'filled')
+    end
+
     %
     % update initial values
     CurrTime0  = Time(end);
-    CurrAngle0 = MarkerAngle(end);
-    CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter()/obj.Wheel1Radius;
+    CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter();
     
     % prepare for a corner
     NextSegment = obj.BPath.Segment{mod(j+1-1,obj.BPath.nSegments)+1};
@@ -194,30 +205,29 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
 
     % adjust the rotation, time is set in terms of the marker
     LocalTime   = linspace(0,1, ceil(MarkerArcLength / obj.Tol));
-    locMarkerAngle = MarkerAngle0 + LocalTime*CornerAngle;
+    locWh1Angle = MarkerAngle0 + LocalTime*CornerAngle;
 
     LocalWhCtrAngle   = atan2(WhNormalPre(2),WhNormalPre(1));
     LocalMarkerAngle  = atan2(MarkerPos0(2)-BezierPos0(2),MarkerPos0(1)-BezierPos0(1));
     LocalMarkerRadius = norm( MarkerPos0 - BezierPos0 );
 
-    locWhCtrPos  = BezierPos0 + [cos(LocalWhCtrAngle  + LocalTime*CornerAngle); sin(LocalWhCtrAngle  + LocalTime*CornerAngle)]*obj.Wheel1Radius;
+    locWh1CtrPos  = BezierPos0 + [cos(LocalWhCtrAngle  + LocalTime*CornerAngle); sin(LocalWhCtrAngle  + LocalTime*CornerAngle)]*obj.Wheel1Radius;
     locMarkerPos = BezierPos0 + [cos(LocalMarkerAngle + LocalTime*CornerAngle); sin(LocalMarkerAngle + LocalTime*CornerAngle)]*LocalMarkerRadius;
 
     % technical
-    locMarkerAngle = mod(locMarkerAngle, 2*pi);
+    locWh1Angle = mod(locWh1Angle, 2*pi);
     BezierPos   = BezierPos0 * ones(size(LocalTime));
 
     %
     % concatenate results from the current segment to the overall outputs
     Time        = [Time,        LocalTime+CurrTime0];
     BezierPos   = [BezierPos,   locBezierPos];
-    WhCtrPos    = [WhCtrPos,    locWhCtrPos];
+    WhCtrPos    = [WhCtrPos,    locWh1CtrPos];
     MarkerPos   = [MarkerPos,   locMarkerPos];
-    MarkerAngle = [MarkerAngle, locMarkerAngle];
+    MarkerAngle = [MarkerAngle, locWh1Angle];
 
     % update initial values
     CurrTime0  = Time(end);
-    CurrAngle0 = MarkerAngle(end);
   end
   %
   %%
