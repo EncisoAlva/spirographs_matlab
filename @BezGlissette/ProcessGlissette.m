@@ -42,7 +42,7 @@ MarkerPos   = [];
 MarkerAngle = [];
 
 % initialize
-CurrAngle0   = obj.MarkerAngle0; % point to the curve
+CurrAngle0   = obj.MarkerAngle0 + pi; % point to the curve
 CurrTime0    = 0;
 
 %%
@@ -84,7 +84,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       else
         CumAngleWh1 = CumRollWh1;
       end
-      locWh1Angle = -CumAngleWh1 - BezNormAngle;
+      locWh1Angle = CurrAngle0 -CumAngleWh1 - BezNormAngle;
 
       % position and angle for the marker
       switch obj.Method
@@ -100,7 +100,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           % 2. rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
           for k = 1:nPts
-            th = locWh1Angle(k)+pi;
+            th = locWh1Angle(k);
             locMarkerPos(:,k) = locWh1CtrPos(:,k) + ...
               [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,k) * obj.Wheel1Radius;
           end
