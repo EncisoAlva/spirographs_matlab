@@ -59,7 +59,7 @@ Cpurple_cl = [192,   0, 192]/255;
 Cblue_fcy  = [ 36, 122, 253]/255;
 Cflower_y  = [255, 229,  90]/255;
 
-Curve.SetColor( {Cblue_fcy, Cflower_y},...
+Curve.SetColor( {Cflower_y, Cblue_fcy},...
  'CumDist', 6 );
 %'CumDist'
 %'Bezier'

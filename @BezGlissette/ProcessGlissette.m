@@ -37,6 +37,7 @@ end
 Time        = [];
 BezierPos   = [];
 WhCtrPos    = [];
+WhCtrAngle  = [];
 MarkerPos   = [];
 MarkerAngle = [];
 
@@ -77,7 +78,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       BezNormAngle = -atan2(locBezierNorm(2,:), locBezierNorm(1,:));
 
       % distance rolled by wheel 1
-      CumRollWh1 = CurrRollDist0 + cumsum([0, vecnorm( diff(locBezierPos,1,2), 2, 1)]);
+      CumRollWh1 = cumsum([CurrRollDist0, vecnorm( diff(locBezierPos,1,2), 2, 1)]);
       if obj.Wheel1Radius > 0
         CumAngleWh1 = CumRollWh1 / obj.Wheel1Radius;
       else
@@ -99,9 +100,9 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           % 2. rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
           for k = 1:nPts
-            th = locWh1Angle(k);
+            th = locWh1Angle(k)+pi;
             locMarkerPos(:,k) = locWh1CtrPos(:,k) + ...
-              obj.Wheel1Radius * [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,j);
+              [cos(th) -sin(th); sin(th) cos(th)] * HolePos(:,k) * obj.Wheel1Radius;
           end
         case 'Ring2'
           % distance that the wheel has rolled so far
@@ -150,16 +151,37 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     %
     % concatenate results from the current segment to the overall outputs
     Time        = [Time,        LocalTime + CurrTime0];
-    BezierPos   = [BezierPos,   locBezierPos];
-    WhCtrPos    = [WhCtrPos,    locWh1CtrPos];
-    MarkerPos   = [MarkerPos,   locMarkerPos];
-    MarkerAngle = [MarkerAngle, locWh1Angle];
+    BezierPos   = [BezierPos,   locBezierPos  ];
+    WhCtrPos    = [WhCtrPos,    locWh1CtrPos  ];
+    WhCtrAngle  = [WhCtrAngle,  mod(CumAngleWh1,2*pi)];
+    MarkerPos   = [MarkerPos,   locMarkerPos  ];
+    MarkerAngle = [MarkerAngle, locWh1Angle   ];
+
+    %
+    % update initial values
+    CurrTime0  = Time(end);
+    CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter();
 
     % debug
     if false
-      %figure()
+      figure()
+      axis equal
+      xlim([-1,1])
+      ylim([-1,1])
+      hold on
+      grid on
+      plot(HolePos(1,:), HolePos(2,:))
+      scatter(HolePos(1,end),HolePos(2,end),'filled')
+    end
+
+    % debug
+    if false
+      figure()
       hold on
       axis equal
+      grid on
+      xlim([-1,1])
+      ylim([-1,1])
       plot(BezierPos(1,:),BezierPos(2,:))
       scatter(BezierPos(1,end),BezierPos(2,end),'filled')
       plot(WhCtrPos(1,:),WhCtrPos(2,:))
@@ -167,11 +189,6 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       plot(MarkerPos(1,:),MarkerPos(2,:))
       scatter(MarkerPos(1,end),MarkerPos(2,end),'filled')
     end
-
-    %
-    % update initial values
-    CurrTime0  = Time(end);
-    CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter();
     
     % prepare for a corner
     NextSegment = obj.BPath.Segment{mod(j+1-1,obj.BPath.nSegments)+1};

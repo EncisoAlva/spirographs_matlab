@@ -72,9 +72,6 @@ classdef BezGlissette < handle
       obj.Multicolor = false;
       obj.ChangeOrient = false;
       obj.AutoUpdate = false;
-      %
-      obj.Tol = 0.0001;
-      obj.CloseTol = 0.0001;
     end
     %%%  METHODS ; OUTPUT = NO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     LoadRollingPath(obj, varargin)

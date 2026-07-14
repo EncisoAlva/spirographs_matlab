@@ -9,8 +9,8 @@ function LoadRollingPath( obj, varargin )
   maxX = max(tmpBez(1,:));
   minY = min(tmpBez(2,:));
   maxY = max(tmpBez(2,:));
-  obj.Tol = max( norm( [ maxX-minX; maxY-minY ] )*(1e-4), 0.0001);
-  obj.CloseTol = max( obj.Tol*(1e-1), 0.0001);
+  obj.Tol = max( norm( [ maxX-minX; maxY-minY ] )*(1e-3), 0.001);
+  obj.CloseTol = max( obj.Tol*(5), 0.001);
 
   % for visualization purposes
   obj.DecorativeBez = obj.BPath.EvalAllPositions();

@@ -75,7 +75,7 @@ Curve.AutoUpdate = true;
 %%
 % designer parameters
 
-Curve.Set_Wheel1BezRatio( 1, 1 );
+Curve.Set_Wheel1BezRatio( 4, 3 );
 
 %%
 
@@ -108,7 +108,7 @@ Curve.PlotGlissette()
 %%
 % fast change
 
-Curve.Set_Wheel1BezRatio( 5,3 );
+Curve.Set_Wheel1BezRatio( 9, 8 );
 
 Curve.ProcessGlissette()
 

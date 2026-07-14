@@ -260,7 +260,7 @@ for i = 0:nTimes
         rolled_circ = [cos(th), -sin(th); sin(th), cos(th)] * circ * VideoOpts.WheelRadii(q);
         fill(RefWheelCtr(1,q)+rolled_circ(1,:),RefWheelCtr(2,q)+rolled_circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15); 
         %
-        rolled_hole = [cos(th), -sin(th); sin(th), cos(th)] * VideoOpts.DecorativeHole*VideoOpts.WheelRadii(q);
+        rolled_hole = [cos(th), -sin(th); sin(th), cos(th)] * obj.DecorativeHole*VideoOpts.WheelRadii(q);
         plot(RefWheelCtr(1,q)+rolled_hole(1,:), RefWheelCtr(2,q)+rolled_hole(2,:), 'Color',[0,0,0,0.5])
     end
     for w = 1:size(aux_angles,2)
