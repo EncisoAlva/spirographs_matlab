@@ -23,7 +23,7 @@
 function MakeVideo( obj, VidName, VideoOpts, varargin )
 
 % I want the videos to be ordered by date, by default
-if isprop(VideoOpts, 'DateTimeIndex') && VideoOpts.AddDateTimeIndex
+if isfield(VideoOpts, 'AddDateTimeIndex') && VideoOpts.AddDateTimeIndex
   DateTimeNow = datetime('now');
   DateTimeNow.Format = 'yyMMdd-HH';
   DateTimeStr = string(DateTimeNow);
