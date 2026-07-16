@@ -3,184 +3,120 @@
 % wheel rolling; the marker is in this second wheel.
 
 %%
-% check available curves in the example file
-who -file ExampleCurves.mat
-
-% load curve
-BPath_pack = struct2cell(load('ExampleCurves.mat','LetterC'));
-BPath = BPath_pack{1};
-clear BPath_pack
+% check available curves
+BezPath.CheckExamples();
 
 %%
-% check available curves in the example file
-who -file ExampleCollections.mat
+% generate empty curve
+Curve = BezGlissette( 'Ring2' );
 
-% load curve
-BPath_pack1 = struct2cell(load('ExampleCollections.mat','Circlegon'));
-BPath_pack2 = BPath_pack1{1};
-BPath = BPath_pack2{2};
+% load path from example
+%Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
 
-clear BPath_pack1 BPath_pack2
+% load path from indexed example
+Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 2 )
 
-%%
-% load from file
-BPath_pack = LoadSVG( './curves_svg/octopi1.svg' );
-BPath = BPath_pack{1};
-clear BPath_pack
+% load path from SVG file
+%Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
 
 %%
 % pre-processing
-BPath = RemovePointCurves( BPath, 0.0001 );
 
-% this one is because I'm using absolute tolerance instead of relative
-BPath = RescalePath( BPath, 2, 2 );
+%Curve.BPath.Rotate( pi/2 );
 
-% line with bad encoding, the normal vector will be wrong
-BPath = ForceCubicLines( BPath );
+Curve.BPath.Flip();
 
-% rotate half a spin
-for i = 1:size(BPath, 2)
-  BPath{i} = [1,0; 0,-1] * BPath{i};
-end
+Curve.BPath.Shift( 2 );
 
-% rotate by an angle
-BPath = RotatePath( BPath, pi/2 );
-
-% change orientation
-BPath = FlipPath(BPath);
+Curve.PlotPath()
 
 %%
-% show control points
+% design parameters
+%Curve.RemoveCorners_Rolling = true;
+%Curve.RemoveCorners_NonRolling = true;
 
-PlotPath(BPath)
-
-BPath = ShiftPath( BPath, 2, false );
+% update all relevant parameter with each change of ratios
+Curve.AutoUpdate = true;
 
 %%
-% parameters
+% designer parameters
 
-% technical stuff
-Tol = 0.005;
-CloseTol = 0.01;
-MaxSpins = 100;
-WheelRadiusTol = 0.000001;
-
-% designer stuff
-MarkerAngle0 = 0;
-
+%>>>
 WheelBezRatio  = 120/96;
 HoleBezRatio   = 120/40;
 Wheel2BezRatio = 120/32;
 Wheel2Marker2Ratio = 4/5;
+%<<<
 
-Shift  = 0;
-Halfen = false;
+Curve.Set_Wheel1BezRatio( 6 );
 
-% willing to loose 1% of total area due to each corner rounding
-CornerRoundingRadius = sqrt(0.001*PathArea(BPath, Tol)/(pi));
-
-%% 
-% remove inner corners
-[BPath_rounded_flipped] = ...
-  RemoveAllCorners( FlipPath(BPath), CornerRoundingRadius, Tol, false );
-BPath_tmp = FlipPath(BPath_rounded_flipped);
-
-PlotPath(BPath_tmp)
-
-% try different rounding radius before proceeding
-BPath = BPath_tmp;
-
-%% 
-
-% remove outer corners
-WheelRadius_old = Inf;
-WheelRadius_new = (PathPerimeter(BPath,0.00001)/(2*pi))/WheelBezRatio
-while abs( WheelRadius_new - WheelRadius_old ) > WheelRadiusTol
-  [BPath_new] = ...
-    RemoveAllCorners( BPath, WheelRadius_new, Tol, true );
-  %
-  WheelRadius_old = WheelRadius_new;
-  WheelRadius_new = (PathPerimeter(BPath_new,0.00001)/(2*pi))/WheelBezRatio
-end
-%BPath = BPath_new;
+%>>>
 Perimeter = (PathPerimeter(BPath_new,0.00001)/(2*pi));
 WheelRadius  = WheelRadius_new;
 Wheel2Radius = Perimeter/Wheel2BezRatio;
 HoleRadius   = Perimeter/HoleBezRatio;
 Marker2Radius = Wheel2Radius*Wheel2Marker2Ratio;
 BPath_new = ShiftPath( BPath_new, Shift, Halfen );
-
-
-
-% don't remove outer corners
-BPath_new = ShiftPath( BPath, Shift, Halfen );
-Perimeter = (PathPerimeter(BPath_new,0.00001)/(2*pi));
-WheelRadius  = Perimeter/WheelBezRatio
-HoleRadius   = Perimeter/HoleBezRatio
-Wheel2Radius = Perimeter/Wheel2BezRatio
-Marker2Radius = Wheel2Radius*Wheel2Marker2Ratio
-
-
-%% 
-% adjust start point after rounding
-PlotPath(BPath_new)
-
-BPath_new = ShiftPath( BPath_new, 1, true);
+%<<<
 
 %%
-% colors
 
-ColorVector = {'yellow','magenta','blue','red','green'};
+% declaring common colors
+Cmarigold  = [234, 162,  33]/255;
+Cwhite     = [255, 255, 255]/255;
+Cdkmagenta = [139,   0, 139]/255;
+Cscarlet   = [255,  36,   0]/255;
+Cblack     = [  0,   0,   0];
+Cruby_cl   = [224,  17,  95]/255;
+Cruby_dk   = [ 78,   9,  15]/255;
+Cbatman_y  = [152, 136,  41]/255;
+Cpurple    = [128,   0, 128]/255;
+Cpurple_cl = [192,   0, 192]/255;
+Cblue_fcy  = [ 36, 122, 253]/255;
+Cflower_y  = [255, 229,  90]/255;
 
-%ColorVector = {'red','white', 'red'};
-
-%ColorVector = {'white', 'red'};
-
-%ColorVector = {[225, 21, 132]/255, [253, 164, 186]/255};
-
-%ColorVector = {[246, 153, 205]/255, [254, 197, 229]/255};
-
-%ColorVector = {[225, 21, 132]/255, [254, 197, 229]/255};
+Curve.SetColor( {Cflower_y, Cblue_fcy},...
+ 'CumDist', 6 );
+%'CumDist'
+%'Bezier'
 
 %%
 % preview curve
 
-% MarkerRadius = WheelRadius;
+Curve.ProcessGlissette()
 
-% setup parameters
-CurveOpts = {};
-CurveOpts.CloseEnds = false;
-CurveOpts.Tol = Tol;
-CurveOpts.CloseTol = CloseTol;
-CurveOpts.MaxSpins = 100;
-CurveOpts.MinSpins = 0;
+Curve.PlotGlissette()
 
-aang = 2*pi*(0:1/1:1)+0*pi;
-aang(end) = [];
-MarkerAngle0Array = aang;
-nPts = size(MarkerAngle0Array,2);
-k = size(ColorVector,2);
+%%
+% fast change
 
-% compute curves
-[ DecorativeBez, ~, ~, ~, AllMarkerPos, ~ ] = ...
-    SetupCurves_Ring2( BPath_new, WheelRadius, ...
-    Wheel2Radius, Marker2Radius, HoleRadius, WheelRadius-HoleRadius, ...
-    MarkerAngle0Array, ...
-      CurveOpts);
+Curve.Set_Wheel1BezRatio( 5,3 );
 
-% plotting per se
-figure()
-hold on
-axis equal
-grid on
-fill(DecorativeBez(1,:),DecorativeBez(2,:), .15*[1,1,1], 'EdgeColor', 'none')
-set(gca,'color', 'k');
-for i = 1:nPts
-  plot(AllMarkerPos{i}(1,:),AllMarkerPos{i}(2,:),'Color',ColorVector{mod(i-1,k)+1}, 'LineWidth',2)
-end
-for i = 1:nPts
-  scatter(AllMarkerPos{i}(1,1),AllMarkerPos{i}(2,1),'red','filled','o')
-end
+Curve.ProcessGlissette()
+
+%Curve.ColorCycles = 5;
+Curve.PlotGlissette()
+
+%%
+% video
+
+% video parameters
+VideoOpts = {};
+VideoOpts.Format = 'mp4';
+VideoOpts.Orientation = 'in';
+VideoOpts.Ratio = 16/9;
+VideoOpts.LineWidth = 2;
+VideoOpts.WhoIsCenter = 1;
+VideoOpts.WheelRadii = Curve.Wheel1Radius;
+%VideoOpts.TimeRefCurve = 'Average';
+%VideoOpts.TimeRefCurve = 'Wheel';
+%VideoOpts.TimeRefCurve = 'Marker';
+VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
+
+VideoOpts.AddDateTimeIndex = true;
+
+% video
+Curve.MakeVideo( 'test', VideoOpts )
 
 %%
 % video
@@ -230,18 +166,3 @@ MakeVideo_Npts( nPts, ...
   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
   ColorVector, ...
   30, 7.5, 'test_260409_14_1', ExtraOpts )
-
-% %%
-% % for batman animation
-% ExtraOpts.FillBezierColor = [152,136,41]/255;
-% ExtraOpts.BackgroundColor = [40,46,60]/255;
-% 
-% ColorVector = {[36,36,36]/255};
-% ExtraOpts.FillMarkerCurve = true;
-% 
-% MakeVideo_Npts( nPts, WhoIsCenter, WheelRadius, ...
-%   DecorativeBez,...
-%   AllBezierPos, AllLocTime, ...
-%   AllWhCtrPos, AllMarkerPos, AllMarkerAngle,...
-%   ColorVector, ...
-%   30, 14, 'test_260408_17_3', ExtraOpts )
