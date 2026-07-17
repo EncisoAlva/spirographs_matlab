@@ -41,14 +41,17 @@ Curve.AutoUpdate = true;
 %%
 % designer parameters
 
-%>>>
-WheelBezRatio  = 120/96;
-HoleBezRatio   = 120/40;
-Wheel2BezRatio = 120/32;
-Wheel2Marker2Ratio = 4/5;
-%<<<
+% the parameters for the ring are more complex
+% for compatibility with the terminology of Wild Gears, the sizes of the
+% circles are given in terms of their perimeters as integers
+WheelPerimeters = [];
+WheelPerimeters.RollingCurve = 120;
+WheelPerimeters.Wheel1_Outer = 96;
+WheelPerimeters.Wheel1_Inner = 40;
+WheelPerimeters.Wheel2       = 32;
+WheelPerimeters.Wheel2MarkerRatio = 4/5;
 
-Curve.Set_Wheel1BezRatio( 6 );
+Curve.Set_RingParameters( WheelPerimeters );
 
 %>>>
 Perimeter = (PathPerimeter(BPath_new,0.00001)/(2*pi));

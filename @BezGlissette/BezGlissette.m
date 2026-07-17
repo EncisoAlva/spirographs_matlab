@@ -11,6 +11,11 @@ classdef BezGlissette < handle
     Wheel1BezRatio
     Wheel1MarkerRatio
     %
+    Wheel2Radius
+    Wheel1Radius_Outer
+    Wheel1Radius_Inner
+    CtrHoleDist
+    %
     Wheel1Radius
     MarkerRadius
     %
@@ -77,6 +82,7 @@ classdef BezGlissette < handle
     LoadRollingPath(obj, varargin)
     LoadHolePath(obj, varargin)
     Set_Wheel1BezRatio(obj, varargin)
+    Set_RingParameters(obj, container)
     RemoveCorners( obj )
     SetColor( obj, ColorVector, varargin )
     SetupHole( obj, varargin )
