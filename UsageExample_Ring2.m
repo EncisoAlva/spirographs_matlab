@@ -45,22 +45,13 @@ Curve.AutoUpdate = true;
 % for compatibility with the terminology of Wild Gears, the sizes of the
 % circles are given in terms of their perimeters as integers
 WheelPerimeters = [];
-WheelPerimeters.RollingCurve = 120;
-WheelPerimeters.Wheel1_Outer = 96;
+WheelPerimeters.RollingCurve = 96;
+WheelPerimeters.Wheel1_Outer = 80;
 WheelPerimeters.Wheel1_Inner = 40;
 WheelPerimeters.Wheel2       = 32;
-WheelPerimeters.Wheel2MarkerRatio = 4/5;
+WheelPerimeters.Wheel2MarkerRatio = 1;
 
 Curve.Set_RingParameters( WheelPerimeters );
-
-%>>>
-Perimeter = (PathPerimeter(BPath_new,0.00001)/(2*pi));
-WheelRadius  = WheelRadius_new;
-Wheel2Radius = Perimeter/Wheel2BezRatio;
-HoleRadius   = Perimeter/HoleBezRatio;
-Marker2Radius = Wheel2Radius*Wheel2Marker2Ratio;
-BPath_new = ShiftPath( BPath_new, Shift, Halfen );
-%<<<
 
 %%
 
@@ -79,7 +70,7 @@ Cblue_fcy  = [ 36, 122, 253]/255;
 Cflower_y  = [255, 229,  90]/255;
 
 Curve.SetColor( {Cflower_y, Cblue_fcy},...
- 'CumDist', 6 );
+ 'CumDist', 1 );
 %'CumDist'
 %'Bezier'
 
