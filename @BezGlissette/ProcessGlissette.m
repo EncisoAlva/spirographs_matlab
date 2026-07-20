@@ -27,7 +27,7 @@ switch obj.Method
       return
     end
   case 'Ring2'
-    if ~isprop(obj, 'CtrHoleDist') || ~isprop(obj, 'HoleRadius') || ~isprop(obj, 'Wheel2Radius') || ~isprop(obj, 'Marker2Radius')
+    if ~isprop(obj, 'CtrHoleDist') || ~isprop(obj, 'Wheel1Radius_Inner') || ~isprop(obj, 'Wheel2Radius')
       warning('Multiple arguments missing.')
       return
     end
@@ -80,11 +80,11 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       % distance rolled by wheel 1
       CumRollWh1 = cumsum([CurrRollDist0, vecnorm( diff(locBezierPos,1,2), 2, 1)]);
       if obj.Wheel1Radius > 0
-        CumAngleWh1 = CumRollWh1 / obj.Wheel1Radius;
+        AngleWh1 = CumRollWh1 / obj.Wheel1Radius;
       else
-        CumAngleWh1 = CumRollWh1;
+        AngleWh1 = CumRollWh1;
       end
-      locWh1Angle = CurrAngle0 -CumAngleWh1 - BezNormAngle;
+      locWh1Angle = CurrAngle0 -AngleWh1 - BezNormAngle;
 
       % position and angle for the marker
       switch obj.Method
@@ -95,8 +95,8 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           % distance that the wheel has rolled so far
           % 1. interpolate where the marker is in the hole
           HolePos = zeros(2, nPts);
-          HolePos(1,:) = interp1(obj.AngBase, obj.BezBase(1,:), mod(CumAngleWh1,2*pi));
-          HolePos(2,:) = interp1(obj.AngBase, obj.BezBase(2,:), mod(CumAngleWh1,2*pi));
+          HolePos(1,:) = interp1(obj.AngBase, obj.BezBase(1,:), mod(AngleWh1,2*pi));
+          HolePos(2,:) = interp1(obj.AngBase, obj.BezBase(2,:), mod(AngleWh1,2*pi));
           % 2. rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
           for k = 1:nPts
@@ -107,12 +107,25 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
         case 'Ring2'
           % distance that the wheel has rolled so far
           % compute the angle rolled by the smallest gear
-          CircProject = [cos(CumAngleWh1); sin(CumAngleWh1)] - [obj.CtrHoleDist;0];
-          LocRollAngle = atan2(CircProject(2,:),CircProject(1,:));
+          AngleWh1_Out = AngleWh1;
+          CircProject  = [cos(AngleWh1_Out); sin(AngleWh1_Out)]*obj.Wheel1Radius_Outer - [obj.CtrHoleDist;0];
+          AngleWh1_Inn = atan2(CircProject(2,:),CircProject(1,:));
+          % fix end effects of going from ~2pi to 0
+          AngleWh1_Inn_Diff = diff(AngleWh1_Inn,1);
+          for q = 1:size(AngleWh1_Inn_Diff,2)
+            if AngleWh1_Inn_Diff(q) < 0
+              AngleWh1_Inn_Diff(q) = AngleWh1_Inn_Diff(q) + 2*pi;
+            end
+          end
+          AngleWh1_Inn = cumsum( [AngleWh1_Inn(1), AngleWh1_Inn_Diff] );
           % position of marker IF ring was static
+          R  = obj.Wheel1Radius_Inner;
+          r  = obj.Wheel2Radius;
+          k  = obj.MarkerRadius;
+          th = AngleWh1_Inn;
           InnMarkerPos = [...
-            (HoleRadius-Wheel2Radius)*cos(LocRollAngle) + Marker2Radius*cos(LocRollAngle*((HoleRadius-Wheel2Radius)/Wheel2Radius));...
-            (HoleRadius-Wheel2Radius)*sin(LocRollAngle) - Marker2Radius*sin(LocRollAngle*((HoleRadius-Wheel2Radius)/Wheel2Radius))...
+            (R-r)*cos(th)+k*cos(th*(R-r)/r);...
+            (R-r)*sin(th)-k*sin(th*(R-r)/r)...
             ];
           % rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
@@ -153,7 +166,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     Time        = [Time,        LocalTime + CurrTime0];
     BezierPos   = [BezierPos,   locBezierPos  ];
     WhCtrPos    = [WhCtrPos,    locWh1CtrPos  ];
-    WhCtrAngle  = [WhCtrAngle,  mod(CumAngleWh1,2*pi)];
+    WhCtrAngle  = [WhCtrAngle,  mod(AngleWh1,2*pi)];
     MarkerPos   = [MarkerPos,   locMarkerPos  ];
     MarkerAngle = [MarkerAngle, locWh1Angle   ];
 
@@ -163,19 +176,19 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter();
 
     % debug
-    if false
+    if true
       figure()
       axis equal
       xlim([-1,1])
       ylim([-1,1])
       hold on
       grid on
-      plot(HolePos(1,:), HolePos(2,:))
-      scatter(HolePos(1,end),HolePos(2,end),'filled')
+      plot(InnMarkerPos(1,:), InnMarkerPos(2,:))
+      scatter(InnMarkerPos(1,end),InnMarkerPos(2,end),'filled')
     end
 
     % debug
-    if false
+    if true
       figure()
       hold on
       axis equal
