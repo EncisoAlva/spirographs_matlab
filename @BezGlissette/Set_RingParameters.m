@@ -34,12 +34,12 @@ function obj = Set_RingParameters( obj, container )
   obj.Wheel2Radius = obj.Wheel1Radius * container.Wheel2 / container.Wheel1_Outer;
   obj.MarkerRadius = obj.Wheel2Radius * container.Wheel2MarkerRatio;
 
-  if isfield(container, 'CtrHoleDist')
-    % if it is given as parameter, it is given as a percent
-    obj.CtrHoleDist = container.CtrHoleDist * obj.Wheel1Radius;
-  else
+  %if isfield(container, 'CtrHoleDist')
+  %  % if it is given as parameter, it is given as a percent
+  %  obj.CtrHoleDist = container.CtrHoleDist * obj.Wheel1Radius;
+  %else
     obj.CtrHoleDist = obj.Wheel1Radius_Outer - obj.Wheel1Radius_Inner;
-  end
+  %end
 
   % TODO: find an actual estimate for this quantity
   obj.MinSpins = 1;

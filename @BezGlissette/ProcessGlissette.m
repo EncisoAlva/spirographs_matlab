@@ -31,6 +31,7 @@ switch obj.Method
       warning('Multiple arguments missing.')
       return
     end
+    obj.Wheel1Radius = obj.Wheel1Radius_Outer;
 end
 
 % containers for results
@@ -52,7 +53,8 @@ ClosedFlag = false;
 SufficientSpins = false;
 CurrRollDist0 = 0;
 while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
-  for j = 1:obj.BPath.nSegments
+  %for j = 1:obj.BPath.nSegments
+  for j = 1:8
     disp(strcat('Spin: ',num2str(CurrSpin),' , Segment: ',num2str(j)))
     CurrSegment = obj.BPath.Segment{j};
     
@@ -77,6 +79,12 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       end
       BezNormAngle = -atan2(locBezierNorm(2,:), locBezierNorm(1,:));
 
+      % if true
+      %   figure()
+      %   plot(BezNormAngle)
+      %   title('BezNormAngle')
+      % end
+
       % distance rolled by wheel 1
       CumRollWh1 = cumsum([CurrRollDist0, vecnorm( diff(locBezierPos,1,2), 2, 1)]);
       if obj.Wheel1Radius > 0
@@ -85,6 +93,23 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
         AngleWh1 = CumRollWh1;
       end
       locWh1Angle = CurrAngle0 -AngleWh1 - BezNormAngle;
+      % 0<->2pi transition from previous angles
+      if size(MarkerAngle, 2) > 0
+        ang0 = locWh1Angle(1) - MarkerAngle(end);
+        if abs(ang0) > pi
+          ang_corrected = mod( ang0+pi, 2*pi ) - pi;
+          ang_diff = ang_corrected - locWh1Angle(1);
+          locWh1Angle = locWh1Angle + ang_diff;
+        end
+      end
+      % 0<->2pi transition
+      locWh1Angle_Diff = diff(locWh1Angle,1);
+      for q = 1:size(locWh1Angle_Diff,2)
+        if abs(locWh1Angle_Diff(q)) > pi
+          disp(locWh1Angle_Diff(q))
+          locWh1Angle_Diff(q) = mod(locWh1Angle_Diff(q)+pi, 2*pi)-pi;
+        end
+      end
 
       % position and angle for the marker
       switch obj.Method
@@ -110,22 +135,45 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           AngleWh1_Out = AngleWh1;
           CircProject  = [cos(AngleWh1_Out); sin(AngleWh1_Out)]*obj.Wheel1Radius_Outer - [obj.CtrHoleDist;0];
           AngleWh1_Inn = atan2(CircProject(2,:),CircProject(1,:));
+          % if true
+          %   figure()
+          %   plot(AngleWh1_Out/pi,AngleWh1_Inn/pi)
+          %   grid on
+          % end
           % fix end effects of going from ~2pi to 0
           AngleWh1_Inn_Diff = diff(AngleWh1_Inn,1);
           for q = 1:size(AngleWh1_Inn_Diff,2)
-            if AngleWh1_Inn_Diff(q) < 0
-              AngleWh1_Inn_Diff(q) = AngleWh1_Inn_Diff(q) + 2*pi;
+            if abs(AngleWh1_Inn_Diff(q)) > pi
+              disp(AngleWh1_Inn_Diff(q))
+              AngleWh1_Inn_Diff(q) = mod(AngleWh1_Inn_Diff(q)+pi, 2*pi)-pi;
             end
           end
           AngleWh1_Inn = cumsum( [AngleWh1_Inn(1), AngleWh1_Inn_Diff] );
+          % fix end effects of going from ~2pi*T to 0
+          Rr_1 = (obj.Wheel1Radius_Inner-obj.Wheel2Radius)/obj.Wheel2Radius; % R/r-1
+          AngleWh2 = AngleWh1_Inn*Rr_1;
+          % if true
+          %   figure()
+          %   plot(AngleWh2/pi)
+          %   grid on
+          % end
+          AngleWh2_Diff = diff(AngleWh2,1);
+          for q = 1:size(AngleWh2_Diff,2)
+            if abs(AngleWh2_Diff(q)) > pi
+              disp(AngleWh2_Diff(q))
+              AngleWh2_Diff(q) = mod(AngleWh2_Diff(q)+pi, 2*pi)-pi;
+            end
+          end
+          AngleWh2 = cumsum( [AngleWh2(1), AngleWh2_Diff] );
           % position of marker IF ring was static
           R  = obj.Wheel1Radius_Inner;
           r  = obj.Wheel2Radius;
           k  = obj.MarkerRadius;
           th = AngleWh1_Inn;
+          th_Rr_1 = AngleWh2;
           InnMarkerPos = [...
-            (R-r)*cos(th)+k*cos(th*(R-r)/r);...
-            (R-r)*sin(th)-k*sin(th*(R-r)/r)...
+             (R-r)*cos(th)+k*cos(th_Rr_1);...
+            -(R-r)*sin(th)+k*sin(th_Rr_1)...
             ];
           % rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
@@ -159,7 +207,7 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     end
 
     % technical
-    locWh1Angle = mod(locWh1Angle, 2*pi);
+    %locWh1Angle = mod(locWh1Angle, 2*pi);
 
     %
     % concatenate results from the current segment to the overall outputs
@@ -175,17 +223,17 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     CurrTime0  = Time(end);
     CurrRollDist0 = CurrRollDist0 + CurrSegment.GetSegmentPerimeter();
 
-    % debug
-    if true
-      figure()
-      axis equal
-      xlim([-1,1])
-      ylim([-1,1])
-      hold on
-      grid on
-      plot(InnMarkerPos(1,:), InnMarkerPos(2,:))
-      scatter(InnMarkerPos(1,end),InnMarkerPos(2,end),'filled')
-    end
+    % % debug
+    % if true
+    %   figure()
+    %   axis equal
+    %   xlim([-1,1])
+    %   ylim([-1,1])
+    %   hold on
+    %   grid on
+    %   plot(InnMarkerPos(1,:), InnMarkerPos(2,:))
+    %   scatter(InnMarkerPos(1,end),InnMarkerPos(2,end),'filled')
+    % end
 
     % debug
     if true
@@ -193,8 +241,8 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
       hold on
       axis equal
       grid on
-      xlim([-1,1])
-      ylim([-1,1])
+      xlim([-1.5,1.5])
+      ylim([-1.5,1.5])
       plot(BezierPos(1,:),BezierPos(2,:))
       scatter(BezierPos(1,end),BezierPos(2,end),'filled')
       plot(WhCtrPos(1,:),WhCtrPos(2,:))
