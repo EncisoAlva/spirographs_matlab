@@ -1,4 +1,4 @@
-function PlotGlissette( obj )
+function PlotGlissette( obj, debug )
 
 % process colors, due to updates
 obj.ProcessColors()
@@ -7,13 +7,23 @@ obj.ProcessColors()
 figure();
 hold on
 axis equal
-axis on
-grid on
+if debug
+  axis on
+  grid on
+else
+  set(gca, 'XColor', 'none', 'YColor', 'none');
+  grid off
+end
 set(gca,'Color','k')
 
 % fill the bezier curve, for reference
-fill(obj.DecorativeBez(1,:),obj.DecorativeBez(2,:), ...
-  .15*[1,1,1], 'EdgeColor', 'none')
+if debug
+  fill(obj.DecorativeBez(1,:),obj.DecorativeBez(2,:), ...
+    .15*[1,1,1], 'EdgeColor', 'none')
+else
+  plot(obj.DecorativeBez(1,:),obj.DecorativeBez(2,:), 'Color', ...
+    .15*[1,1,1], 'LineWidth',3)
+end
 
 % actual plot
 if obj.Multicolor
@@ -27,6 +37,7 @@ else
 end
 
 % reference points for multicolor
+if debug
 if obj.Multicolor
   switch obj.ColorRefCurve
     case 'CumDist'
@@ -39,6 +50,7 @@ if obj.Multicolor
     [~,iidx] = max(ColorVal(ColorVal<=rref));
     scatter(obj.MarkerPos(1,iidx),obj.MarkerPos(2,iidx),'red','filled','o')
   end
+end
 end
 
 end

@@ -68,9 +68,13 @@ Cpurple    = [128,   0, 128]/255;
 Cpurple_cl = [192,   0, 192]/255;
 Cblue_fcy  = [ 36, 122, 253]/255;
 Cflower_y  = [255, 229,  90]/255;
+Cgreen_dk  = [  0,  71,   4]/255;
 
-Curve.SetColor( {Cflower_y, Cblue_fcy},...
+% Curve.SetColor( {Cflower_y, Cblue_fcy},...
+%  'CumDist', 1 );
+Curve.SetColor( {Cgreen_dk, Cflower_y},...
  'CumDist', 1 );
+Curve.ColorCycles = 6;
 %'CumDist'
 %'Bezier'
 
@@ -84,12 +88,21 @@ Curve.PlotGlissette()
 %%
 % fast change
 
-Curve.Set_Wheel1BezRatio( 5,3 );
+for kk = 1:40
+WheelPerimeters = [];
+WheelPerimeters.RollingCurve = 96;
+WheelPerimeters.Wheel1_Outer = 80;
+WheelPerimeters.Wheel1_Inner = 40;
+WheelPerimeters.Wheel2       = kk;
+WheelPerimeters.Wheel2MarkerRatio = 1;
+
+Curve.Set_RingParameters( WheelPerimeters );
 
 Curve.ProcessGlissette()
 
-%Curve.ColorCycles = 5;
+%Curve.ColorCycles = 6;
 Curve.PlotGlissette()
+end
 
 %%
 % video
