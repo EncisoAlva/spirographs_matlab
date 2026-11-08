@@ -1,4 +1,4 @@
-function PlotGlissette( obj, debug )
+function PlotGlissette( obj )
 
 % process colors, due to updates
 obj.ProcessColors()
@@ -7,7 +7,7 @@ obj.ProcessColors()
 figure();
 hold on
 axis equal
-if debug
+if obj.DebugFig
   axis on
   grid on
 else
@@ -17,7 +17,7 @@ end
 set(gca,'Color','k')
 
 % fill the bezier curve, for reference
-if debug
+if obj.DebugFig
   fill(obj.DecorativeBez(1,:),obj.DecorativeBez(2,:), ...
     .15*[1,1,1], 'EdgeColor', 'none')
 else
@@ -37,7 +37,7 @@ else
 end
 
 % reference points for multicolor
-if debug
+if obj.DebugFig
 if obj.Multicolor
   switch obj.ColorRefCurve
     case 'CumDist'

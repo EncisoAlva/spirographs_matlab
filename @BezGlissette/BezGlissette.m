@@ -55,6 +55,8 @@ classdef BezGlissette < handle
     %
     BezBase
     AngBase
+    %
+    DebugFig
   end
 
   methods

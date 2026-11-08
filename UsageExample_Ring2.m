@@ -37,6 +37,7 @@ Curve.PlotPath()
 
 % update all relevant parameter with each change of ratios
 Curve.AutoUpdate = true;
+Curve.DebugFig = true;
 
 %%
 % designer parameters
@@ -103,6 +104,23 @@ Curve.ProcessGlissette()
 %Curve.ColorCycles = 6;
 Curve.PlotGlissette()
 end
+
+%%
+% fast change
+
+WheelPerimeters = [];
+WheelPerimeters.RollingCurve = 90;
+WheelPerimeters.Wheel1_Outer = 80;
+WheelPerimeters.Wheel1_Inner = 40;
+WheelPerimeters.Wheel2       = 32;
+WheelPerimeters.Wheel2MarkerRatio = 1;
+
+Curve.Set_RingParameters( WheelPerimeters );
+
+Curve.ProcessGlissette()
+
+%Curve.ColorCycles = 6;
+Curve.PlotGlissette()
 
 %%
 % video
