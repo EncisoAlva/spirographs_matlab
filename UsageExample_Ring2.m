@@ -73,7 +73,7 @@ Cgreen_dk  = [  0,  71,   4]/255;
 
 % Curve.SetColor( {Cflower_y, Cblue_fcy},...
 %  'CumDist', 1 );
-Curve.SetColor( {Cgreen_dk, Cflower_y},...
+Curve.SetColor( {Cmarigold, Cmarigold},...
  'CumDist', 1 );
 Curve.ColorCycles = 6;
 %'CumDist'
@@ -97,11 +97,11 @@ Curve.PlotGlissette()
 % 120 96 40 32
 
 WheelPerimeters = [];
-WheelPerimeters.RollingCurve = 120;
-WheelPerimeters.Wheel1_Outer =  96;
-WheelPerimeters.Wheel1_Inner =  40;
-WheelPerimeters.Wheel2       =  32;
-WheelPerimeters.Wheel2MarkerRatio = 3/4;
+WheelPerimeters.RollingCurve = 144;
+WheelPerimeters.Wheel1_Outer = 117;
+WheelPerimeters.Wheel1_Inner =  90;
+WheelPerimeters.Wheel2       =  60;
+WheelPerimeters.Wheel2MarkerRatio = .6;
 
 Curve.Set_RingParameters( WheelPerimeters );
 
@@ -123,9 +123,9 @@ VideoOpts.LineWidth = 2;
 VideoOpts.WhoIsCenter = 1;
 VideoOpts.WheelRadii = Curve.Wheel1Radius;
 %VideoOpts.TimeRefCurve = 'Average';
-%VideoOpts.TimeRefCurve = 'Wheel';
+VideoOpts.TimeRefCurve = 'Wheel';
 %VideoOpts.TimeRefCurve = 'Marker';
-VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
+%VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
 
 VideoOpts.AddDateTimeIndex = true;
 

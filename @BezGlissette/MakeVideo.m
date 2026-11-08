@@ -304,10 +304,14 @@ for i = 0:nTimes
         rolled2_circ2 = [cos(th), -sin(th); sin(th), cos(th)] * ( rolled1_circ2 + [obj.CtrHoleDist; 0]); 
         fill(RefWheelCtr(1,q)+rolled2_circ2(1,:),RefWheelCtr(2,q)+rolled2_circ2(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15);
         %
-        aux_pts = [cos(aux_angles(w)+obj.MarkerAngleW2(jj)); cos(aux_angles(w)+obj.MarkerAngleW2(jj))] * obj.Wheel2Radius;
-        rolld1_aux_pts = [cos(th2), -sin(th2); sin(th2), cos(th2)] * (aux_pts + [obj.Wheel1Radius_Inner-obj.Wheel2Radius; 0]);
-        rolld2_aux_pts = [cos(th), -sin(th); sin(th), cos(th)] * ( rolld1_aux_pts + [obj.CtrHoleDist; 0]); 
-        plot(rolld2_aux_pts(1,:), rolld2_aux_pts(2,:), 'Color',[0,0,0,0.5])
+        for w = 1:2:size(aux_angles,2)
+          %aux_pts = [0,cos(aux_angles(w)); 0,sin(aux_angles(w))] * obj.Wheel2Radius;
+          th3 = obj.MarkerAngleW1Inn(jj)/(obj.Wheel2Radius/obj.Wheel1Radius_Inner);
+          aux_pts = [0,cos(aux_angles(w)-th3); 0,sin(aux_angles(w)-th3)] * obj.Wheel2Radius;
+          rolld1_aux_pts = [cos(th2), -sin(th2); sin(th2), cos(th2)] * (aux_pts + [obj.Wheel1Radius_Inner-obj.Wheel2Radius; 0]);
+          rolld2_aux_pts = [cos(th), -sin(th); sin(th), cos(th)] * ( rolld1_aux_pts + [obj.CtrHoleDist; 0]); 
+          plot(RefWheelCtr(1,q)+rolld2_aux_pts(1,:), RefWheelCtr(2,q)+rolld2_aux_pts(2,:), 'Color',[0,0,0,0.5])
+        end
     end
   end
   if obj.Multicolor
