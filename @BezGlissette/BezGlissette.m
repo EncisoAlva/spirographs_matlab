@@ -52,6 +52,8 @@ classdef BezGlissette < handle
     MarkerPos
     MarkerAngle
     LocTime
+    MarkerAngleW1Inn
+    MarkerAngleW2
     %
     BezBase
     AngBase

@@ -89,31 +89,17 @@ Curve.PlotGlissette()
 %%
 % fast change
 
-for kk = 1:40
-WheelPerimeters = [];
-WheelPerimeters.RollingCurve = 96;
-WheelPerimeters.Wheel1_Outer = 80;
-WheelPerimeters.Wheel1_Inner = 40;
-WheelPerimeters.Wheel2       = kk;
-WheelPerimeters.Wheel2MarkerRatio = 1;
+% 90, 80, 40, 32
+% 90, 80, 40, 25
 
-Curve.Set_RingParameters( WheelPerimeters );
-
-Curve.ProcessGlissette()
-
-%Curve.ColorCycles = 6;
-Curve.PlotGlissette()
-end
-
-%%
-% fast change
+% 144, 126, 56, 24
 
 WheelPerimeters = [];
-WheelPerimeters.RollingCurve = 90;
-WheelPerimeters.Wheel1_Outer = 80;
-WheelPerimeters.Wheel1_Inner = 40;
-WheelPerimeters.Wheel2       = 32;
-WheelPerimeters.Wheel2MarkerRatio = 1;
+WheelPerimeters.RollingCurve = 120;
+WheelPerimeters.Wheel1_Outer =  96;
+WheelPerimeters.Wheel1_Inner =  40;
+WheelPerimeters.Wheel2       =  32;
+WheelPerimeters.Wheel2MarkerRatio = 1/2;
 
 Curve.Set_RingParameters( WheelPerimeters );
 

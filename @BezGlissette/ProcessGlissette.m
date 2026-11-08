@@ -50,7 +50,9 @@ CurrTime0    = 0;
 switch obj.Method
   case 'Ring2'
     PrevAngleWh1_Inn = 0;
-    PrevAngleWh1 = 0;
+    PrevAngleWh1     = 0;
+    MarkerAngleW1Inn = [];
+    MarkerAngleW2    = [];
 end
 
 %%
@@ -61,7 +63,6 @@ SufficientSpins = false;
 CurrRollDist0 = 0;
 while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
   for j = 1:obj.BPath.nSegments
-  %for j = 1:3
     disp(strcat('Spin: ',num2str(CurrSpin),' , Segment: ',num2str(j)))
     CurrSegment = obj.BPath.Segment{j};
     
@@ -173,8 +174,8 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
           th = AngleWh1_Inn;
           th_Rr_1 = AngleWh2;
           InnMarkerPos = [...
-             (R-r)*cos(th)+k*cos(th_Rr_1);...
-            -(R-r)*sin(th)+k*sin(th_Rr_1)...
+            (R-r)*cos(th)+k*cos(th_Rr_1);...
+            (R-r)*sin(th)-k*sin(th_Rr_1)...
             ];
           % rotate the interpolated point and add around the wheel center
           locMarkerPos = zeros(2, nPts);
@@ -215,6 +216,13 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     WhCtrAngle  = [WhCtrAngle,  mod(AngleWh1,2*pi)];
     MarkerPos   = [MarkerPos,   locMarkerPos  ];
     MarkerAngle = [MarkerAngle, locWh1Angle   ];
+
+    % method-specific variables
+    switch obj.Method
+      case 'Ring2'
+        MarkerAngleW1Inn = [MarkerAngleW1Inn, AngleWh1_Inn];
+        MarkerAngleW2    = [MarkerAngleW2,    AngleWh2];
+    end
 
     %
     % update initial values
@@ -274,6 +282,13 @@ while (CurrSpin < obj.MaxSpins) && (~ClosedFlag)
     MarkerPos   = [MarkerPos,   locMarkerPos];
     MarkerAngle = [MarkerAngle, locWh1Angle];
 
+    % method-specific variables
+    switch obj.Method
+      case 'Ring2'
+        MarkerAngleW1Inn = [MarkerAngleW1Inn, MarkerAngleW1Inn(end) * ones(size(LocalTime))];
+        MarkerAngleW2    = [MarkerAngleW2,    MarkerAngleW2(end)    * ones(size(LocalTime))];
+    end
+
     % update initial values
     CurrTime0  = Time(end);
   end
@@ -320,5 +335,10 @@ obj.WhCtrPos    = WhCtrPos;
 obj.MarkerPos   = MarkerPos;
 obj.MarkerAngle = MarkerAngle;
 obj.LocTime     = Time;
+switch obj.Method
+  case 'Ring2'
+    obj.MarkerAngleW1Inn = MarkerAngleW1Inn;
+    obj.MarkerAngleW2    = MarkerAngleW2;
+end
 
 end

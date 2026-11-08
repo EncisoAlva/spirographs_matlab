@@ -90,10 +90,27 @@ if ~isfield(VideoOpts, 'FillMarkerCurve')
   VideoOpts.FillMarkerCurve = false;
 end
 
+% PATCH
+nPts = min( [size(obj.BezierPos,2), size(obj.WhCtrPos,2), size(obj.MarkerPos,2), size(obj.MarkerAngle,2), size(obj.LocTime,2) ]);
+if size(obj.BezierPos,2) > nPts
+  obj.BezierPos = obj.BezierPos(:,1:nPts);
+end
+if size(obj.WhCtrPos,2) > nPts
+  obj.WhCtrPos = obj.WhCtrPos(:,1:nPts);
+end
+if size(obj.MarkerPos,2) > nPts
+  obj.MarkerPos = obj.MarkerPos(:,1:nPts);
+end
+if size(size(obj.MarkerAngle,2),2) > nPts
+  obj.MarkerAngle = obj.MarkerAngle(:,1:nPts);
+end
+if size(obj.LocTime,2) > nPts
+  obj.LocTime = obj.LocTime(1:nPts);
+end
+
 %%
 % time is parametrized by the path over the Bezier curve or the path
 % described by the wheel center
-nPts = size(obj.BezierPos,2);
 switch VideoOpts.TimeRefCurve
   case 'Bezier'
     TimeFromCurve = zeros(1,nPts);
@@ -135,6 +152,10 @@ switch obj.Method
     circ = [cos(aang); sin(aang)];
   case 'Hole'
     circ = [ [cos(aang); sin(aang)], obj.DecorativeHole ];
+  case 'Ring2'
+    DecorativeHole = ([cos(aang); sin(aang)]*obj.Wheel1Radius_Inner + [obj.CtrHoleDist; 0]) / obj.Wheel1Radius_Outer;
+    circ = [ [cos(aang); sin(aang)], DecorativeHole ];
+    circ2 = [cos(aang); sin(aang)]*obj.Wheel2Radius;
 end
 
 % original figure
@@ -262,6 +283,15 @@ for i = 0:nTimes
         %
         rolled_hole = [cos(th), -sin(th); sin(th), cos(th)] * obj.DecorativeHole*VideoOpts.WheelRadii(q);
         plot(RefWheelCtr(1,q)+rolled_hole(1,:), RefWheelCtr(2,q)+rolled_hole(2,:), 'Color',[0,0,0,0.5])
+      case 'Ring2'
+        th = RefAngle(q);
+        rolled_circ = [cos(th), -sin(th); sin(th), cos(th)] * circ * VideoOpts.WheelRadii(q);
+        fill(RefWheelCtr(1,q)+rolled_circ(1,:),RefWheelCtr(2,q)+rolled_circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15);
+        %
+        th2 = obj.MarkerAngleW1Inn(jj);
+        rolled1_circ2 = [cos(th2), -sin(th2); sin(th2), cos(th2)]*(circ2 + [obj.Wheel1Radius_Inner-obj.Wheel2Radius; 0]);
+        rolled2_circ2 = [cos(th), -sin(th); sin(th), cos(th)] * ( rolled1_circ2 + [obj.CtrHoleDist; 0]); 
+        fill(RefWheelCtr(1,q)+rolled2_circ2(1,:),RefWheelCtr(2,q)+rolled2_circ2(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15);
     end
     for w = 1:size(aux_angles,2)
       plot(RefWheelCtr(1,q)+[0,cos(aux_angles(w)+RefAngle(q))*CenterRadii(q)],...
