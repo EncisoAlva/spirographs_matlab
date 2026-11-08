@@ -107,6 +107,9 @@ end
 if size(obj.LocTime,2) > nPts
   obj.LocTime = obj.LocTime(1:nPts);
 end
+if size(obj.ColorFunc,2) > nPts
+  obj.ColorFunc = obj.ColorFunc(:,1:nPts);
+end
 
 %%
 % time is parametrized by the path over the Bezier curve or the path
@@ -287,16 +290,24 @@ for i = 0:nTimes
         th = RefAngle(q);
         rolled_circ = [cos(th), -sin(th); sin(th), cos(th)] * circ * VideoOpts.WheelRadii(q);
         fill(RefWheelCtr(1,q)+rolled_circ(1,:),RefWheelCtr(2,q)+rolled_circ(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15);
-        %
-        th2 = obj.MarkerAngleW1Inn(jj);
-        rolled1_circ2 = [cos(th2), -sin(th2); sin(th2), cos(th2)]*(circ2 + [obj.Wheel1Radius_Inner-obj.Wheel2Radius; 0]);
-        rolled2_circ2 = [cos(th), -sin(th); sin(th), cos(th)] * ( rolled1_circ2 + [obj.CtrHoleDist; 0]); 
-        fill(RefWheelCtr(1,q)+rolled2_circ2(1,:),RefWheelCtr(2,q)+rolled2_circ2(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15);
     end
     for w = 1:size(aux_angles,2)
       plot(RefWheelCtr(1,q)+[0,cos(aux_angles(w)+RefAngle(q))*CenterRadii(q)],...
            RefWheelCtr(2,q)+[0,sin(aux_angles(w)+RefAngle(q))*CenterRadii(q)],...
         'Color',[0,0,0,0.5])
+    end
+    % scond whel, specific to the Ring2 method
+    switch obj.Method
+      case 'Ring2'
+        th2 = obj.MarkerAngleW1Inn(jj);
+        rolled1_circ2 = [cos(th2), -sin(th2); sin(th2), cos(th2)]*(circ2 + [obj.Wheel1Radius_Inner-obj.Wheel2Radius; 0]);
+        rolled2_circ2 = [cos(th), -sin(th); sin(th), cos(th)] * ( rolled1_circ2 + [obj.CtrHoleDist; 0]); 
+        fill(RefWheelCtr(1,q)+rolled2_circ2(1,:),RefWheelCtr(2,q)+rolled2_circ2(2,:), 'cyan', 'EdgeColor', 'none','FaceAlpha',0.15);
+        %
+        aux_pts = [cos(aux_angles(w)+obj.MarkerAngleW2(jj)); cos(aux_angles(w)+obj.MarkerAngleW2(jj))] * obj.Wheel2Radius;
+        rolld1_aux_pts = [cos(th2), -sin(th2); sin(th2), cos(th2)] * (aux_pts + [obj.Wheel1Radius_Inner-obj.Wheel2Radius; 0]);
+        rolld2_aux_pts = [cos(th), -sin(th); sin(th), cos(th)] * ( rolld1_aux_pts + [obj.CtrHoleDist; 0]); 
+        plot(rolld2_aux_pts(1,:), rolld2_aux_pts(2,:), 'Color',[0,0,0,0.5])
     end
   end
   if obj.Multicolor

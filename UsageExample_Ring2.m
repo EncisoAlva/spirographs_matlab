@@ -94,18 +94,21 @@ Curve.PlotGlissette()
 
 % 144, 126, 56, 24
 
+% 120 96 40 32
+
 WheelPerimeters = [];
 WheelPerimeters.RollingCurve = 120;
 WheelPerimeters.Wheel1_Outer =  96;
 WheelPerimeters.Wheel1_Inner =  40;
 WheelPerimeters.Wheel2       =  32;
-WheelPerimeters.Wheel2MarkerRatio = 1/2;
+WheelPerimeters.Wheel2MarkerRatio = 3/4;
 
 Curve.Set_RingParameters( WheelPerimeters );
 
 Curve.ProcessGlissette()
 
 %Curve.ColorCycles = 6;
+
 Curve.PlotGlissette()
 
 %%
