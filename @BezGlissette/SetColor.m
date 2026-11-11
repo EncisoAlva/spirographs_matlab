@@ -4,6 +4,7 @@ function SetColor( obj, ColorVector, varargin )
     % single color
     obj.ColorVector = { ColorVector };
     obj.nColors = 1;
+    obj.Multicolor = false;
   else
     obj.ColorVector = ColorVector;
     obj.ColorRefCurve = varargin{1};

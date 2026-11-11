@@ -73,8 +73,8 @@ Cgreen_dk  = [  0,  71,   4]/255;
 
 % Curve.SetColor( {Cflower_y, Cblue_fcy},...
 %  'CumDist', 1 );
-Curve.SetColor( {Cmarigold, Cmarigold},...
- 'CumDist', 1 );
+Curve.SetColor( {Cgreen_dk, Cflower_y},...
+ 'CumDist');
 Curve.ColorCycles = 6;
 %'CumDist'
 %'Bezier'
@@ -97,11 +97,11 @@ Curve.PlotGlissette()
 % 120 96 40 32
 
 WheelPerimeters = [];
-WheelPerimeters.RollingCurve = 144;
-WheelPerimeters.Wheel1_Outer = 117;
-WheelPerimeters.Wheel1_Inner =  90;
-WheelPerimeters.Wheel2       =  60;
-WheelPerimeters.Wheel2MarkerRatio = .6;
+WheelPerimeters.RollingCurve = 114;
+WheelPerimeters.Wheel1_Outer =  80;
+WheelPerimeters.Wheel1_Inner =  32;
+WheelPerimeters.Wheel2       =  24;
+WheelPerimeters.Wheel2MarkerRatio = .8;
 
 Curve.Set_RingParameters( WheelPerimeters );
 
