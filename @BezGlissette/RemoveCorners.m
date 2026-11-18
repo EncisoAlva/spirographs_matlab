@@ -22,7 +22,7 @@ function obj = RemoveCorners( obj )
     if obj.RemoveCorners_NonRolling
       obj.BPath = obj.OG_BPath;
       obj.BPath.Flip();
-      obj.BPath.RemoveAllCorners( obj.OG_BPath.CornerRoundingRadius );
+      obj.BPath = obj.BPath.RemoveAllCorners( obj.OG_BPath.CornerRoundingRadius );
       obj.BPath.Flip();
     end
     

@@ -14,7 +14,7 @@ Curve = BezGlissette( 'Ring2' );
 %Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
 
 % load path from indexed example
-Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 2 )
+Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 4 )
 
 % load path from SVG file
 %Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
@@ -22,18 +22,29 @@ Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 2 )
 %%
 % pre-processing
 
+Curve.RemoveCorners_Rolling = false;
+Curve.RemoveCorners_NonRolling = true;
+
 %Curve.BPath.Rotate( pi/2 );
 
 Curve.BPath.Flip();
 
 Curve.BPath.Shift( 2 );
 
+if Curve.RemoveCorners_NonRolling
+  Curve.BPath = Curve.OG_BPath;
+  Curve.BPath.Flip();
+  Curve.BPath = Curve.BPath.RemoveAllCorners( Curve.OG_BPath.CornerRoundingRadius );
+  Curve.BPath.Flip();
+  Curve.OG_BPath = Curve.BPath;
+end
+
 Curve.PlotPath()
 
 %%
 % design parameters
 %Curve.RemoveCorners_Rolling = true;
-%Curve.RemoveCorners_NonRolling = true;
+%Curve.RemoveCorners_NonRolling = false;
 
 % update all relevant parameter with each change of ratios
 Curve.AutoUpdate = true;
@@ -70,10 +81,12 @@ Cpurple_cl = [192,   0, 192]/255;
 Cblue_fcy  = [ 36, 122, 253]/255;
 Cflower_y  = [255, 229,  90]/255;
 Cgreen_dk  = [  0,  71,   4]/255;
+Cgreen_cl  = [  0, 255,   0]/255;
+Ccyan      = [  0, 255, 255]/255;
 
 % Curve.SetColor( {Cflower_y, Cblue_fcy},...
 %  'CumDist', 1 );
-Curve.SetColor( {Cgreen_dk, Cflower_y},...
+Curve.SetColor( {Cblue_fcy, Cblue_fcy},...
  'CumDist');
 Curve.ColorCycles = 6;
 %'CumDist'
@@ -96,18 +109,51 @@ Curve.PlotGlissette()
 
 % 120 96 40 32
 
+for i1 = 9:9
+for i2 = 1:(i1-1)
+for i3 = 1:(i2-1)
+for i4 = 1:(i3-1)
+
 WheelPerimeters = [];
-WheelPerimeters.RollingCurve = 114;
-WheelPerimeters.Wheel1_Outer =  80;
-WheelPerimeters.Wheel1_Inner =  32;
-WheelPerimeters.Wheel2       =  24;
-WheelPerimeters.Wheel2MarkerRatio = .8;
+WheelPerimeters.RollingCurve =  i1;
+WheelPerimeters.Wheel1_Outer =  i2;
+WheelPerimeters.Wheel1_Inner =  i3;
+WheelPerimeters.Wheel2       =  i4;
+%WheelPerimeters.Wheel1CtrHoleDistRatio = .5;
+WheelPerimeters.Wheel2MarkerRatio      = .75;
 
 Curve.Set_RingParameters( WheelPerimeters );
 
 Curve.ProcessGlissette()
 
 %Curve.ColorCycles = 6;
+
+Curve.PlotGlissette()
+
+title([num2str(i1),',',num2str(i2),',',num2str(i3),',',num2str(i4)])
+
+end
+end
+end
+end
+
+%%
+% fast change
+
+WheelPerimeters = [];
+WheelPerimeters.RollingCurve =  8*3;
+WheelPerimeters.Wheel1_Outer =  3*3;
+WheelPerimeters.Wheel1_Inner =  5;
+WheelPerimeters.Wheel2       =  4;
+%WheelPerimeters.Wheel1CtrHoleDistRatio = .5;
+WheelPerimeters.Wheel2MarkerRatio      = .75;
+
+Curve.Set_RingParameters( WheelPerimeters );
+Curve.Set_RingParameters( WheelPerimeters );
+
+Curve.ProcessGlissette()
+
+%Curve.ColorCycles = 8;
 
 Curve.PlotGlissette()
 
@@ -122,8 +168,8 @@ VideoOpts.Ratio = 16/9;
 VideoOpts.LineWidth = 2;
 VideoOpts.WhoIsCenter = 1;
 VideoOpts.WheelRadii = Curve.Wheel1Radius;
-%VideoOpts.TimeRefCurve = 'Average';
-VideoOpts.TimeRefCurve = 'Wheel';
+VideoOpts.TimeRefCurve = 'Average';
+%VideoOpts.TimeRefCurve = 'Wheel';
 %VideoOpts.TimeRefCurve = 'Marker';
 %VideoOpts.TimeRefCurve = 'Avg_MarkerBezier';
 

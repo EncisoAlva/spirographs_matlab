@@ -24,6 +24,9 @@ Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 2 )
 %%
 % pre-processing
 
+%Curve.RemoveCorners_Rolling = true;
+%Curve.RemoveCorners_NonRolling = true;
+
 %Curve.BPath.Rotate( pi/2 );
 
 Curve.BPath.Flip();
