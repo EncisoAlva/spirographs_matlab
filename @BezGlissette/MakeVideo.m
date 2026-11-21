@@ -320,16 +320,19 @@ for i = 0:nTimes
     scatter(obj.MarkerPos(1,jj),obj.MarkerPos(2,jj),20,obj.ColorVector{1},'filled')
   end
   scatter(RefBez(1),RefBez(2),10,'white','filled')
-  % switch obj.Method
-  %   case 'Ring2'
-  %     scatter(RefBez(1),RefBez(2),10,'white','filled')
-  %     RefPt2 = [cos(th), -sin(th); sin(th), cos(th)] *( ...
-  %       [cos(obj.MarkerAngleW1Inn(jj)), sin(obj.MarkerAngleW1Inn(jj))] * obj.Wheel1Radius_Inner ...
-  %       + [obj.CtrHoleDist; 0] ...
-  %       ) + RefWheelCtr;
-  %     scatter(RefPt2(1),RefPt2(2),10,'white','filled')
-  % end
-  %
+  switch obj.Method
+    case 'Ring2'
+      %scatter(RefBez(1),RefBez(2),10,'white','filled')
+      % RefPt2 = [cos(th), -sin(th); sin(th), cos(th)] *( ...
+      %   [cos(obj.MarkerAngleW1Inn(jj)), sin(obj.MarkerAngleW1Inn(jj))] * obj.Wheel1Radius_Inner ...
+      %   + [obj.CtrHoleDist; 0] ...
+      %   ) + RefWheelCtr;
+      RefPt2 = [cos(th), -sin(th); sin(th), cos(th)] *( ...
+        [cos(obj.MarkerAngleW1Inn(jj)); sin(obj.MarkerAngleW1Inn(jj))] * obj.Wheel1Radius_Inner ...
+        + [obj.CtrHoleDist; 0] ...
+        ) + RefWheelCtr;
+      scatter(RefPt2(1),RefPt2(2),10,'white','filled')
+  end
   end
   writeVideo(v,getframe)
 end

@@ -14,7 +14,7 @@ Curve = BezGlissette( 'Ring2' );
 %Curve.LoadRollingPath( 'UniqueCurve', 'LetterC' )
 
 % load path from indexed example
-Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 4 )
+Curve.LoadRollingPath( 'IndexedCurve', 'Circlegon', 3 )
 
 % load path from SVG file
 %Curve.LoadRollingPath( 'SVG', './curves_svg/Yscavenge.svg' )
@@ -38,6 +38,8 @@ if Curve.RemoveCorners_NonRolling
   Curve.BPath.Flip();
   Curve.OG_BPath = Curve.BPath;
 end
+
+Curve.BPath.Flip();
 
 Curve.PlotPath()
 
@@ -86,7 +88,7 @@ Ccyan      = [  0, 255, 255]/255;
 
 % Curve.SetColor( {Cflower_y, Cblue_fcy},...
 %  'CumDist', 1 );
-Curve.SetColor( {Cblue_fcy, Cblue_fcy},...
+Curve.SetColor( {Cwhite, Cwhite},...
  'CumDist');
 Curve.ColorCycles = 6;
 %'CumDist'
@@ -141,8 +143,8 @@ end
 % fast change
 
 WheelPerimeters = [];
-WheelPerimeters.RollingCurve =  8*3;
-WheelPerimeters.Wheel1_Outer =  3*3;
+WheelPerimeters.RollingCurve =  9;
+WheelPerimeters.Wheel1_Outer =  6;
 WheelPerimeters.Wheel1_Inner =  5;
 WheelPerimeters.Wheel2       =  4;
 %WheelPerimeters.Wheel1CtrHoleDistRatio = .5;
